@@ -23,15 +23,15 @@
 #include "mbedtls/cipher.h"
 
 #if defined(MBEDTLS_HAVE_TIME)
-#include "mbedtls/platform_time.h"
+  #include "mbedtls/platform_time.h"
 #endif
 
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
-#include "psa/crypto.h"
+  #include "psa/crypto.h"
 #endif
 
 #if defined(MBEDTLS_THREADING_C)
-#include "mbedtls/threading.h"
+  #include "mbedtls/threading.h"
 #endif
 
 #ifdef __cplusplus
@@ -44,23 +44,24 @@ extern "C" {
 /**
  * \brief   Information for session ticket protection
  */
-typedef struct mbedtls_ssl_ticket_key {
-    unsigned char MBEDTLS_PRIVATE(name)[MBEDTLS_SSL_TICKET_KEY_NAME_BYTES];
-    /*!< random key identifier              */
+typedef struct mbedtls_ssl_ticket_key
+{
+  unsigned char MBEDTLS_PRIVATE ( name ) [MBEDTLS_SSL_TICKET_KEY_NAME_BYTES];
+  /*!< random key identifier              */
 #if defined(MBEDTLS_HAVE_TIME)
-    mbedtls_time_t MBEDTLS_PRIVATE(generation_time); /*!< key generation timestamp (seconds) */
+  mbedtls_time_t MBEDTLS_PRIVATE ( generation_time ); /*!< key generation timestamp (seconds) */
 #endif
-    /*! Lifetime of the key in seconds. This is also the lifetime of the
-     *  tickets created under that key.
-     */
-    uint32_t MBEDTLS_PRIVATE(lifetime);
+  /*! Lifetime of the key in seconds. This is also the lifetime of the
+   *  tickets created under that key.
+   */
+  uint32_t MBEDTLS_PRIVATE ( lifetime );
 #if !defined(MBEDTLS_USE_PSA_CRYPTO)
-    mbedtls_cipher_context_t MBEDTLS_PRIVATE(ctx);   /*!< context for auth enc/decryption    */
+  mbedtls_cipher_context_t MBEDTLS_PRIVATE ( ctx ); /*!< context for auth enc/decryption    */
 #else
-    mbedtls_svc_key_id_t MBEDTLS_PRIVATE(key);       /*!< key used for auth enc/decryption   */
-    psa_algorithm_t MBEDTLS_PRIVATE(alg);            /*!< algorithm of auth enc/decryption   */
-    psa_key_type_t MBEDTLS_PRIVATE(key_type);        /*!< key type                           */
-    size_t MBEDTLS_PRIVATE(key_bits);                /*!< key length in bits                 */
+  mbedtls_svc_key_id_t MBEDTLS_PRIVATE ( key );    /*!< key used for auth enc/decryption   */
+  psa_algorithm_t MBEDTLS_PRIVATE ( alg );         /*!< algorithm of auth enc/decryption   */
+  psa_key_type_t MBEDTLS_PRIVATE ( key_type );     /*!< key type                           */
+  size_t MBEDTLS_PRIVATE ( key_bits );             /*!< key length in bits                 */
 #endif
 }
 mbedtls_ssl_ticket_key;
@@ -68,18 +69,19 @@ mbedtls_ssl_ticket_key;
 /**
  * \brief   Context for session ticket handling functions
  */
-typedef struct mbedtls_ssl_ticket_context {
-    mbedtls_ssl_ticket_key MBEDTLS_PRIVATE(keys)[2]; /*!< ticket protection keys             */
-    unsigned char MBEDTLS_PRIVATE(active);           /*!< index of the currently active key  */
+typedef struct mbedtls_ssl_ticket_context
+{
+  mbedtls_ssl_ticket_key MBEDTLS_PRIVATE ( keys ) [2]; /*!< ticket protection keys             */
+  unsigned char MBEDTLS_PRIVATE ( active );        /*!< index of the currently active key  */
 
-    uint32_t MBEDTLS_PRIVATE(ticket_lifetime);       /*!< lifetime of tickets in seconds     */
+  uint32_t MBEDTLS_PRIVATE ( ticket_lifetime );    /*!< lifetime of tickets in seconds     */
 
-    /** Callback for getting (pseudo-)random numbers                        */
-    int(*MBEDTLS_PRIVATE(f_rng))(void *, unsigned char *, size_t);
-    void *MBEDTLS_PRIVATE(p_rng);                    /*!< context for the RNG function       */
+  /** Callback for getting (pseudo-)random numbers                        */
+  int ( *MBEDTLS_PRIVATE ( f_rng ) ) ( void*, unsigned char*, size_t );
+  void* MBEDTLS_PRIVATE ( p_rng );                 /*!< context for the RNG function       */
 
 #if defined(MBEDTLS_THREADING_C)
-    mbedtls_threading_mutex_t MBEDTLS_PRIVATE(mutex);
+  mbedtls_threading_mutex_t MBEDTLS_PRIVATE ( mutex );
 #endif
 }
 mbedtls_ssl_ticket_context;
@@ -91,7 +93,7 @@ mbedtls_ssl_ticket_context;
  *
  * \param ctx       Context to be initialized
  */
-void mbedtls_ssl_ticket_init(mbedtls_ssl_ticket_context *ctx);
+void mbedtls_ssl_ticket_init ( mbedtls_ssl_ticket_context* ctx );
 
 /**
  * \brief           Prepare context to be actually used
@@ -121,10 +123,10 @@ void mbedtls_ssl_ticket_init(mbedtls_ssl_ticket_context *ctx);
  * \return          0 if successful,
  *                  or a specific MBEDTLS_ERR_XXX error code
  */
-int mbedtls_ssl_ticket_setup(mbedtls_ssl_ticket_context *ctx,
-                             int (*f_rng)(void *, unsigned char *, size_t), void *p_rng,
-                             mbedtls_cipher_type_t cipher,
-                             uint32_t lifetime);
+int mbedtls_ssl_ticket_setup ( mbedtls_ssl_ticket_context* ctx,
+                               int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng,
+                               mbedtls_cipher_type_t cipher,
+                               uint32_t lifetime );
 
 /**
  * \brief           Rotate session ticket encryption key to new specified key.
@@ -164,10 +166,10 @@ int mbedtls_ssl_ticket_setup(mbedtls_ssl_ticket_context *ctx,
  * \return          0 if successful,
  *                  or a specific MBEDTLS_ERR_XXX error code
  */
-int mbedtls_ssl_ticket_rotate(mbedtls_ssl_ticket_context *ctx,
-                              const unsigned char *name, size_t nlength,
-                              const unsigned char *k, size_t klength,
-                              uint32_t lifetime);
+int mbedtls_ssl_ticket_rotate ( mbedtls_ssl_ticket_context* ctx,
+                                const unsigned char* name, size_t nlength,
+                                const unsigned char* k, size_t klength,
+                                uint32_t lifetime );
 
 /**
  * \brief           Implementation of the ticket write callback
@@ -188,7 +190,7 @@ mbedtls_ssl_ticket_parse_t mbedtls_ssl_ticket_parse;
  *
  * \param ctx       Context to be cleaned up
  */
-void mbedtls_ssl_ticket_free(mbedtls_ssl_ticket_context *ctx);
+void mbedtls_ssl_ticket_free ( mbedtls_ssl_ticket_context* ctx );
 
 #ifdef __cplusplus
 }

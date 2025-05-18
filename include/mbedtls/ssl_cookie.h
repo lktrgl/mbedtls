@@ -16,9 +16,9 @@
 #include "mbedtls/ssl.h"
 
 #if !defined(MBEDTLS_USE_PSA_CRYPTO)
-#if defined(MBEDTLS_THREADING_C)
-#include "mbedtls/threading.h"
-#endif
+  #if defined(MBEDTLS_THREADING_C)
+    #include "mbedtls/threading.h"
+  #endif
 #endif /* !MBEDTLS_USE_PSA_CRYPTO */
 
 /**
@@ -29,7 +29,7 @@
  * \{
  */
 #ifndef MBEDTLS_SSL_COOKIE_TIMEOUT
-#define MBEDTLS_SSL_COOKIE_TIMEOUT     60 /**< Default expiration delay of DTLS cookies, in seconds if HAVE_TIME, or in number of cookies issued */
+  #define MBEDTLS_SSL_COOKIE_TIMEOUT     60 /**< Default expiration delay of DTLS cookies, in seconds if HAVE_TIME, or in number of cookies issued */
 #endif
 
 /** \} name SECTION: Module settings */
@@ -41,22 +41,23 @@ extern "C" {
 /**
  * \brief          Context for the default cookie functions.
  */
-typedef struct mbedtls_ssl_cookie_ctx {
+typedef struct mbedtls_ssl_cookie_ctx
+{
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
-    mbedtls_svc_key_id_t    MBEDTLS_PRIVATE(psa_hmac_key);  /*!< key id for the HMAC portion   */
-    psa_algorithm_t         MBEDTLS_PRIVATE(psa_hmac_alg);  /*!< key algorithm for the HMAC portion   */
+  mbedtls_svc_key_id_t    MBEDTLS_PRIVATE ( psa_hmac_key ); /*!< key id for the HMAC portion   */
+  psa_algorithm_t         MBEDTLS_PRIVATE ( psa_hmac_alg ); /*!< key algorithm for the HMAC portion   */
 #else
-    mbedtls_md_context_t    MBEDTLS_PRIVATE(hmac_ctx);   /*!< context for the HMAC portion   */
+  mbedtls_md_context_t    MBEDTLS_PRIVATE ( hmac_ctx ); /*!< context for the HMAC portion   */
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 #if !defined(MBEDTLS_HAVE_TIME)
-    unsigned long   MBEDTLS_PRIVATE(serial);     /*!< serial number for expiration   */
+  unsigned long   MBEDTLS_PRIVATE ( serial );  /*!< serial number for expiration   */
 #endif
-    unsigned long   MBEDTLS_PRIVATE(timeout);    /*!< timeout delay, in seconds if HAVE_TIME,
+  unsigned long   MBEDTLS_PRIVATE ( timeout );    /*!< timeout delay, in seconds if HAVE_TIME,
                                                     or in number of tickets issued */
 
 #if !defined(MBEDTLS_USE_PSA_CRYPTO)
 #if defined(MBEDTLS_THREADING_C)
-    mbedtls_threading_mutex_t MBEDTLS_PRIVATE(mutex);
+  mbedtls_threading_mutex_t MBEDTLS_PRIVATE ( mutex );
 #endif
 #endif /* !MBEDTLS_USE_PSA_CRYPTO */
 } mbedtls_ssl_cookie_ctx;
@@ -64,14 +65,14 @@ typedef struct mbedtls_ssl_cookie_ctx {
 /**
  * \brief          Initialize cookie context
  */
-void mbedtls_ssl_cookie_init(mbedtls_ssl_cookie_ctx *ctx);
+void mbedtls_ssl_cookie_init ( mbedtls_ssl_cookie_ctx* ctx );
 
 /**
  * \brief          Setup cookie context (generate keys)
  */
-int mbedtls_ssl_cookie_setup(mbedtls_ssl_cookie_ctx *ctx,
-                             int (*f_rng)(void *, unsigned char *, size_t),
-                             void *p_rng);
+int mbedtls_ssl_cookie_setup ( mbedtls_ssl_cookie_ctx* ctx,
+                               int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                               void* p_rng );
 
 /**
  * \brief          Set expiration delay for cookies
@@ -82,12 +83,12 @@ int mbedtls_ssl_cookie_setup(mbedtls_ssl_cookie_ctx *ctx,
  *                 issued in the meantime.
  *                 0 to disable expiration (NOT recommended)
  */
-void mbedtls_ssl_cookie_set_timeout(mbedtls_ssl_cookie_ctx *ctx, unsigned long delay);
+void mbedtls_ssl_cookie_set_timeout ( mbedtls_ssl_cookie_ctx* ctx, unsigned long delay );
 
 /**
  * \brief          Free cookie context
  */
-void mbedtls_ssl_cookie_free(mbedtls_ssl_cookie_ctx *ctx);
+void mbedtls_ssl_cookie_free ( mbedtls_ssl_cookie_ctx* ctx );
 
 /**
  * \brief          Generate cookie, see \c mbedtls_ssl_cookie_write_t

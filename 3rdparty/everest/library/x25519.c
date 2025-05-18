@@ -26,7 +26,7 @@
 #include <mbedtls/ecdh.h>
 
 #if !(defined(__SIZEOF_INT128__) && (__SIZEOF_INT128__ == 16))
-#define KRML_VERIFIED_UINT128
+  #define KRML_VERIFIED_UINT128
 #endif
 
 #include <Hacl_Curve25519.h>
@@ -39,147 +39,186 @@
 /*
  * Initialize context
  */
-void mbedtls_x25519_init( mbedtls_x25519_context *ctx )
+void mbedtls_x25519_init ( mbedtls_x25519_context* ctx )
 {
-    mbedtls_platform_zeroize( ctx, sizeof( mbedtls_x25519_context ) );
+  mbedtls_platform_zeroize ( ctx, sizeof ( mbedtls_x25519_context ) );
 }
 
 /*
  * Free context
  */
-void mbedtls_x25519_free( mbedtls_x25519_context *ctx )
+void mbedtls_x25519_free ( mbedtls_x25519_context* ctx )
 {
-    if( ctx == NULL )
-        return;
+  if ( ctx == NULL )
+  {
+    return;
+  }
 
-    mbedtls_platform_zeroize( ctx->our_secret, MBEDTLS_X25519_KEY_SIZE_BYTES );
-    mbedtls_platform_zeroize( ctx->peer_point, MBEDTLS_X25519_KEY_SIZE_BYTES );
+  mbedtls_platform_zeroize ( ctx->our_secret, MBEDTLS_X25519_KEY_SIZE_BYTES );
+  mbedtls_platform_zeroize ( ctx->peer_point, MBEDTLS_X25519_KEY_SIZE_BYTES );
 }
 
-int mbedtls_x25519_make_params( mbedtls_x25519_context *ctx, size_t *olen,
-                        unsigned char *buf, size_t blen,
-                        int( *f_rng )(void *, unsigned char *, size_t),
-                        void *p_rng )
+int mbedtls_x25519_make_params ( mbedtls_x25519_context* ctx, size_t* olen,
+                                 unsigned char* buf, size_t blen,
+                                 int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                 void* p_rng )
 {
-    int ret = 0;
+  int ret = 0;
 
-    uint8_t base[MBEDTLS_X25519_KEY_SIZE_BYTES] = {0};
+  uint8_t base[MBEDTLS_X25519_KEY_SIZE_BYTES] = {0};
 
-    if( ( ret = f_rng( p_rng, ctx->our_secret, MBEDTLS_X25519_KEY_SIZE_BYTES ) ) != 0 )
-        return ret;
+  if ( ( ret = f_rng ( p_rng, ctx->our_secret, MBEDTLS_X25519_KEY_SIZE_BYTES ) ) != 0 )
+  {
+    return ret;
+  }
 
-    *olen = MBEDTLS_X25519_KEY_SIZE_BYTES + 4;
-    if( blen < *olen )
-        return( MBEDTLS_ERR_ECP_BUFFER_TOO_SMALL );
+  *olen = MBEDTLS_X25519_KEY_SIZE_BYTES + 4;
 
-    *buf++ = MBEDTLS_ECP_TLS_NAMED_CURVE;
-    *buf++ = MBEDTLS_ECP_TLS_CURVE25519 >> 8;
-    *buf++ = MBEDTLS_ECP_TLS_CURVE25519 & 0xFF;
-    *buf++ = MBEDTLS_X25519_KEY_SIZE_BYTES;
+  if ( blen < *olen )
+  {
+    return ( MBEDTLS_ERR_ECP_BUFFER_TOO_SMALL );
+  }
 
-    base[0] = 9;
-    Hacl_Curve25519_crypto_scalarmult( buf, ctx->our_secret, base );
+  *buf++ = MBEDTLS_ECP_TLS_NAMED_CURVE;
+  *buf++ = MBEDTLS_ECP_TLS_CURVE25519 >> 8;
+  *buf++ = MBEDTLS_ECP_TLS_CURVE25519 & 0xFF;
+  *buf++ = MBEDTLS_X25519_KEY_SIZE_BYTES;
 
-    base[0] = 0;
-    if( memcmp( buf, base, MBEDTLS_X25519_KEY_SIZE_BYTES) == 0 )
-        return MBEDTLS_ERR_ECP_RANDOM_FAILED;
+  base[0] = 9;
+  Hacl_Curve25519_crypto_scalarmult ( buf, ctx->our_secret, base );
 
-    return( 0 );
+  base[0] = 0;
+
+  if ( memcmp ( buf, base, MBEDTLS_X25519_KEY_SIZE_BYTES ) == 0 )
+  {
+    return MBEDTLS_ERR_ECP_RANDOM_FAILED;
+  }
+
+  return ( 0 );
 }
 
-int mbedtls_x25519_read_params( mbedtls_x25519_context *ctx,
-                        const unsigned char **buf, const unsigned char *end )
+int mbedtls_x25519_read_params ( mbedtls_x25519_context* ctx,
+                                 const unsigned char** buf, const unsigned char* end )
 {
-    if( end - *buf < MBEDTLS_X25519_KEY_SIZE_BYTES + 1 )
-        return( MBEDTLS_ERR_ECP_BAD_INPUT_DATA );
+  if ( end - *buf < MBEDTLS_X25519_KEY_SIZE_BYTES + 1 )
+  {
+    return ( MBEDTLS_ERR_ECP_BAD_INPUT_DATA );
+  }
 
-    if( ( *(*buf)++ != MBEDTLS_X25519_KEY_SIZE_BYTES ) )
-        return( MBEDTLS_ERR_ECP_BAD_INPUT_DATA );
+  if ( ( * ( *buf )++ != MBEDTLS_X25519_KEY_SIZE_BYTES ) )
+  {
+    return ( MBEDTLS_ERR_ECP_BAD_INPUT_DATA );
+  }
 
-    memcpy( ctx->peer_point, *buf, MBEDTLS_X25519_KEY_SIZE_BYTES );
-    *buf += MBEDTLS_X25519_KEY_SIZE_BYTES;
-    return( 0 );
+  memcpy ( ctx->peer_point, *buf, MBEDTLS_X25519_KEY_SIZE_BYTES );
+  *buf += MBEDTLS_X25519_KEY_SIZE_BYTES;
+  return ( 0 );
 }
 
-int mbedtls_x25519_get_params( mbedtls_x25519_context *ctx, const mbedtls_ecp_keypair *key,
-                               mbedtls_x25519_ecdh_side side )
+int mbedtls_x25519_get_params ( mbedtls_x25519_context* ctx, const mbedtls_ecp_keypair* key,
+                                mbedtls_x25519_ecdh_side side )
 {
-    size_t olen = 0;
+  size_t olen = 0;
 
-    switch( side ) {
-    case MBEDTLS_X25519_ECDH_THEIRS:
-        return mbedtls_ecp_point_write_binary( &key->grp, &key->Q, MBEDTLS_ECP_PF_COMPRESSED, &olen, ctx->peer_point, MBEDTLS_X25519_KEY_SIZE_BYTES );
-    case MBEDTLS_X25519_ECDH_OURS:
-        return mbedtls_mpi_write_binary_le( &key->d, ctx->our_secret, MBEDTLS_X25519_KEY_SIZE_BYTES );
-    default:
-        return( MBEDTLS_ERR_ECP_BAD_INPUT_DATA );
-    }
+  switch ( side )
+  {
+  case MBEDTLS_X25519_ECDH_THEIRS:
+    return mbedtls_ecp_point_write_binary ( &key->grp, &key->Q, MBEDTLS_ECP_PF_COMPRESSED, &olen, ctx->peer_point,
+                                            MBEDTLS_X25519_KEY_SIZE_BYTES );
+
+  case MBEDTLS_X25519_ECDH_OURS:
+    return mbedtls_mpi_write_binary_le ( &key->d, ctx->our_secret, MBEDTLS_X25519_KEY_SIZE_BYTES );
+
+  default:
+    return ( MBEDTLS_ERR_ECP_BAD_INPUT_DATA );
+  }
 }
 
-int mbedtls_x25519_calc_secret( mbedtls_x25519_context *ctx, size_t *olen,
-                        unsigned char *buf, size_t blen,
-                        int( *f_rng )(void *, unsigned char *, size_t),
-                        void *p_rng )
+int mbedtls_x25519_calc_secret ( mbedtls_x25519_context* ctx, size_t* olen,
+                                 unsigned char* buf, size_t blen,
+                                 int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                 void* p_rng )
 {
-    /* f_rng and p_rng are not used here because this implementation does not
-       need blinding since it has constant trace. */
-    (( void )f_rng);
-    (( void )p_rng);
+  /* f_rng and p_rng are not used here because this implementation does not
+     need blinding since it has constant trace. */
+  ( ( void ) f_rng );
+  ( ( void ) p_rng );
 
-    *olen = MBEDTLS_X25519_KEY_SIZE_BYTES;
+  *olen = MBEDTLS_X25519_KEY_SIZE_BYTES;
 
-    if( blen < *olen )
-        return( MBEDTLS_ERR_ECP_BUFFER_TOO_SMALL );
+  if ( blen < *olen )
+  {
+    return ( MBEDTLS_ERR_ECP_BUFFER_TOO_SMALL );
+  }
 
-    Hacl_Curve25519_crypto_scalarmult( buf, ctx->our_secret, ctx->peer_point);
+  Hacl_Curve25519_crypto_scalarmult ( buf, ctx->our_secret, ctx->peer_point );
 
-    /* Wipe the DH secret and don't let the peer chose a small subgroup point */
-    mbedtls_platform_zeroize( ctx->our_secret, MBEDTLS_X25519_KEY_SIZE_BYTES );
+  /* Wipe the DH secret and don't let the peer chose a small subgroup point */
+  mbedtls_platform_zeroize ( ctx->our_secret, MBEDTLS_X25519_KEY_SIZE_BYTES );
 
-    if( memcmp( buf, ctx->our_secret, MBEDTLS_X25519_KEY_SIZE_BYTES) == 0 )
-        return MBEDTLS_ERR_ECP_RANDOM_FAILED;
+  if ( memcmp ( buf, ctx->our_secret, MBEDTLS_X25519_KEY_SIZE_BYTES ) == 0 )
+  {
+    return MBEDTLS_ERR_ECP_RANDOM_FAILED;
+  }
 
-    return( 0 );
+  return ( 0 );
 }
 
-int mbedtls_x25519_make_public( mbedtls_x25519_context *ctx, size_t *olen,
-                        unsigned char *buf, size_t blen,
-                        int( *f_rng )(void *, unsigned char *, size_t),
-                        void *p_rng )
+int mbedtls_x25519_make_public ( mbedtls_x25519_context* ctx, size_t* olen,
+                                 unsigned char* buf, size_t blen,
+                                 int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                 void* p_rng )
 {
-    int ret = 0;
-    unsigned char base[MBEDTLS_X25519_KEY_SIZE_BYTES] = { 0 };
+  int ret = 0;
+  unsigned char base[MBEDTLS_X25519_KEY_SIZE_BYTES] = { 0 };
 
-    if( ctx == NULL )
-        return( MBEDTLS_ERR_ECP_BAD_INPUT_DATA );
+  if ( ctx == NULL )
+  {
+    return ( MBEDTLS_ERR_ECP_BAD_INPUT_DATA );
+  }
 
-    if( ( ret = f_rng( p_rng, ctx->our_secret, MBEDTLS_X25519_KEY_SIZE_BYTES ) ) != 0 )
-        return ret;
+  if ( ( ret = f_rng ( p_rng, ctx->our_secret, MBEDTLS_X25519_KEY_SIZE_BYTES ) ) != 0 )
+  {
+    return ret;
+  }
 
-    *olen = MBEDTLS_X25519_KEY_SIZE_BYTES + 1;
-    if( blen < *olen )
-        return(MBEDTLS_ERR_ECP_BUFFER_TOO_SMALL);
-    *buf++ = MBEDTLS_X25519_KEY_SIZE_BYTES;
+  *olen = MBEDTLS_X25519_KEY_SIZE_BYTES + 1;
 
-    base[0] = 9;
-    Hacl_Curve25519_crypto_scalarmult( buf, ctx->our_secret, base );
+  if ( blen < *olen )
+  {
+    return ( MBEDTLS_ERR_ECP_BUFFER_TOO_SMALL );
+  }
 
-    base[0] = 0;
-    if( memcmp( buf, base, MBEDTLS_X25519_KEY_SIZE_BYTES ) == 0 )
-        return MBEDTLS_ERR_ECP_RANDOM_FAILED;
+  *buf++ = MBEDTLS_X25519_KEY_SIZE_BYTES;
 
-    return( ret );
+  base[0] = 9;
+  Hacl_Curve25519_crypto_scalarmult ( buf, ctx->our_secret, base );
+
+  base[0] = 0;
+
+  if ( memcmp ( buf, base, MBEDTLS_X25519_KEY_SIZE_BYTES ) == 0 )
+  {
+    return MBEDTLS_ERR_ECP_RANDOM_FAILED;
+  }
+
+  return ( ret );
 }
 
-int mbedtls_x25519_read_public( mbedtls_x25519_context *ctx,
-                        const unsigned char *buf, size_t blen )
+int mbedtls_x25519_read_public ( mbedtls_x25519_context* ctx,
+                                 const unsigned char* buf, size_t blen )
 {
-    if( blen < MBEDTLS_X25519_KEY_SIZE_BYTES + 1 )
-        return(MBEDTLS_ERR_ECP_BUFFER_TOO_SMALL);
-    if( (*buf++ != MBEDTLS_X25519_KEY_SIZE_BYTES) )
-        return(MBEDTLS_ERR_ECP_BAD_INPUT_DATA);
-    memcpy( ctx->peer_point, buf, MBEDTLS_X25519_KEY_SIZE_BYTES );
-    return( 0 );
+  if ( blen < MBEDTLS_X25519_KEY_SIZE_BYTES + 1 )
+  {
+    return ( MBEDTLS_ERR_ECP_BUFFER_TOO_SMALL );
+  }
+
+  if ( ( *buf++ != MBEDTLS_X25519_KEY_SIZE_BYTES ) )
+  {
+    return ( MBEDTLS_ERR_ECP_BAD_INPUT_DATA );
+  }
+
+  memcpy ( ctx->peer_point, buf, MBEDTLS_X25519_KEY_SIZE_BYTES );
+  return ( 0 );
 }
 
 

@@ -7,8 +7,9 @@
 #ifndef MD5_ALT_H
 #define MD5_ALT_H
 
-typedef struct mbedtls_md5_context {
-    int dummy;
+typedef struct mbedtls_md5_context
+{
+  int dummy;
 }
 mbedtls_md5_context;
 

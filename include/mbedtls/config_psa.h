@@ -28,32 +28,32 @@
 
 #if defined(MBEDTLS_PSA_CRYPTO_CONFIG)
 
-/* Require built-in implementations based on PSA requirements */
+  /* Require built-in implementations based on PSA requirements */
 
-/* We need this to have a complete list of requirements
- * before we deduce what built-ins are required. */
-#include "psa/crypto_adjust_config_key_pair_types.h"
+  /* We need this to have a complete list of requirements
+  * before we deduce what built-ins are required. */
+  #include "psa/crypto_adjust_config_key_pair_types.h"
 
-#if defined(MBEDTLS_PSA_CRYPTO_C)
-/* If we are implementing PSA crypto ourselves, then we want to enable the
- * required built-ins. Otherwise, PSA features will be provided by the server. */
-#include "mbedtls/config_adjust_legacy_from_psa.h"
-#endif
+  #if defined(MBEDTLS_PSA_CRYPTO_C)
+    /* If we are implementing PSA crypto ourselves, then we want to enable the
+    * required built-ins. Otherwise, PSA features will be provided by the server. */
+    #include "mbedtls/config_adjust_legacy_from_psa.h"
+  #endif
 
 #else /* MBEDTLS_PSA_CRYPTO_CONFIG */
 
-/* Infer PSA requirements from Mbed TLS capabilities */
+  /* Infer PSA requirements from Mbed TLS capabilities */
 
-#include "mbedtls/config_adjust_psa_from_legacy.h"
+  #include "mbedtls/config_adjust_psa_from_legacy.h"
 
-/* Hopefully the file above will have enabled keypair symbols in a consistent
- * way, but including this here fixes them if that wasn't the case. */
-#include "psa/crypto_adjust_config_key_pair_types.h"
+  /* Hopefully the file above will have enabled keypair symbols in a consistent
+  * way, but including this here fixes them if that wasn't the case. */
+  #include "psa/crypto_adjust_config_key_pair_types.h"
 
 #endif /* MBEDTLS_PSA_CRYPTO_CONFIG */
 
 #if defined(PSA_WANT_ALG_JPAKE)
-#define PSA_WANT_ALG_SOME_PAKE 1
+  #define PSA_WANT_ALG_SOME_PAKE 1
 #endif
 
 #include "psa/crypto_adjust_auto_enabled.h"

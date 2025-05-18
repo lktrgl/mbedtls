@@ -16,7 +16,7 @@
 #include "mbedtls/ssl.h"
 
 #if defined(MBEDTLS_THREADING_C)
-#include "mbedtls/threading.h"
+  #include "mbedtls/threading.h"
 #endif
 
 /**
@@ -28,11 +28,11 @@
  */
 
 #if !defined(MBEDTLS_SSL_CACHE_DEFAULT_TIMEOUT)
-#define MBEDTLS_SSL_CACHE_DEFAULT_TIMEOUT       86400   /*!< 1 day  */
+  #define MBEDTLS_SSL_CACHE_DEFAULT_TIMEOUT       86400   /*!< 1 day  */
 #endif
 
 #if !defined(MBEDTLS_SSL_CACHE_DEFAULT_MAX_ENTRIES)
-#define MBEDTLS_SSL_CACHE_DEFAULT_MAX_ENTRIES      50   /*!< Maximum entries in cache */
+  #define MBEDTLS_SSL_CACHE_DEFAULT_MAX_ENTRIES      50   /*!< Maximum entries in cache */
 #endif
 
 /** \} name SECTION: Module settings */
@@ -47,29 +47,31 @@ typedef struct mbedtls_ssl_cache_entry mbedtls_ssl_cache_entry;
 /**
  * \brief   This structure is used for storing cache entries
  */
-struct mbedtls_ssl_cache_entry {
+struct mbedtls_ssl_cache_entry
+{
 #if defined(MBEDTLS_HAVE_TIME)
-    mbedtls_time_t MBEDTLS_PRIVATE(timestamp);           /*!< entry timestamp    */
+  mbedtls_time_t MBEDTLS_PRIVATE ( timestamp );        /*!< entry timestamp    */
 #endif
 
-    unsigned char MBEDTLS_PRIVATE(session_id)[32];       /*!< session ID         */
-    size_t MBEDTLS_PRIVATE(session_id_len);
+  unsigned char MBEDTLS_PRIVATE ( session_id ) [32];   /*!< session ID         */
+  size_t MBEDTLS_PRIVATE ( session_id_len );
 
-    unsigned char *MBEDTLS_PRIVATE(session);             /*!< serialized session */
-    size_t MBEDTLS_PRIVATE(session_len);
+  unsigned char* MBEDTLS_PRIVATE ( session );          /*!< serialized session */
+  size_t MBEDTLS_PRIVATE ( session_len );
 
-    mbedtls_ssl_cache_entry *MBEDTLS_PRIVATE(next);      /*!< chain pointer      */
+  mbedtls_ssl_cache_entry* MBEDTLS_PRIVATE ( next );   /*!< chain pointer      */
 };
 
 /**
  * \brief Cache context
  */
-struct mbedtls_ssl_cache_context {
-    mbedtls_ssl_cache_entry *MBEDTLS_PRIVATE(chain);     /*!< start of the chain     */
-    int MBEDTLS_PRIVATE(timeout);                /*!< cache entry timeout    */
-    int MBEDTLS_PRIVATE(max_entries);            /*!< maximum entries        */
+struct mbedtls_ssl_cache_context
+{
+  mbedtls_ssl_cache_entry* MBEDTLS_PRIVATE ( chain );  /*!< start of the chain     */
+  int MBEDTLS_PRIVATE ( timeout );             /*!< cache entry timeout    */
+  int MBEDTLS_PRIVATE ( max_entries );         /*!< maximum entries        */
 #if defined(MBEDTLS_THREADING_C)
-    mbedtls_threading_mutex_t MBEDTLS_PRIVATE(mutex);    /*!< mutex                  */
+  mbedtls_threading_mutex_t MBEDTLS_PRIVATE ( mutex ); /*!< mutex                  */
 #endif
 };
 
@@ -78,7 +80,7 @@ struct mbedtls_ssl_cache_context {
  *
  * \param cache    SSL cache context
  */
-void mbedtls_ssl_cache_init(mbedtls_ssl_cache_context *cache);
+void mbedtls_ssl_cache_init ( mbedtls_ssl_cache_context* cache );
 
 /**
  * \brief          Cache get callback implementation
@@ -96,10 +98,10 @@ void mbedtls_ssl_cache_init(mbedtls_ssl_cache_context *cache);
  *                        no cache entry with specified session ID found, or
  *                        any other negative error code for other failures.
  */
-int mbedtls_ssl_cache_get(void *data,
-                          unsigned char const *session_id,
-                          size_t session_id_len,
-                          mbedtls_ssl_session *session);
+int mbedtls_ssl_cache_get ( void* data,
+                            unsigned char const* session_id,
+                            size_t session_id_len,
+                            mbedtls_ssl_session* session );
 
 /**
  * \brief          Cache set callback implementation
@@ -114,10 +116,10 @@ int mbedtls_ssl_cache_get(void *data,
  * \return                \c 0 on success.
  * \return                A negative error code on failure.
  */
-int mbedtls_ssl_cache_set(void *data,
-                          unsigned char const *session_id,
-                          size_t session_id_len,
-                          const mbedtls_ssl_session *session);
+int mbedtls_ssl_cache_set ( void* data,
+                            unsigned char const* session_id,
+                            size_t session_id_len,
+                            const mbedtls_ssl_session* session );
 
 /**
  * \brief          Remove the cache entry by the session ID
@@ -133,9 +135,9 @@ int mbedtls_ssl_cache_set(void *data,
  *                        exist.
  * \return                A negative error code on failure.
  */
-int mbedtls_ssl_cache_remove(void *data,
-                             unsigned char const *session_id,
-                             size_t session_id_len);
+int mbedtls_ssl_cache_remove ( void* data,
+                               unsigned char const* session_id,
+                               size_t session_id_len );
 
 #if defined(MBEDTLS_HAVE_TIME)
 /**
@@ -147,7 +149,7 @@ int mbedtls_ssl_cache_remove(void *data,
  * \param cache    SSL cache context
  * \param timeout  cache entry timeout in seconds
  */
-void mbedtls_ssl_cache_set_timeout(mbedtls_ssl_cache_context *cache, int timeout);
+void mbedtls_ssl_cache_set_timeout ( mbedtls_ssl_cache_context* cache, int timeout );
 
 /**
  * \brief          Get the cache timeout
@@ -158,9 +160,9 @@ void mbedtls_ssl_cache_set_timeout(mbedtls_ssl_cache_context *cache, int timeout
  *
  * \return         cache entry timeout in seconds
  */
-static inline int mbedtls_ssl_cache_get_timeout(mbedtls_ssl_cache_context *cache)
+static inline int mbedtls_ssl_cache_get_timeout ( mbedtls_ssl_cache_context* cache )
 {
-    return cache->MBEDTLS_PRIVATE(timeout);
+  return cache->MBEDTLS_PRIVATE ( timeout );
 }
 #endif /* MBEDTLS_HAVE_TIME */
 
@@ -171,14 +173,14 @@ static inline int mbedtls_ssl_cache_get_timeout(mbedtls_ssl_cache_context *cache
  * \param cache    SSL cache context
  * \param max      cache entry maximum
  */
-void mbedtls_ssl_cache_set_max_entries(mbedtls_ssl_cache_context *cache, int max);
+void mbedtls_ssl_cache_set_max_entries ( mbedtls_ssl_cache_context* cache, int max );
 
 /**
  * \brief          Free referenced items in a cache context and clear memory
  *
  * \param cache    SSL cache context
  */
-void mbedtls_ssl_cache_free(mbedtls_ssl_cache_context *cache);
+void mbedtls_ssl_cache_free ( mbedtls_ssl_cache_context* cache );
 
 #ifdef __cplusplus
 }

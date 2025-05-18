@@ -21,6 +21,6 @@
  *
  * \return          The corresponding MD error code,
  */
-int mbedtls_md_error_from_psa(psa_status_t status);
+int mbedtls_md_error_from_psa ( psa_status_t status );
 
 #endif /* MBEDTLS_MD_PSA_H */

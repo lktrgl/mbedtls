@@ -18,9 +18,10 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-typedef union {
-    size_t len;
-    intmax_t sint;
+typedef union
+{
+  size_t len;
+  intmax_t sint;
 } mbedtls_test_argument_t;
 
 #endif /* TEST_ARGUMENTS_H */

@@ -10,9 +10,9 @@
 #define P256M_DRIVER_ENTRYPOINTS_H
 
 #if defined(MBEDTLS_PSA_P256M_DRIVER_ENABLED)
-#ifndef PSA_CRYPTO_ACCELERATOR_DRIVER_PRESENT
-#define PSA_CRYPTO_ACCELERATOR_DRIVER_PRESENT
-#endif /* PSA_CRYPTO_ACCELERATOR_DRIVER_PRESENT */
+  #ifndef PSA_CRYPTO_ACCELERATOR_DRIVER_PRESENT
+    #define PSA_CRYPTO_ACCELERATOR_DRIVER_PRESENT
+  #endif /* PSA_CRYPTO_ACCELERATOR_DRIVER_PRESENT */
 #endif /* MBEDTLS_PSA_P256M_DRIVER_ENABLED */
 
 #include "psa/crypto_types.h"
@@ -42,13 +42,13 @@
  * \retval  #PSA_ERROR_BUFFER_TOO_SMALL
  *          \p key_buffer_size is too small.
  */
-psa_status_t p256_transparent_import_key(const psa_key_attributes_t *attributes,
-                             const uint8_t *data,
-                             size_t data_length,
-                             uint8_t *key_buffer,
-                             size_t key_buffer_size,
-                             size_t *key_buffer_length,
-                             size_t *bits);
+psa_status_t p256_transparent_import_key ( const psa_key_attributes_t* attributes,
+    const uint8_t* data,
+    size_t data_length,
+    uint8_t* key_buffer,
+    size_t key_buffer_size,
+    size_t* key_buffer_length,
+    size_t* bits );
 
 /** Export SECP256R1 public key, from the private key.
  *
@@ -70,12 +70,12 @@ psa_status_t p256_transparent_import_key(const psa_key_attributes_t *attributes,
  * \retval  #PSA_ERROR_BUFFER_TOO_SMALL
  *          \p key_buffer_size is too small.
  */
-psa_status_t p256_transparent_export_public_key(const psa_key_attributes_t *attributes,
-                                    const uint8_t *key_buffer,
-                                    size_t key_buffer_size,
-                                    uint8_t *data,
-                                    size_t data_size,
-                                    size_t *data_length);
+psa_status_t p256_transparent_export_public_key ( const psa_key_attributes_t* attributes,
+    const uint8_t* key_buffer,
+    size_t key_buffer_size,
+    uint8_t* data,
+    size_t data_size,
+    size_t* data_length );
 
 /** Generate SECP256R1 ECC Key Pair.
  *  Interface function which calls the p256-m key generation function and
@@ -97,11 +97,11 @@ psa_status_t p256_transparent_export_public_key(const psa_key_attributes_t *attr
  * \retval  #PSA_ERROR_GENERIC_ERROR
  *          The internal RNG failed.
  */
-psa_status_t p256_transparent_generate_key(
-    const psa_key_attributes_t *attributes,
-    uint8_t *key_buffer,
-    size_t key_buffer_size,
-    size_t *key_buffer_length);
+psa_status_t p256_transparent_generate_key (
+  const psa_key_attributes_t* attributes,
+  uint8_t* key_buffer,
+  size_t key_buffer_size,
+  size_t* key_buffer_length );
 
 /** Perform raw key agreement using p256-m's ECDH implementation
  * \param[in]  attributes           The attributes of the key to use for the
@@ -128,16 +128,16 @@ psa_status_t p256_transparent_generate_key(
  * \retval  #PSA_ERROR_BUFFER_TOO_SMALL
  *          \p shared_secret_size is too small.
  */
-psa_status_t p256_transparent_key_agreement(
-    const psa_key_attributes_t *attributes,
-    const uint8_t *key_buffer,
-    size_t key_buffer_size,
-    psa_algorithm_t alg,
-    const uint8_t *peer_key,
-    size_t peer_key_length,
-    uint8_t *shared_secret,
-    size_t shared_secret_size,
-    size_t *shared_secret_length);
+psa_status_t p256_transparent_key_agreement (
+  const psa_key_attributes_t* attributes,
+  const uint8_t* key_buffer,
+  size_t key_buffer_size,
+  psa_algorithm_t alg,
+  const uint8_t* peer_key,
+  size_t peer_key_length,
+  uint8_t* shared_secret,
+  size_t shared_secret_size,
+  size_t* shared_secret_length );
 
 /** Sign an already-calculated hash with a private key using p256-m's ECDSA
  *  implementation
@@ -164,16 +164,16 @@ psa_status_t p256_transparent_key_agreement(
  * \retval  #PSA_ERROR_GENERIC_ERROR
  *          The internal RNG failed.
  */
-psa_status_t p256_transparent_sign_hash(
-    const psa_key_attributes_t *attributes,
-    const uint8_t *key_buffer,
-    size_t key_buffer_size,
-    psa_algorithm_t alg,
-    const uint8_t *hash,
-    size_t hash_length,
-    uint8_t *signature,
-    size_t signature_size,
-    size_t *signature_length);
+psa_status_t p256_transparent_sign_hash (
+  const psa_key_attributes_t* attributes,
+  const uint8_t* key_buffer,
+  size_t key_buffer_size,
+  psa_algorithm_t alg,
+  const uint8_t* hash,
+  size_t hash_length,
+  uint8_t* signature,
+  size_t signature_size,
+  size_t* signature_length );
 
 /** Verify the signature of a hash using a SECP256R1 public key using p256-m's
  *  ECDSA implementation.
@@ -206,14 +206,14 @@ psa_status_t p256_transparent_sign_hash(
  * \retval  #PSA_ERROR_INVALID_ARGUMENT
  *          The input is invalid.
  */
-psa_status_t p256_transparent_verify_hash(
-    const psa_key_attributes_t *attributes,
-    const uint8_t *key_buffer,
-    size_t key_buffer_size,
-    psa_algorithm_t alg,
-    const uint8_t *hash,
-    size_t hash_length,
-    const uint8_t *signature,
-    size_t signature_length);
+psa_status_t p256_transparent_verify_hash (
+  const psa_key_attributes_t* attributes,
+  const uint8_t* key_buffer,
+  size_t key_buffer_size,
+  psa_algorithm_t alg,
+  const uint8_t* hash,
+  size_t hash_length,
+  const uint8_t* signature,
+  size_t signature_length );
 
 #endif /* P256M_DRIVER_ENTRYPOINTS_H */

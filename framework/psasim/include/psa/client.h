@@ -41,35 +41,37 @@ typedef int32_t psa_handle_t;
 /**
  * A read-only input memory region provided to an RoT Service.
  */
-typedef struct psa_invec {
-    const void *base;
-    size_t len;
+typedef struct psa_invec
+{
+  const void* base;
+  size_t len;
 } psa_invec;
 
 /**
  * A writable output memory region provided to an RoT Service.
  */
-typedef struct psa_outvec {
-    void *base;
-    size_t len;
+typedef struct psa_outvec
+{
+  void* base;
+  size_t len;
 } psa_outvec;
 
 /*************************** PSA Client API **********************************/
 
-uint32_t psa_framework_version(void);
+uint32_t psa_framework_version ( void );
 
-uint32_t psa_version(uint32_t sid);
+uint32_t psa_version ( uint32_t sid );
 
-psa_handle_t psa_connect(uint32_t sid, uint32_t version);
+psa_handle_t psa_connect ( uint32_t sid, uint32_t version );
 
-psa_status_t psa_call(psa_handle_t handle,
-                      int32_t type,
-                      const psa_invec *in_vec,
-                      size_t in_len,
-                      psa_outvec *out_vec,
-                      size_t out_len);
+psa_status_t psa_call ( psa_handle_t handle,
+                        int32_t type,
+                        const psa_invec* in_vec,
+                        size_t in_len,
+                        psa_outvec* out_vec,
+                        size_t out_len );
 
-void psa_close(psa_handle_t handle);
+void psa_close ( psa_handle_t handle );
 
 #ifdef __cplusplus
 }

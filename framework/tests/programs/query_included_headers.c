@@ -7,23 +7,23 @@
 #include <psa/crypto.h>
 #include <mbedtls/platform.h>
 
-int main(void)
+int main ( void )
 {
 
-    /* Which PSA platform header? */
+  /* Which PSA platform header? */
 #if defined(PSA_CRYPTO_PLATFORM_H)
-    mbedtls_printf("PSA_CRYPTO_PLATFORM_H\n");
+  mbedtls_printf ( "PSA_CRYPTO_PLATFORM_H\n" );
 #endif
 #if defined(PSA_CRYPTO_PLATFORM_ALT_H)
-    mbedtls_printf("PSA_CRYPTO_PLATFORM_ALT_H\n");
+  mbedtls_printf ( "PSA_CRYPTO_PLATFORM_ALT_H\n" );
 #endif
 
-    /* Which PSA struct header? */
+  /* Which PSA struct header? */
 #if defined(PSA_CRYPTO_STRUCT_H)
-    mbedtls_printf("PSA_CRYPTO_STRUCT_H\n");
+  mbedtls_printf ( "PSA_CRYPTO_STRUCT_H\n" );
 #endif
 #if defined(PSA_CRYPTO_STRUCT_ALT_H)
-    mbedtls_printf("PSA_CRYPTO_STRUCT_ALT_H\n");
+  mbedtls_printf ( "PSA_CRYPTO_STRUCT_ALT_H\n" );
 #endif
 
 }

@@ -29,8 +29,8 @@
  * \return      Zero if the contents of the two buffers are the same,
  *              otherwise non-zero.
  */
-int mbedtls_ct_memcmp(const void *a,
-                      const void *b,
-                      size_t n);
+int mbedtls_ct_memcmp ( const void* a,
+                        const void* b,
+                        size_t n );
 
 #endif /* MBEDTLS_CONSTANT_TIME_H */

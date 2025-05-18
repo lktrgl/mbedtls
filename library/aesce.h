@@ -42,7 +42,7 @@ extern signed char mbedtls_aesce_has_support_result;
  *
  * \return         1 if CPU has support for the feature, 0 otherwise
  */
-int mbedtls_aesce_has_support_impl(void);
+int mbedtls_aesce_has_support_impl ( void );
 
 #define MBEDTLS_AESCE_HAS_SUPPORT() (mbedtls_aesce_has_support_result == -1 ? \
                                      mbedtls_aesce_has_support_impl() : \
@@ -70,10 +70,10 @@ int mbedtls_aesce_has_support_impl(void);
  *
  * \return         0 on success (cannot fail)
  */
-int mbedtls_aesce_crypt_ecb(mbedtls_aes_context *ctx,
-                            int mode,
-                            const unsigned char input[16],
-                            unsigned char output[16]);
+int mbedtls_aesce_crypt_ecb ( mbedtls_aes_context* ctx,
+                              int mode,
+                              const unsigned char input[16],
+                              unsigned char output[16] );
 
 /**
  * \brief          Internal GCM multiplication: c = a * b in GF(2^128)
@@ -88,9 +88,9 @@ int mbedtls_aesce_crypt_ecb(mbedtls_aes_context *ctx,
  * \note           Both operands and result are bit strings interpreted as
  *                 elements of GF(2^128) as per the GCM spec.
  */
-void mbedtls_aesce_gcm_mult(unsigned char c[16],
-                            const unsigned char a[16],
-                            const unsigned char b[16]);
+void mbedtls_aesce_gcm_mult ( unsigned char c[16],
+                              const unsigned char a[16],
+                              const unsigned char b[16] );
 
 
 #if !defined(MBEDTLS_BLOCK_CIPHER_NO_DECRYPT)
@@ -102,9 +102,9 @@ void mbedtls_aesce_gcm_mult(unsigned char c[16],
  * \param fwdkey    Original round keys (for encryption)
  * \param nr        Number of rounds (that is, number of round keys minus one)
  */
-void mbedtls_aesce_inverse_key(unsigned char *invkey,
-                               const unsigned char *fwdkey,
-                               int nr);
+void mbedtls_aesce_inverse_key ( unsigned char* invkey,
+                                 const unsigned char* fwdkey,
+                                 int nr );
 #endif /* !MBEDTLS_BLOCK_CIPHER_NO_DECRYPT */
 
 /**
@@ -116,9 +116,9 @@ void mbedtls_aesce_inverse_key(unsigned char *invkey,
  *
  * \return          0 if successful, or MBEDTLS_ERR_AES_INVALID_KEY_LENGTH
  */
-int mbedtls_aesce_setkey_enc(unsigned char *rk,
-                             const unsigned char *key,
-                             size_t bits);
+int mbedtls_aesce_setkey_enc ( unsigned char* rk,
+                               const unsigned char* key,
+                               size_t bits );
 
 #ifdef __cplusplus
 }
@@ -127,7 +127,7 @@ int mbedtls_aesce_setkey_enc(unsigned char *rk,
 #else
 
 #if defined(MBEDTLS_AES_USE_HARDWARE_ONLY) && defined(MBEDTLS_ARCH_IS_ARMV8_A)
-#error "AES hardware acceleration not supported on this platform / compiler"
+  #error "AES hardware acceleration not supported on this platform / compiler"
 #endif
 
 #endif /* MBEDTLS_AESCE_C && MBEDTLS_ARCH_IS_ARMV8_A && MBEDTLS_HAVE_NEON_INTRINSICS &&

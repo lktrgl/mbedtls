@@ -26,17 +26,19 @@ extern "C" {
 /**
  * \brief          timer structure
  */
-struct mbedtls_timing_hr_time {
-    uint64_t MBEDTLS_PRIVATE(opaque)[4];
+struct mbedtls_timing_hr_time
+{
+  uint64_t MBEDTLS_PRIVATE ( opaque ) [4];
 };
 
 /**
  * \brief          Context for mbedtls_timing_set/get_delay()
  */
-typedef struct mbedtls_timing_delay_context {
-    struct mbedtls_timing_hr_time   MBEDTLS_PRIVATE(timer);
-    uint32_t                        MBEDTLS_PRIVATE(int_ms);
-    uint32_t                        MBEDTLS_PRIVATE(fin_ms);
+typedef struct mbedtls_timing_delay_context
+{
+  struct mbedtls_timing_hr_time   MBEDTLS_PRIVATE ( timer );
+  uint32_t                        MBEDTLS_PRIVATE ( int_ms );
+  uint32_t                        MBEDTLS_PRIVATE ( fin_ms );
 } mbedtls_timing_delay_context;
 
 #else  /* MBEDTLS_TIMING_ALT */
@@ -44,7 +46,7 @@ typedef struct mbedtls_timing_delay_context {
 #endif /* MBEDTLS_TIMING_ALT */
 
 /* Internal use */
-unsigned long mbedtls_timing_get_timer(struct mbedtls_timing_hr_time *val, int reset);
+unsigned long mbedtls_timing_get_timer ( struct mbedtls_timing_hr_time* val, int reset );
 
 /**
  * \brief          Set a pair of delays to watch
@@ -60,7 +62,7 @@ unsigned long mbedtls_timing_get_timer(struct mbedtls_timing_hr_time *val, int r
  * \note           To set a single delay, either use \c mbedtls_timing_set_timer
  *                 directly or use this function with int_ms == fin_ms.
  */
-void mbedtls_timing_set_delay(void *data, uint32_t int_ms, uint32_t fin_ms);
+void mbedtls_timing_set_delay ( void* data, uint32_t int_ms, uint32_t fin_ms );
 
 /**
  * \brief          Get the status of delays
@@ -74,7 +76,7 @@ void mbedtls_timing_set_delay(void *data, uint32_t int_ms, uint32_t fin_ms);
  *                  1 if only the intermediate delay is passed,
  *                  2 if the final delay is passed.
  */
-int mbedtls_timing_get_delay(void *data);
+int mbedtls_timing_get_delay ( void* data );
 
 /**
  * \brief          Get the final timing delay
@@ -84,8 +86,8 @@ int mbedtls_timing_get_delay(void *data);
  *
  * \return         Final timing delay in milliseconds.
  */
-uint32_t mbedtls_timing_get_final_delay(
-    const mbedtls_timing_delay_context *data);
+uint32_t mbedtls_timing_get_final_delay (
+  const mbedtls_timing_delay_context* data );
 
 #ifdef __cplusplus
 }

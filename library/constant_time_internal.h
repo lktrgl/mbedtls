@@ -14,7 +14,7 @@
 #include "common.h"
 
 #if defined(MBEDTLS_BIGNUM_C)
-#include "mbedtls/bignum.h"
+  #include "mbedtls/bignum.h"
 #endif
 
 /* The constant-time interface provides various operations that are likely
@@ -63,25 +63,25 @@
  */
 
 #if (SIZE_MAX > 0xffffffffffffffffULL)
-/* Pointer size > 64-bit */
-typedef size_t    mbedtls_ct_condition_t;
-typedef size_t    mbedtls_ct_uint_t;
-typedef ptrdiff_t mbedtls_ct_int_t;
-#define MBEDTLS_CT_TRUE  ((mbedtls_ct_condition_t) mbedtls_ct_compiler_opaque(SIZE_MAX))
+  /* Pointer size > 64-bit */
+  typedef size_t    mbedtls_ct_condition_t;
+  typedef size_t    mbedtls_ct_uint_t;
+  typedef ptrdiff_t mbedtls_ct_int_t;
+  #define MBEDTLS_CT_TRUE  ((mbedtls_ct_condition_t) mbedtls_ct_compiler_opaque(SIZE_MAX))
 #elif (SIZE_MAX > 0xffffffff) || defined(MBEDTLS_HAVE_INT64)
-/* 32-bit < pointer size <= 64-bit, or 64-bit MPI */
-typedef uint64_t  mbedtls_ct_condition_t;
-typedef uint64_t  mbedtls_ct_uint_t;
-typedef int64_t   mbedtls_ct_int_t;
-#define MBEDTLS_CT_SIZE_64
-#define MBEDTLS_CT_TRUE  ((mbedtls_ct_condition_t) mbedtls_ct_compiler_opaque(UINT64_MAX))
+  /* 32-bit < pointer size <= 64-bit, or 64-bit MPI */
+  typedef uint64_t  mbedtls_ct_condition_t;
+  typedef uint64_t  mbedtls_ct_uint_t;
+  typedef int64_t   mbedtls_ct_int_t;
+  #define MBEDTLS_CT_SIZE_64
+  #define MBEDTLS_CT_TRUE  ((mbedtls_ct_condition_t) mbedtls_ct_compiler_opaque(UINT64_MAX))
 #else
-/* Pointer size <= 32-bit, and no 64-bit MPIs */
-typedef uint32_t  mbedtls_ct_condition_t;
-typedef uint32_t  mbedtls_ct_uint_t;
-typedef int32_t   mbedtls_ct_int_t;
-#define MBEDTLS_CT_SIZE_32
-#define MBEDTLS_CT_TRUE  ((mbedtls_ct_condition_t) mbedtls_ct_compiler_opaque(UINT32_MAX))
+  /* Pointer size <= 32-bit, and no 64-bit MPIs */
+  typedef uint32_t  mbedtls_ct_condition_t;
+  typedef uint32_t  mbedtls_ct_uint_t;
+  typedef int32_t   mbedtls_ct_int_t;
+  #define MBEDTLS_CT_SIZE_32
+  #define MBEDTLS_CT_TRUE  ((mbedtls_ct_condition_t) mbedtls_ct_compiler_opaque(UINT32_MAX))
 #endif
 #define MBEDTLS_CT_FALSE ((mbedtls_ct_condition_t) mbedtls_ct_compiler_opaque(0))
 
@@ -96,7 +96,7 @@ typedef int32_t   mbedtls_ct_int_t;
  * \return MBEDTLS_CT_TRUE if \p x != 0, or MBEDTLS_CT_FALSE if \p x == 0
  *
  */
-static inline mbedtls_ct_condition_t mbedtls_ct_bool(mbedtls_ct_uint_t x);
+static inline mbedtls_ct_condition_t mbedtls_ct_bool ( mbedtls_ct_uint_t x );
 
 /** Boolean "not equal" operation.
  *
@@ -109,7 +109,7 @@ static inline mbedtls_ct_condition_t mbedtls_ct_bool(mbedtls_ct_uint_t x);
  *
  * \return      MBEDTLS_CT_TRUE if \p x != \p y, otherwise MBEDTLS_CT_FALSE.
  */
-static inline mbedtls_ct_condition_t mbedtls_ct_uint_ne(mbedtls_ct_uint_t x, mbedtls_ct_uint_t y);
+static inline mbedtls_ct_condition_t mbedtls_ct_uint_ne ( mbedtls_ct_uint_t x, mbedtls_ct_uint_t y );
 
 /** Boolean "equals" operation.
  *
@@ -122,8 +122,8 @@ static inline mbedtls_ct_condition_t mbedtls_ct_uint_ne(mbedtls_ct_uint_t x, mbe
  *
  * \return      MBEDTLS_CT_TRUE if \p x == \p y, otherwise MBEDTLS_CT_FALSE.
  */
-static inline mbedtls_ct_condition_t mbedtls_ct_uint_eq(mbedtls_ct_uint_t x,
-                                                        mbedtls_ct_uint_t y);
+static inline mbedtls_ct_condition_t mbedtls_ct_uint_eq ( mbedtls_ct_uint_t x,
+    mbedtls_ct_uint_t y );
 
 /** Boolean "less than" operation.
  *
@@ -136,7 +136,7 @@ static inline mbedtls_ct_condition_t mbedtls_ct_uint_eq(mbedtls_ct_uint_t x,
  *
  * \return      MBEDTLS_CT_TRUE if \p x < \p y, otherwise MBEDTLS_CT_FALSE.
  */
-static inline mbedtls_ct_condition_t mbedtls_ct_uint_lt(mbedtls_ct_uint_t x, mbedtls_ct_uint_t y);
+static inline mbedtls_ct_condition_t mbedtls_ct_uint_lt ( mbedtls_ct_uint_t x, mbedtls_ct_uint_t y );
 
 /** Boolean "greater than" operation.
  *
@@ -149,8 +149,8 @@ static inline mbedtls_ct_condition_t mbedtls_ct_uint_lt(mbedtls_ct_uint_t x, mbe
  *
  * \return      MBEDTLS_CT_TRUE if \p x > \p y, otherwise MBEDTLS_CT_FALSE.
  */
-static inline mbedtls_ct_condition_t mbedtls_ct_uint_gt(mbedtls_ct_uint_t x,
-                                                        mbedtls_ct_uint_t y);
+static inline mbedtls_ct_condition_t mbedtls_ct_uint_gt ( mbedtls_ct_uint_t x,
+    mbedtls_ct_uint_t y );
 
 /** Boolean "greater or equal" operation.
  *
@@ -164,8 +164,8 @@ static inline mbedtls_ct_condition_t mbedtls_ct_uint_gt(mbedtls_ct_uint_t x,
  * \return      MBEDTLS_CT_TRUE if \p x >= \p y,
  *              otherwise MBEDTLS_CT_FALSE.
  */
-static inline mbedtls_ct_condition_t mbedtls_ct_uint_ge(mbedtls_ct_uint_t x,
-                                                        mbedtls_ct_uint_t y);
+static inline mbedtls_ct_condition_t mbedtls_ct_uint_ge ( mbedtls_ct_uint_t x,
+    mbedtls_ct_uint_t y );
 
 /** Boolean "less than or equal" operation.
  *
@@ -179,8 +179,8 @@ static inline mbedtls_ct_condition_t mbedtls_ct_uint_ge(mbedtls_ct_uint_t x,
  * \return      MBEDTLS_CT_TRUE if \p x <= \p y,
  *              otherwise MBEDTLS_CT_FALSE.
  */
-static inline mbedtls_ct_condition_t mbedtls_ct_uint_le(mbedtls_ct_uint_t x,
-                                                        mbedtls_ct_uint_t y);
+static inline mbedtls_ct_condition_t mbedtls_ct_uint_le ( mbedtls_ct_uint_t x,
+    mbedtls_ct_uint_t y );
 
 /** Boolean not-equals operation.
  *
@@ -197,8 +197,8 @@ static inline mbedtls_ct_condition_t mbedtls_ct_uint_le(mbedtls_ct_uint_t x,
  * \return      MBEDTLS_CT_TRUE if \p x != \p y,
  *              otherwise MBEDTLS_CT_FALSE.
  */
-static inline mbedtls_ct_condition_t mbedtls_ct_bool_ne(mbedtls_ct_condition_t x,
-                                                        mbedtls_ct_condition_t y);
+static inline mbedtls_ct_condition_t mbedtls_ct_bool_ne ( mbedtls_ct_condition_t x,
+    mbedtls_ct_condition_t y );
 
 /** Boolean "and" operation.
  *
@@ -212,8 +212,8 @@ static inline mbedtls_ct_condition_t mbedtls_ct_bool_ne(mbedtls_ct_condition_t x
  * \return      MBEDTLS_CT_TRUE if \p x && \p y,
  *              otherwise MBEDTLS_CT_FALSE.
  */
-static inline mbedtls_ct_condition_t mbedtls_ct_bool_and(mbedtls_ct_condition_t x,
-                                                         mbedtls_ct_condition_t y);
+static inline mbedtls_ct_condition_t mbedtls_ct_bool_and ( mbedtls_ct_condition_t x,
+    mbedtls_ct_condition_t y );
 
 /** Boolean "or" operation.
  *
@@ -227,8 +227,8 @@ static inline mbedtls_ct_condition_t mbedtls_ct_bool_and(mbedtls_ct_condition_t 
  * \return      MBEDTLS_CT_TRUE if \p x || \p y,
  *              otherwise MBEDTLS_CT_FALSE.
  */
-static inline mbedtls_ct_condition_t mbedtls_ct_bool_or(mbedtls_ct_condition_t x,
-                                                        mbedtls_ct_condition_t y);
+static inline mbedtls_ct_condition_t mbedtls_ct_bool_or ( mbedtls_ct_condition_t x,
+    mbedtls_ct_condition_t y );
 
 /** Boolean "not" operation.
  *
@@ -240,7 +240,7 @@ static inline mbedtls_ct_condition_t mbedtls_ct_bool_or(mbedtls_ct_condition_t x
  *
  * \return      MBEDTLS_CT_FALSE if \p x, otherwise MBEDTLS_CT_TRUE.
  */
-static inline mbedtls_ct_condition_t mbedtls_ct_bool_not(mbedtls_ct_condition_t x);
+static inline mbedtls_ct_condition_t mbedtls_ct_bool_not ( mbedtls_ct_condition_t x );
 
 
 /* ============================================================================
@@ -259,9 +259,9 @@ static inline mbedtls_ct_condition_t mbedtls_ct_bool_not(mbedtls_ct_condition_t 
  *
  * \return  \c if1 if \p condition == MBEDTLS_CT_TRUE, otherwise \c if0.
  */
-static inline size_t mbedtls_ct_size_if(mbedtls_ct_condition_t condition,
-                                        size_t if1,
-                                        size_t if0);
+static inline size_t mbedtls_ct_size_if ( mbedtls_ct_condition_t condition,
+    size_t if1,
+    size_t if0 );
 
 /** Choose between two unsigned values.
  *
@@ -275,9 +275,9 @@ static inline size_t mbedtls_ct_size_if(mbedtls_ct_condition_t condition,
  *
  * \return  \c if1 if \p condition == MBEDTLS_CT_TRUE, otherwise \c if0.
  */
-static inline unsigned mbedtls_ct_uint_if(mbedtls_ct_condition_t condition,
-                                          unsigned if1,
-                                          unsigned if0);
+static inline unsigned mbedtls_ct_uint_if ( mbedtls_ct_condition_t condition,
+    unsigned if1,
+    unsigned if0 );
 
 /** Choose between two mbedtls_ct_condition_t values.
  *
@@ -291,9 +291,9 @@ static inline unsigned mbedtls_ct_uint_if(mbedtls_ct_condition_t condition,
  *
  * \return  \c if1 if \p condition == MBEDTLS_CT_TRUE, otherwise \c if0.
  */
-static inline mbedtls_ct_condition_t mbedtls_ct_bool_if(mbedtls_ct_condition_t condition,
-                                                        mbedtls_ct_condition_t if1,
-                                                        mbedtls_ct_condition_t if0);
+static inline mbedtls_ct_condition_t mbedtls_ct_bool_if ( mbedtls_ct_condition_t condition,
+    mbedtls_ct_condition_t if1,
+    mbedtls_ct_condition_t if0 );
 
 #if defined(MBEDTLS_BIGNUM_C)
 
@@ -309,9 +309,9 @@ static inline mbedtls_ct_condition_t mbedtls_ct_bool_if(mbedtls_ct_condition_t c
  *
  * \return  \c if1 if \p condition == MBEDTLS_CT_TRUE, otherwise \c if0.
  */
-static inline mbedtls_mpi_uint mbedtls_ct_mpi_uint_if(mbedtls_ct_condition_t condition, \
-                                                      mbedtls_mpi_uint if1, \
-                                                      mbedtls_mpi_uint if0);
+static inline mbedtls_mpi_uint mbedtls_ct_mpi_uint_if ( mbedtls_ct_condition_t condition, \
+    mbedtls_mpi_uint if1, \
+    mbedtls_mpi_uint if0 );
 
 #endif
 
@@ -329,7 +329,7 @@ static inline mbedtls_mpi_uint mbedtls_ct_mpi_uint_if(mbedtls_ct_condition_t con
  *
  * \return  \c if1 if \p condition == MBEDTLS_CT_TRUE, otherwise 0.
  */
-static inline unsigned mbedtls_ct_uint_if_else_0(mbedtls_ct_condition_t condition, unsigned if1);
+static inline unsigned mbedtls_ct_uint_if_else_0 ( mbedtls_ct_condition_t condition, unsigned if1 );
 
 /** Choose between an mbedtls_ct_condition_t and 0.
  *
@@ -345,8 +345,8 @@ static inline unsigned mbedtls_ct_uint_if_else_0(mbedtls_ct_condition_t conditio
  *
  * \return  \c if1 if \p condition == MBEDTLS_CT_TRUE, otherwise 0.
  */
-static inline mbedtls_ct_condition_t mbedtls_ct_bool_if_else_0(mbedtls_ct_condition_t condition,
-                                                               mbedtls_ct_condition_t if1);
+static inline mbedtls_ct_condition_t mbedtls_ct_bool_if_else_0 ( mbedtls_ct_condition_t condition,
+    mbedtls_ct_condition_t if1 );
 
 /** Choose between a size_t value and 0.
  *
@@ -362,7 +362,7 @@ static inline mbedtls_ct_condition_t mbedtls_ct_bool_if_else_0(mbedtls_ct_condit
  *
  * \return  \c if1 if \p condition == MBEDTLS_CT_TRUE, otherwise 0.
  */
-static inline size_t mbedtls_ct_size_if_else_0(mbedtls_ct_condition_t condition, size_t if1);
+static inline size_t mbedtls_ct_size_if_else_0 ( mbedtls_ct_condition_t condition, size_t if1 );
 
 #if defined(MBEDTLS_BIGNUM_C)
 
@@ -380,8 +380,8 @@ static inline size_t mbedtls_ct_size_if_else_0(mbedtls_ct_condition_t condition,
  *
  * \return  \c if1 if \p condition == MBEDTLS_CT_TRUE, otherwise 0.
  */
-static inline mbedtls_mpi_uint mbedtls_ct_mpi_uint_if_else_0(mbedtls_ct_condition_t condition,
-                                                             mbedtls_mpi_uint if1);
+static inline mbedtls_mpi_uint mbedtls_ct_mpi_uint_if_else_0 ( mbedtls_ct_condition_t condition,
+    mbedtls_mpi_uint if1 );
 
 #endif
 
@@ -394,10 +394,10 @@ static inline mbedtls_mpi_uint mbedtls_ct_mpi_uint_if_else_0(mbedtls_ct_conditio
  *
  * \return      \p t if \p low <= \p c <= \p high, 0 otherwise.
  */
-static inline unsigned char mbedtls_ct_uchar_in_range_if(unsigned char low,
-                                                         unsigned char high,
-                                                         unsigned char c,
-                                                         unsigned char t);
+static inline unsigned char mbedtls_ct_uchar_in_range_if ( unsigned char low,
+    unsigned char high,
+    unsigned char c,
+    unsigned char t );
 
 /** Choose between two error values. The values must be in the range [-32767..0].
  *
@@ -411,7 +411,7 @@ static inline unsigned char mbedtls_ct_uchar_in_range_if(unsigned char low,
  *
  * \return  \c if1 if \p condition == MBEDTLS_CT_TRUE, otherwise \c if0.
  */
-static inline int mbedtls_ct_error_if(mbedtls_ct_condition_t condition, int if1, int if0);
+static inline int mbedtls_ct_error_if ( mbedtls_ct_condition_t condition, int if1, int if0 );
 
 /** Choose between an error value and 0. The error value must be in the range [-32767..0].
  *
@@ -427,7 +427,7 @@ static inline int mbedtls_ct_error_if(mbedtls_ct_condition_t condition, int if1,
  *
  * \return  \c if1 if \p condition == MBEDTLS_CT_TRUE, otherwise 0.
  */
-static inline int mbedtls_ct_error_if_else_0(mbedtls_ct_condition_t condition, int if1);
+static inline int mbedtls_ct_error_if_else_0 ( mbedtls_ct_condition_t condition, int if1 );
 
 /* ============================================================================
  * Block memory operations
@@ -447,7 +447,7 @@ static inline int mbedtls_ct_error_if_else_0(mbedtls_ct_condition_t condition, i
  * \warning Unlike mbedtls_platform_zeroize, this does not have the same guarantees
  * about not being optimised away if the memory is never read again.
  */
-void mbedtls_ct_zeroize_if(mbedtls_ct_condition_t condition, void *buf, size_t len);
+void mbedtls_ct_zeroize_if ( mbedtls_ct_condition_t condition, void* buf, size_t len );
 
 /** Shift some data towards the left inside a buffer.
  *
@@ -462,9 +462,9 @@ void mbedtls_ct_zeroize_if(mbedtls_ct_condition_t condition, void *buf, size_t l
  * \param total     Total size of the buffer.
  * \param offset    Secret. Offset from which to copy \p total - \p offset bytes.
  */
-void mbedtls_ct_memmove_left(void *start,
-                             size_t total,
-                             size_t offset);
+void mbedtls_ct_memmove_left ( void* start,
+                               size_t total,
+                               size_t offset );
 
 #endif /* defined(MBEDTLS_PKCS1_V15) && defined(MBEDTLS_RSA_C) && !defined(MBEDTLS_RSA_ALT) */
 
@@ -492,11 +492,11 @@ void mbedtls_ct_memmove_left(void *start,
  *                  This may be equal to \p dest, but may not overlap it in other ways. It may overlap with \p src1.
  * \param len       Number of bytes to copy.
  */
-void mbedtls_ct_memcpy_if(mbedtls_ct_condition_t condition,
-                          unsigned char *dest,
-                          const unsigned char *src1,
-                          const unsigned char *src2,
-                          size_t len
+void mbedtls_ct_memcpy_if ( mbedtls_ct_condition_t condition,
+                            unsigned char* dest,
+                            const unsigned char* src1,
+                            const unsigned char* src2,
+                            size_t len
                           );
 
 /** Copy data from a secret position.
@@ -528,12 +528,12 @@ void mbedtls_ct_memcpy_if(mbedtls_ct_condition_t condition,
  * \param offset_max    The maximal value of \p offset.
  * \param len           The number of bytes to copy.
  */
-void mbedtls_ct_memcpy_offset(unsigned char *dest,
-                              const unsigned char *src,
-                              size_t offset,
-                              size_t offset_min,
-                              size_t offset_max,
-                              size_t len);
+void mbedtls_ct_memcpy_offset ( unsigned char* dest,
+                                const unsigned char* src,
+                                size_t offset,
+                                size_t offset_min,
+                                size_t offset_max,
+                                size_t len );
 
 /* Documented in include/mbedtls/constant_time.h. a and b are secret.
 
@@ -565,11 +565,11 @@ void mbedtls_ct_memcpy_offset(unsigned char *dest,
  *
  * \return          Zero if the contents of the two buffers are the same, otherwise non-zero.
  */
-int mbedtls_ct_memcmp_partial(const void *a,
-                              const void *b,
-                              size_t n,
-                              size_t skip_head,
-                              size_t skip_tail);
+int mbedtls_ct_memcmp_partial ( const void* a,
+                                const void* b,
+                                size_t n,
+                                size_t skip_head,
+                                size_t skip_tail );
 
 #endif
 

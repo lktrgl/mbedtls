@@ -31,7 +31,7 @@
  * \return          MBEDTLS_ERR_RSA_KEY_CHECK_FAILED if validity checks on the
  *                  provided key fail.
  */
-int mbedtls_rsa_parse_key(mbedtls_rsa_context *rsa, const unsigned char *key, size_t keylen);
+int mbedtls_rsa_parse_key ( mbedtls_rsa_context* rsa, const unsigned char* key, size_t keylen );
 
 /**
  * \brief           Parse a PKCS#1 (ASN.1) encoded public RSA key.
@@ -47,7 +47,7 @@ int mbedtls_rsa_parse_key(mbedtls_rsa_context *rsa, const unsigned char *key, si
  * \return          MBEDTLS_ERR_RSA_KEY_CHECK_FAILED if validity checks on the
  *                  provided key fail.
  */
-int mbedtls_rsa_parse_pubkey(mbedtls_rsa_context *rsa, const unsigned char *key, size_t keylen);
+int mbedtls_rsa_parse_pubkey ( mbedtls_rsa_context* rsa, const unsigned char* key, size_t keylen );
 
 /**
  * \brief           Write a PKCS#1 (ASN.1) encoded private RSA key.
@@ -69,8 +69,8 @@ int mbedtls_rsa_parse_pubkey(mbedtls_rsa_context *rsa, const unsigned char *key,
  * \note            The output buffer is filled backward, i.e. starting from its
  *                  end and moving toward its start.
  */
-int mbedtls_rsa_write_key(const mbedtls_rsa_context *rsa, unsigned char *start,
-                          unsigned char **p);
+int mbedtls_rsa_write_key ( const mbedtls_rsa_context* rsa, unsigned char* start,
+                            unsigned char** p );
 
 /**
  * \brief           Parse a PKCS#1 (ASN.1) encoded public RSA key.
@@ -92,8 +92,8 @@ int mbedtls_rsa_write_key(const mbedtls_rsa_context *rsa, unsigned char *start,
  * \note            The output buffer is filled backward, i.e. starting from its
  *                  end and moving toward its start.
  */
-int mbedtls_rsa_write_pubkey(const mbedtls_rsa_context *rsa, unsigned char *start,
-                             unsigned char **p);
+int mbedtls_rsa_write_pubkey ( const mbedtls_rsa_context* rsa, unsigned char* start,
+                               unsigned char** p );
 
 #if defined(MBEDTLS_PKCS1_V21)
 /**
@@ -109,13 +109,13 @@ int mbedtls_rsa_write_pubkey(const mbedtls_rsa_context *rsa, unsigned char *star
  * \note  Refer to \c mbedtls_rsa_rsassa_pss_sign() for a description
  *        of the functioning and parameters of this function.
  */
-int mbedtls_rsa_rsassa_pss_sign_no_mode_check(mbedtls_rsa_context *ctx,
-                                              int (*f_rng)(void *, unsigned char *, size_t),
-                                              void *p_rng,
-                                              mbedtls_md_type_t md_alg,
-                                              unsigned int hashlen,
-                                              const unsigned char *hash,
-                                              unsigned char *sig);
+int mbedtls_rsa_rsassa_pss_sign_no_mode_check ( mbedtls_rsa_context* ctx,
+    int ( *f_rng ) ( void*, unsigned char*, size_t ),
+    void* p_rng,
+    mbedtls_md_type_t md_alg,
+    unsigned int hashlen,
+    const unsigned char* hash,
+    unsigned char* sig );
 #endif /* MBEDTLS_PKCS1_V21 */
 
 #endif /* rsa_internal.h */

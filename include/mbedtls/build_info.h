@@ -40,8 +40,8 @@
 /* Macros for build-time platform detection */
 
 #if !defined(MBEDTLS_ARCH_IS_ARM64) && \
-    (defined(__aarch64__) || defined(_M_ARM64) || defined(_M_ARM64EC))
-#define MBEDTLS_ARCH_IS_ARM64
+  (defined(__aarch64__) || defined(_M_ARM64) || defined(_M_ARM64EC))
+  #define MBEDTLS_ARCH_IS_ARM64
 #endif
 
 #if !defined(MBEDTLS_ARCH_IS_ARM32) && \
@@ -63,24 +63,24 @@
 #endif
 
 #if !defined(MBEDTLS_PLATFORM_IS_WINDOWS_ON_ARM64) && \
-    (defined(_M_ARM64) || defined(_M_ARM64EC))
-#define MBEDTLS_PLATFORM_IS_WINDOWS_ON_ARM64
+  (defined(_M_ARM64) || defined(_M_ARM64EC))
+  #define MBEDTLS_PLATFORM_IS_WINDOWS_ON_ARM64
 #endif
 
 /* This is defined if the architecture is Armv8-A, or higher */
 #if !defined(MBEDTLS_ARCH_IS_ARMV8_A)
-#if defined(__ARM_ARCH) && defined(__ARM_ARCH_PROFILE)
-#if (__ARM_ARCH >= 8) && (__ARM_ARCH_PROFILE == 'A')
-/* GCC, clang, armclang and IAR */
-#define MBEDTLS_ARCH_IS_ARMV8_A
-#endif
-#elif defined(__ARM_ARCH_8A)
-/* Alternative defined by clang */
-#define MBEDTLS_ARCH_IS_ARMV8_A
-#elif defined(_M_ARM64) || defined(_M_ARM64EC)
-/* MSVC ARM64 is at least Armv8.0-A */
-#define MBEDTLS_ARCH_IS_ARMV8_A
-#endif
+  #if defined(__ARM_ARCH) && defined(__ARM_ARCH_PROFILE)
+    #if (__ARM_ARCH >= 8) && (__ARM_ARCH_PROFILE == 'A')
+      /* GCC, clang, armclang and IAR */
+      #define MBEDTLS_ARCH_IS_ARMV8_A
+    #endif
+  #elif defined(__ARM_ARCH_8A)
+    /* Alternative defined by clang */
+    #define MBEDTLS_ARCH_IS_ARMV8_A
+  #elif defined(_M_ARM64) || defined(_M_ARM64EC)
+    /* MSVC ARM64 is at least Armv8.0-A */
+    #define MBEDTLS_ARCH_IS_ARMV8_A
+  #endif
 #endif
 
 #if defined(__GNUC__) && !defined(__ARMCC_VERSION) && !defined(__clang__) \
@@ -88,31 +88,31 @@
 /* Defined if the compiler really is gcc and not clang, etc */
 #define MBEDTLS_COMPILER_IS_GCC
 #define MBEDTLS_GCC_VERSION \
-    (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
+  (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 #endif
 
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_DEPRECATE)
-#define _CRT_SECURE_NO_DEPRECATE 1
+  #define _CRT_SECURE_NO_DEPRECATE 1
 #endif
 
 /* Define `inline` on some non-C99-compliant compilers. */
 #if (defined(__ARMCC_VERSION) || defined(_MSC_VER)) && \
-    !defined(inline) && !defined(__cplusplus)
-#define inline __inline
+  !defined(inline) && !defined(__cplusplus)
+  #define inline __inline
 #endif
 
 #if defined(MBEDTLS_CONFIG_FILES_READ)
-#error "Something went wrong: MBEDTLS_CONFIG_FILES_READ defined before reading the config files!"
+  #error "Something went wrong: MBEDTLS_CONFIG_FILES_READ defined before reading the config files!"
 #endif
 #if defined(MBEDTLS_CONFIG_IS_FINALIZED)
-#error "Something went wrong: MBEDTLS_CONFIG_IS_FINALIZED defined before reading the config files!"
+  #error "Something went wrong: MBEDTLS_CONFIG_IS_FINALIZED defined before reading the config files!"
 #endif
 
 /* X.509, TLS and non-PSA crypto configuration */
 #if !defined(MBEDTLS_CONFIG_FILE)
-#include "mbedtls/mbedtls_config.h"
+  #include "mbedtls/mbedtls_config.h"
 #else
-#include MBEDTLS_CONFIG_FILE
+  #include MBEDTLS_CONFIG_FILE
 #endif
 
 #if defined(MBEDTLS_CONFIG_VERSION) && ( \
@@ -127,19 +127,19 @@
  *
  */
 #if defined(MBEDTLS_USER_CONFIG_FILE)
-#include MBEDTLS_USER_CONFIG_FILE
+  #include MBEDTLS_USER_CONFIG_FILE
 #endif
 
 /* PSA crypto configuration */
 #if defined(MBEDTLS_PSA_CRYPTO_CONFIG)
-#if defined(MBEDTLS_PSA_CRYPTO_CONFIG_FILE)
-#include MBEDTLS_PSA_CRYPTO_CONFIG_FILE
-#else
-#include "psa/crypto_config.h"
-#endif
-#if defined(MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE)
-#include MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE
-#endif
+  #if defined(MBEDTLS_PSA_CRYPTO_CONFIG_FILE)
+    #include MBEDTLS_PSA_CRYPTO_CONFIG_FILE
+  #else
+    #include "psa/crypto_config.h"
+  #endif
+  #if defined(MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE)
+    #include MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE
+  #endif
 #endif /* defined(MBEDTLS_PSA_CRYPTO_CONFIG) */
 
 /* Indicate that all configuration files have been read.
@@ -153,14 +153,14 @@
  * to ensure a 128-bit key size in CTR_DRBG.
  */
 #if defined(MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH) && defined(MBEDTLS_CTR_DRBG_C)
-#define MBEDTLS_CTR_DRBG_USE_128_BIT_KEY
+  #define MBEDTLS_CTR_DRBG_USE_128_BIT_KEY
 #endif
 
 /* Auto-enable MBEDTLS_MD_C if needed by a module that didn't require it
  * in a previous release, to ensure backwards compatibility.
  */
 #if defined(MBEDTLS_PKCS5_C)
-#define MBEDTLS_MD_C
+  #define MBEDTLS_MD_C
 #endif
 
 /* PSA crypto specific configuration options
@@ -171,9 +171,9 @@
  *   (e.g. MBEDTLS_MD_LIGHT)
  */
 #if defined(MBEDTLS_PSA_CRYPTO_CONFIG) /* PSA_WANT_xxx influences MBEDTLS_xxx */ || \
-    defined(MBEDTLS_PSA_CRYPTO_C) /* MBEDTLS_xxx influences PSA_WANT_xxx */ || \
-    defined(MBEDTLS_PSA_CRYPTO_CLIENT) /* The same as the previous, but with separation only */
-#include "mbedtls/config_psa.h"
+  defined(MBEDTLS_PSA_CRYPTO_C) /* MBEDTLS_xxx influences PSA_WANT_xxx */ || \
+  defined(MBEDTLS_PSA_CRYPTO_CLIENT) /* The same as the previous, but with separation only */
+  #include "mbedtls/config_psa.h"
 #endif
 
 #include "mbedtls/config_adjust_legacy_crypto.h"

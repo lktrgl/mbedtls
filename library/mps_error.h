@@ -31,11 +31,11 @@
  */
 
 #ifndef MBEDTLS_MPS_ERR_BASE
-#define MBEDTLS_MPS_ERR_BASE (0)
+  #define MBEDTLS_MPS_ERR_BASE (0)
 #endif
 
 #define MBEDTLS_MPS_MAKE_ERROR(code) \
-    (-(MBEDTLS_MPS_ERR_BASE | (code)))
+  (-(MBEDTLS_MPS_ERR_BASE | (code)))
 
 #define MBEDTLS_ERR_MPS_OPERATION_UNEXPECTED  MBEDTLS_MPS_MAKE_ERROR(0x1)
 #define MBEDTLS_ERR_MPS_INTERNAL_ERROR        MBEDTLS_MPS_MAKE_ERROR(0x2)
@@ -49,11 +49,11 @@
  */
 
 #ifndef MBEDTLS_MPS_READER_ERR_BASE
-#define MBEDTLS_MPS_READER_ERR_BASE (1 << 8)
+  #define MBEDTLS_MPS_READER_ERR_BASE (1 << 8)
 #endif
 
 #define MBEDTLS_MPS_READER_MAKE_ERROR(code) \
-    (-(MBEDTLS_MPS_READER_ERR_BASE | (code)))
+  (-(MBEDTLS_MPS_READER_ERR_BASE | (code)))
 
 /*! An attempt to reclaim the data buffer from a reader failed because
  *  the user hasn't yet read and committed all of it. */

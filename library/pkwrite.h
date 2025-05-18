@@ -16,7 +16,7 @@
 #include "mbedtls/pk.h"
 
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
-#include "psa/crypto.h"
+  #include "psa/crypto.h"
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 
 /*
@@ -56,7 +56,7 @@
 #define MBEDTLS_MPI_MAX_SIZE_2  (MBEDTLS_MPI_MAX_SIZE / 2 + \
                                  MBEDTLS_MPI_MAX_SIZE % 2)
 #define MBEDTLS_PK_RSA_PRV_DER_MAX_BYTES    (47 + 3 * MBEDTLS_MPI_MAX_SIZE \
-                                             + 5 * MBEDTLS_MPI_MAX_SIZE_2)
+    + 5 * MBEDTLS_MPI_MAX_SIZE_2)
 
 #else /* MBEDTLS_RSA_C */
 
@@ -113,9 +113,9 @@
 /* Define the maximum available public key DER length based on the supported
  * key types (EC and/or RSA). */
 #if (MBEDTLS_PK_RSA_PUB_DER_MAX_BYTES > MBEDTLS_PK_ECP_PUB_DER_MAX_BYTES)
-#define MBEDTLS_PK_WRITE_PUBKEY_MAX_SIZE    MBEDTLS_PK_RSA_PUB_DER_MAX_BYTES
+  #define MBEDTLS_PK_WRITE_PUBKEY_MAX_SIZE    MBEDTLS_PK_RSA_PUB_DER_MAX_BYTES
 #else
-#define MBEDTLS_PK_WRITE_PUBKEY_MAX_SIZE    MBEDTLS_PK_ECP_PUB_DER_MAX_BYTES
+  #define MBEDTLS_PK_WRITE_PUBKEY_MAX_SIZE    MBEDTLS_PK_ECP_PUB_DER_MAX_BYTES
 #endif
 
 #endif /* MBEDTLS_PK_WRITE_H */

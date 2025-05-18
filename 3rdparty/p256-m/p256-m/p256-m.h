@@ -30,7 +30,7 @@ extern "C" {
  * out: output is filled with output_size random bytes.
  *      return 0 on success, non-zero on errors.
  */
-extern int p256_generate_random(uint8_t * output, unsigned output_size);
+extern int p256_generate_random ( uint8_t* output, unsigned output_size );
 
 /*
  * ECDH/ECDSA generate key pair
@@ -42,7 +42,7 @@ extern int p256_generate_random(uint8_t * output, unsigned output_size);
  * return:  P256_SUCCESS on success
  *          P256_RANDOM_FAILED on failure
  */
-int p256_gen_keypair(uint8_t priv[32], uint8_t pub[64]);
+int p256_gen_keypair ( uint8_t priv[32], uint8_t pub[64] );
 
 /*
  * ECDH compute shared secret
@@ -55,8 +55,8 @@ int p256_gen_keypair(uint8_t priv[32], uint8_t pub[64]);
  *          P256_INVALID_PRIVKEY if priv is invalid
  *          P256_INVALID_PUBKEY if pub is invalid
  */
-int p256_ecdh_shared_secret(uint8_t secret[32],
-                            const uint8_t priv[32], const uint8_t pub[64]);
+int p256_ecdh_shared_secret ( uint8_t secret[32],
+                              const uint8_t priv[32], const uint8_t pub[64] );
 
 /*
  * ECDSA sign
@@ -71,8 +71,8 @@ int p256_ecdh_shared_secret(uint8_t secret[32],
  *          P256_RANDOM_FAILED on failure
  *          P256_INVALID_PRIVKEY if priv is invalid
  */
-int p256_ecdsa_sign(uint8_t sig[64], const uint8_t priv[32],
-                    const uint8_t *hash, size_t hlen);
+int p256_ecdsa_sign ( uint8_t sig[64], const uint8_t priv[32],
+                      const uint8_t* hash, size_t hlen );
 
 /*
  * ECDSA verify
@@ -86,8 +86,8 @@ int p256_ecdsa_sign(uint8_t sig[64], const uint8_t priv[32],
  *          P256_INVALID_PUBKEY if pub is invalid
  *          P256_INVALID_SIGNATURE if the signature was found to be invalid
  */
-int p256_ecdsa_verify(const uint8_t sig[64], const uint8_t pub[64],
-                      const uint8_t *hash, size_t hlen);
+int p256_ecdsa_verify ( const uint8_t sig[64], const uint8_t pub[64],
+                        const uint8_t* hash, size_t hlen );
 
 /*
  * Public key validation
@@ -101,7 +101,7 @@ int p256_ecdsa_verify(const uint8_t sig[64], const uint8_t pub[64],
  * return:  P256_SUCCESS if the key is valid
  *          P256_INVALID_PUBKEY if pub is invalid
  */
-int p256_validate_pubkey(const uint8_t pub[64]);
+int p256_validate_pubkey ( const uint8_t pub[64] );
 
 /*
  * Private key validation
@@ -115,7 +115,7 @@ int p256_validate_pubkey(const uint8_t pub[64]);
  * return:  P256_SUCCESS if the key is valid
  *          P256_INVALID_PRIVKEY if priv is invalid
  */
-int p256_validate_privkey(const uint8_t priv[32]);
+int p256_validate_privkey ( const uint8_t priv[32] );
 
 /*
  * Compute public key from private key
@@ -126,7 +126,7 @@ int p256_validate_privkey(const uint8_t priv[32]);
  * return:  P256_SUCCESS on success
  *          P256_INVALID_PRIVKEY if priv is invalid
  */
-int p256_public_from_private(uint8_t pub[64], const uint8_t priv[32]);
+int p256_public_from_private ( uint8_t pub[64], const uint8_t priv[32] );
 
 #ifdef __cplusplus
 }

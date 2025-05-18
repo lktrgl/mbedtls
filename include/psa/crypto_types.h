@@ -34,9 +34,9 @@
 #include "mbedtls/private_access.h"
 
 #if defined(MBEDTLS_PSA_CRYPTO_PLATFORM_FILE)
-#include MBEDTLS_PSA_CRYPTO_PLATFORM_FILE
+  #include MBEDTLS_PSA_CRYPTO_PLATFORM_FILE
 #else
-#include "crypto_platform.h"
+  #include "crypto_platform.h"
 #endif
 
 #include <stdint.h>
@@ -56,7 +56,7 @@
  * definition.
  */
 #ifndef PSA_SUCCESS
-typedef int32_t psa_status_t;
+  typedef int32_t psa_status_t;
 #endif
 
 /**@}*/
@@ -297,9 +297,10 @@ typedef psa_key_id_t mbedtls_svc_key_id_t;
  * client and encodes the client identity in the key identifier argument of
  * functions such as psa_open_key().
  */
-typedef struct {
-    psa_key_id_t MBEDTLS_PRIVATE(key_id);
-    mbedtls_key_owner_id_t MBEDTLS_PRIVATE(owner);
+typedef struct
+{
+  psa_key_id_t MBEDTLS_PRIVATE ( key_id );
+  mbedtls_key_owner_id_t MBEDTLS_PRIVATE ( owner );
 } mbedtls_svc_key_id_t;
 
 #endif /* !MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER */
@@ -433,13 +434,13 @@ typedef struct psa_key_attributes_s psa_key_attributes_t;
 
 
 #ifndef __DOXYGEN_ONLY__
-#if defined(MBEDTLS_PSA_CRYPTO_SE_C)
-/* Mbed TLS defines this type in crypto_types.h because it is also
- * visible to applications through an implementation-specific extension.
- * For the PSA Cryptography specification, this type is only visible
- * via crypto_se_driver.h. */
-typedef uint64_t psa_key_slot_number_t;
-#endif /* MBEDTLS_PSA_CRYPTO_SE_C */
+  #if defined(MBEDTLS_PSA_CRYPTO_SE_C)
+    /* Mbed TLS defines this type in crypto_types.h because it is also
+    * visible to applications through an implementation-specific extension.
+    * For the PSA Cryptography specification, this type is only visible
+    * via crypto_se_driver.h. */
+    typedef uint64_t psa_key_slot_number_t;
+  #endif /* MBEDTLS_PSA_CRYPTO_SE_C */
 #endif /* !__DOXYGEN_ONLY__ */
 
 /**@}*/

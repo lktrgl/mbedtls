@@ -26,16 +26,17 @@ extern "C" {
  * Message digest information.
  * Allows message digest functions to be called in a generic way.
  */
-struct mbedtls_md_info_t {
-    /** Digest identifier */
-    mbedtls_md_type_t type;
+struct mbedtls_md_info_t
+{
+  /** Digest identifier */
+  mbedtls_md_type_t type;
 
-    /** Output length of the digest function in bytes */
-    unsigned char size;
+  /** Output length of the digest function in bytes */
+  unsigned char size;
 
 #if defined(MBEDTLS_MD_C)
-    /** Block length of the digest function in bytes */
-    unsigned char block_size;
+  /** Block length of the digest function in bytes */
+  unsigned char block_size;
 #endif
 };
 

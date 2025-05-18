@@ -14,7 +14,7 @@
 #include "mbedtls/pk.h"
 
 #if defined(MBEDTLS_PK_HAVE_ECC_KEYS)
-#include "mbedtls/ecp.h"
+  #include "mbedtls/ecp.h"
 #endif
 
 #if defined(MBEDTLS_PSA_CRYPTO_CLIENT)
@@ -23,11 +23,11 @@
 #include "psa_util_internal.h"
 #define PSA_PK_TO_MBEDTLS_ERR(status) psa_pk_status_to_mbedtls(status)
 #define PSA_PK_RSA_TO_MBEDTLS_ERR(status) PSA_TO_MBEDTLS_ERR_LIST(status,     \
-                                                                  psa_to_pk_rsa_errors,            \
-                                                                  psa_pk_status_to_mbedtls)
+    psa_to_pk_rsa_errors,            \
+    psa_pk_status_to_mbedtls)
 #define PSA_PK_ECDSA_TO_MBEDTLS_ERR(status) PSA_TO_MBEDTLS_ERR_LIST(status,   \
-                                                                    psa_to_pk_ecdsa_errors,        \
-                                                                    psa_pk_status_to_mbedtls)
+    psa_to_pk_ecdsa_errors,        \
+    psa_pk_status_to_mbedtls)
 #endif /* MBEDTLS_PSA_CRYPTO_CLIENT */
 
 /* Headers/footers for PEM files */
@@ -57,75 +57,84 @@
  * usage of the returned pointer explicit. Of course the returned value is
  * const or non-const accordingly.
  */
-static inline const mbedtls_ecp_keypair *mbedtls_pk_ec_ro(const mbedtls_pk_context pk)
+static inline const mbedtls_ecp_keypair* mbedtls_pk_ec_ro ( const mbedtls_pk_context pk )
 {
-    switch (mbedtls_pk_get_type(&pk)) {
-        case MBEDTLS_PK_ECKEY:
-        case MBEDTLS_PK_ECKEY_DH:
-        case MBEDTLS_PK_ECDSA:
-            return (const mbedtls_ecp_keypair *) (pk).MBEDTLS_PRIVATE(pk_ctx);
-        default:
-            return NULL;
-    }
+  switch ( mbedtls_pk_get_type ( &pk ) )
+  {
+  case MBEDTLS_PK_ECKEY:
+  case MBEDTLS_PK_ECKEY_DH:
+  case MBEDTLS_PK_ECDSA:
+    return ( const mbedtls_ecp_keypair* ) ( pk ).MBEDTLS_PRIVATE ( pk_ctx );
+
+  default:
+    return NULL;
+  }
 }
 
-static inline mbedtls_ecp_keypair *mbedtls_pk_ec_rw(const mbedtls_pk_context pk)
+static inline mbedtls_ecp_keypair* mbedtls_pk_ec_rw ( const mbedtls_pk_context pk )
 {
-    switch (mbedtls_pk_get_type(&pk)) {
-        case MBEDTLS_PK_ECKEY:
-        case MBEDTLS_PK_ECKEY_DH:
-        case MBEDTLS_PK_ECDSA:
-            return (mbedtls_ecp_keypair *) (pk).MBEDTLS_PRIVATE(pk_ctx);
-        default:
-            return NULL;
-    }
+  switch ( mbedtls_pk_get_type ( &pk ) )
+  {
+  case MBEDTLS_PK_ECKEY:
+  case MBEDTLS_PK_ECKEY_DH:
+  case MBEDTLS_PK_ECDSA:
+    return ( mbedtls_ecp_keypair* ) ( pk ).MBEDTLS_PRIVATE ( pk_ctx );
+
+  default:
+    return NULL;
+  }
 }
 #endif /* MBEDTLS_PK_HAVE_ECC_KEYS && !MBEDTLS_PK_USE_PSA_EC_DATA */
 
 #if defined(MBEDTLS_PK_HAVE_ECC_KEYS)
-static inline mbedtls_ecp_group_id mbedtls_pk_get_ec_group_id(const mbedtls_pk_context *pk)
+static inline mbedtls_ecp_group_id mbedtls_pk_get_ec_group_id ( const mbedtls_pk_context* pk )
 {
-    mbedtls_ecp_group_id id;
+  mbedtls_ecp_group_id id;
 
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
-    if (mbedtls_pk_get_type(pk) == MBEDTLS_PK_OPAQUE) {
-        psa_key_attributes_t opaque_attrs = PSA_KEY_ATTRIBUTES_INIT;
-        psa_key_type_t opaque_key_type;
-        psa_ecc_family_t curve;
 
-        if (psa_get_key_attributes(pk->priv_id, &opaque_attrs) != PSA_SUCCESS) {
-            return MBEDTLS_ECP_DP_NONE;
-        }
-        opaque_key_type = psa_get_key_type(&opaque_attrs);
-        curve = PSA_KEY_TYPE_ECC_GET_FAMILY(opaque_key_type);
-        id = mbedtls_ecc_group_from_psa(curve, psa_get_key_bits(&opaque_attrs));
-        psa_reset_key_attributes(&opaque_attrs);
-    } else
-#endif /* MBEDTLS_USE_PSA_CRYPTO */
+  if ( mbedtls_pk_get_type ( pk ) == MBEDTLS_PK_OPAQUE )
+  {
+    psa_key_attributes_t opaque_attrs = PSA_KEY_ATTRIBUTES_INIT;
+    psa_key_type_t opaque_key_type;
+    psa_ecc_family_t curve;
+
+    if ( psa_get_key_attributes ( pk->priv_id, &opaque_attrs ) != PSA_SUCCESS )
     {
-#if defined(MBEDTLS_PK_USE_PSA_EC_DATA)
-        id = mbedtls_ecc_group_from_psa(pk->ec_family, pk->ec_bits);
-#else /* MBEDTLS_PK_USE_PSA_EC_DATA */
-        id = mbedtls_pk_ec_ro(*pk)->grp.id;
-#endif /* MBEDTLS_PK_USE_PSA_EC_DATA */
+      return MBEDTLS_ECP_DP_NONE;
     }
 
-    return id;
+    opaque_key_type = psa_get_key_type ( &opaque_attrs );
+    curve = PSA_KEY_TYPE_ECC_GET_FAMILY ( opaque_key_type );
+    id = mbedtls_ecc_group_from_psa ( curve, psa_get_key_bits ( &opaque_attrs ) );
+    psa_reset_key_attributes ( &opaque_attrs );
+  }
+  else
+#endif /* MBEDTLS_USE_PSA_CRYPTO */
+  {
+#if defined(MBEDTLS_PK_USE_PSA_EC_DATA)
+    id = mbedtls_ecc_group_from_psa ( pk->ec_family, pk->ec_bits );
+#else /* MBEDTLS_PK_USE_PSA_EC_DATA */
+    id = mbedtls_pk_ec_ro ( *pk )->grp.id;
+#endif /* MBEDTLS_PK_USE_PSA_EC_DATA */
+  }
+
+  return id;
 }
 
 /* Helper for Montgomery curves */
 #if defined(MBEDTLS_ECP_HAVE_CURVE25519) || defined(MBEDTLS_ECP_HAVE_CURVE448)
-#define MBEDTLS_PK_HAVE_RFC8410_CURVES
+  #define MBEDTLS_PK_HAVE_RFC8410_CURVES
 #endif /* MBEDTLS_ECP_HAVE_CURVE25519 || MBEDTLS_ECP_DP_CURVE448 */
 
 #define MBEDTLS_PK_IS_RFC8410_GROUP_ID(id)  \
-    ((id == MBEDTLS_ECP_DP_CURVE25519) || (id == MBEDTLS_ECP_DP_CURVE448))
+  ((id == MBEDTLS_ECP_DP_CURVE25519) || (id == MBEDTLS_ECP_DP_CURVE448))
 
-static inline int mbedtls_pk_is_rfc8410(const mbedtls_pk_context *pk)
+static inline int mbedtls_pk_is_rfc8410 ( const mbedtls_pk_context* pk )
 {
-    mbedtls_ecp_group_id id = mbedtls_pk_get_ec_group_id(pk);
+  mbedtls_ecp_group_id id = mbedtls_pk_get_ec_group_id ( pk );
 
-    return MBEDTLS_PK_IS_RFC8410_GROUP_ID(id);
+  return MBEDTLS_PK_IS_RFC8410_GROUP_ID ( id );
 }
 
 /*
@@ -135,7 +144,7 @@ static inline int mbedtls_pk_is_rfc8410(const mbedtls_pk_context *pk)
  *              out: will have group (curve) information set
  * [in] grp_in: a supported group ID (not NONE)
  */
-int mbedtls_pk_ecc_set_group(mbedtls_pk_context *pk, mbedtls_ecp_group_id grp_id);
+int mbedtls_pk_ecc_set_group ( mbedtls_pk_context* pk, mbedtls_ecp_group_id grp_id );
 
 /*
  * Set the private key material
@@ -144,7 +153,7 @@ int mbedtls_pk_ecc_set_group(mbedtls_pk_context *pk, mbedtls_ecp_group_id grp_id
  *              out: will have the private key set.
  * [in] key, key_len: the raw private key (no ASN.1 wrapping).
  */
-int mbedtls_pk_ecc_set_key(mbedtls_pk_context *pk, unsigned char *key, size_t key_len);
+int mbedtls_pk_ecc_set_key ( mbedtls_pk_context* pk, unsigned char* key, size_t key_len );
 
 /*
  * Set the public key.
@@ -159,7 +168,7 @@ int mbedtls_pk_ecc_set_key(mbedtls_pk_context *pk, unsigned char *key, size_t ke
  *   but not supported;
  * - another error code otherwise.
  */
-int mbedtls_pk_ecc_set_pubkey(mbedtls_pk_context *pk, const unsigned char *pub, size_t pub_len);
+int mbedtls_pk_ecc_set_pubkey ( mbedtls_pk_context* pk, const unsigned char* pub, size_t pub_len );
 
 /*
  * Derive a public key from its private counterpart.
@@ -180,28 +189,28 @@ int mbedtls_pk_ecc_set_pubkey(mbedtls_pk_context *pk, const unsigned char *pub, 
  * 2. MBEDTLS_USE_PSA_CRYPTO but not MBEDTLS_PK_USE_PSA_EC_DATA,
  * 3. not MBEDTLS_USE_PSA_CRYPTO.
  */
-int mbedtls_pk_ecc_set_pubkey_from_prv(mbedtls_pk_context *pk,
-                                       const unsigned char *prv, size_t prv_len,
-                                       int (*f_rng)(void *, unsigned char *, size_t), void *p_rng);
+int mbedtls_pk_ecc_set_pubkey_from_prv ( mbedtls_pk_context* pk,
+    const unsigned char* prv, size_t prv_len,
+    int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng );
 #endif /* MBEDTLS_PK_HAVE_ECC_KEYS */
 
 /* Helper for (deterministic) ECDSA */
 #if defined(MBEDTLS_ECDSA_DETERMINISTIC)
-#define MBEDTLS_PK_PSA_ALG_ECDSA_MAYBE_DET  PSA_ALG_DETERMINISTIC_ECDSA
+  #define MBEDTLS_PK_PSA_ALG_ECDSA_MAYBE_DET  PSA_ALG_DETERMINISTIC_ECDSA
 #else
-#define MBEDTLS_PK_PSA_ALG_ECDSA_MAYBE_DET  PSA_ALG_ECDSA
+  #define MBEDTLS_PK_PSA_ALG_ECDSA_MAYBE_DET  PSA_ALG_ECDSA
 #endif
 
 #if defined(MBEDTLS_TEST_HOOKS)
-MBEDTLS_STATIC_TESTABLE int mbedtls_pk_parse_key_pkcs8_encrypted_der(
-    mbedtls_pk_context *pk,
-    unsigned char *key, size_t keylen,
-    const unsigned char *pwd, size_t pwdlen,
-    int (*f_rng)(void *, unsigned char *, size_t), void *p_rng);
+MBEDTLS_STATIC_TESTABLE int mbedtls_pk_parse_key_pkcs8_encrypted_der (
+  mbedtls_pk_context* pk,
+  unsigned char* key, size_t keylen,
+  const unsigned char* pwd, size_t pwdlen,
+  int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng );
 #endif
 
 #if defined(MBEDTLS_FS_IO)
-int mbedtls_pk_load_file(const char *path, unsigned char **buf, size_t *n);
+  int mbedtls_pk_load_file ( const char* path, unsigned char** buf, size_t* n );
 #endif
 
 #endif /* MBEDTLS_PK_INTERNAL_H */

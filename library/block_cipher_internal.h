@@ -27,9 +27,9 @@ extern "C" {
  *
  * \param ctx       The context to initialize.
  */
-static inline void mbedtls_block_cipher_init(mbedtls_block_cipher_context_t *ctx)
+static inline void mbedtls_block_cipher_init ( mbedtls_block_cipher_context_t* ctx )
 {
-    memset(ctx, 0, sizeof(*ctx));
+  memset ( ctx, 0, sizeof ( *ctx ) );
 }
 
 /**
@@ -46,8 +46,8 @@ static inline void mbedtls_block_cipher_init(mbedtls_block_cipher_context_t *ctx
  * \retval          #MBEDTLS_ERR_CIPHER_BAD_INPUT_DATA if \p cipher_id was
  *                  invalid.
  */
-int mbedtls_block_cipher_setup(mbedtls_block_cipher_context_t *ctx,
-                               mbedtls_cipher_id_t cipher_id);
+int mbedtls_block_cipher_setup ( mbedtls_block_cipher_context_t* ctx,
+                                 mbedtls_cipher_id_t cipher_id );
 
 /**
  * \brief           Set the key into the context.
@@ -64,9 +64,9 @@ int mbedtls_block_cipher_setup(mbedtls_block_cipher_context_t *ctx,
  *                  #MBEDTLS_ERR_CAMELLIA_BAD_INPUT_DATA if \p key_bitlen is
  *                  invalid.
  */
-int mbedtls_block_cipher_setkey(mbedtls_block_cipher_context_t *ctx,
-                                const unsigned char *key,
-                                unsigned key_bitlen);
+int mbedtls_block_cipher_setkey ( mbedtls_block_cipher_context_t* ctx,
+                                  const unsigned char* key,
+                                  unsigned key_bitlen );
 
 /**
  * \brief           Encrypt one block (16 bytes) with the configured key.
@@ -82,15 +82,15 @@ int mbedtls_block_cipher_setkey(mbedtls_block_cipher_context_t *ctx,
  *                  properly set up before calling this function.
  * \retval          Another negative value if encryption failed.
  */
-int mbedtls_block_cipher_encrypt(mbedtls_block_cipher_context_t *ctx,
-                                 const unsigned char input[16],
-                                 unsigned char output[16]);
+int mbedtls_block_cipher_encrypt ( mbedtls_block_cipher_context_t* ctx,
+                                   const unsigned char input[16],
+                                   unsigned char output[16] );
 /**
  * \brief           Clear the context.
  *
  * \param ctx       The context to clear.
  */
-void mbedtls_block_cipher_free(mbedtls_block_cipher_context_t *ctx);
+void mbedtls_block_cipher_free ( mbedtls_block_cipher_context_t* ctx );
 
 #ifdef __cplusplus
 }

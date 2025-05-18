@@ -26,7 +26,7 @@
 #define MBEDTLS_ERR_THREADING_THREAD_ERROR                 -0x001F
 
 #if defined(MBEDTLS_THREADING_PTHREAD)
-#include <pthread.h>
+  #include <pthread.h>
 #endif /* MBEDTLS_THREADING_PTHREAD */
 
 #if defined(MBEDTLS_THREADING_ALT)
@@ -47,21 +47,22 @@
  * \param thread_join       The thread join function implementation.
 
  */
-void mbedtls_test_thread_set_alt(int (*thread_create)(mbedtls_test_thread_t *thread,
-                                                      void *(*thread_func)(
-                                                          void *),
-                                                      void *thread_data),
-                                 int (*thread_join)(mbedtls_test_thread_t *thread));
+void mbedtls_test_thread_set_alt ( int ( *thread_create ) ( mbedtls_test_thread_t* thread,
+                                   void* ( *thread_func ) (
+                                     void* ),
+                                   void* thread_data ),
+                                   int ( *thread_join ) ( mbedtls_test_thread_t* thread ) );
 
 #else /* MBEDTLS_THREADING_ALT*/
 
-typedef struct mbedtls_test_thread_t {
+typedef struct mbedtls_test_thread_t
+{
 
 #if defined(MBEDTLS_THREADING_PTHREAD)
-    pthread_t MBEDTLS_PRIVATE(thread);
+  pthread_t MBEDTLS_PRIVATE ( thread );
 #else /* MBEDTLS_THREADING_PTHREAD */
-    /* Make sure this struct is always non-empty */
-    unsigned dummy;
+  /* Make sure this struct is always non-empty */
+  unsigned dummy;
 #endif
 
 } mbedtls_test_thread_t;
@@ -79,32 +80,32 @@ typedef struct mbedtls_test_thread_t {
  * \note                    All these functions are expected to work or
  *                          the result will be undefined.
  */
-extern int (*mbedtls_test_thread_create)(mbedtls_test_thread_t *thread,
-                                         void *(*thread_func)(void *), void *thread_data);
-extern int (*mbedtls_test_thread_join)(mbedtls_test_thread_t *thread);
+extern int ( *mbedtls_test_thread_create ) ( mbedtls_test_thread_t* thread,
+    void* ( *thread_func ) ( void* ), void* thread_data );
+extern int ( *mbedtls_test_thread_join ) ( mbedtls_test_thread_t* thread );
 
 #if defined(MBEDTLS_THREADING_PTHREAD) && defined(MBEDTLS_TEST_HOOKS)
-#define MBEDTLS_TEST_MUTEX_USAGE
+  #define MBEDTLS_TEST_MUTEX_USAGE
 #endif
 
 #if defined(MBEDTLS_TEST_MUTEX_USAGE)
-/**
- *  Activate the mutex usage verification framework. See threading_helpers.c for
- *  information.
- */
-void mbedtls_test_mutex_usage_init(void);
+  /**
+  *  Activate the mutex usage verification framework. See threading_helpers.c for
+  *  information.
+  */
+  void mbedtls_test_mutex_usage_init ( void );
 
-/**
- *  Deactivate the mutex usage verification framework. See threading_helpers.c
- *  for information.
- */
-void mbedtls_test_mutex_usage_end(void);
+  /**
+  *  Deactivate the mutex usage verification framework. See threading_helpers.c
+  *  for information.
+  */
+  void mbedtls_test_mutex_usage_end ( void );
 
-/**
- *  Call this function after executing a test case to check for mutex usage
- * errors.
- */
-void mbedtls_test_mutex_usage_check(void);
+  /**
+  *  Call this function after executing a test case to check for mutex usage
+  * errors.
+  */
+  void mbedtls_test_mutex_usage_check ( void );
 #endif /* MBEDTLS_TEST_MUTEX_USAGE */
 
 #endif /* MBEDTLS_THREADING_C */

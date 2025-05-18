@@ -34,8 +34,8 @@
  * \retval #PSA_ERROR_INSUFFICIENT_MEMORY   \emptydescription
  * \retval #PSA_ERROR_CORRUPTION_DETECTED   \emptydescription
  */
-psa_status_t mbedtls_psa_pake_setup(mbedtls_psa_pake_operation_t *operation,
-                                    const psa_crypto_driver_pake_inputs_t *inputs);
+psa_status_t mbedtls_psa_pake_setup ( mbedtls_psa_pake_operation_t* operation,
+                                      const psa_crypto_driver_pake_inputs_t* inputs );
 
 
 /** Get output for a step of a password-authenticated key exchange.
@@ -71,11 +71,11 @@ psa_status_t mbedtls_psa_pake_setup(mbedtls_psa_pake_operation_t *operation,
  * \retval #PSA_ERROR_DATA_CORRUPT          \emptydescription
  * \retval #PSA_ERROR_DATA_INVALID          \emptydescription
  */
-psa_status_t mbedtls_psa_pake_output(mbedtls_psa_pake_operation_t *operation,
-                                     psa_crypto_driver_pake_step_t step,
-                                     uint8_t *output,
-                                     size_t output_size,
-                                     size_t *output_length);
+psa_status_t mbedtls_psa_pake_output ( mbedtls_psa_pake_operation_t* operation,
+                                       psa_crypto_driver_pake_step_t step,
+                                       uint8_t* output,
+                                       size_t output_size,
+                                       size_t* output_length );
 
 /** Provide input for a step of a password-authenticated key exchange.
  *
@@ -109,10 +109,10 @@ psa_status_t mbedtls_psa_pake_output(mbedtls_psa_pake_operation_t *operation,
  * \retval #PSA_ERROR_DATA_CORRUPT          \emptydescription
  * \retval #PSA_ERROR_DATA_INVALID          \emptydescription
  */
-psa_status_t mbedtls_psa_pake_input(mbedtls_psa_pake_operation_t *operation,
-                                    psa_crypto_driver_pake_step_t step,
-                                    const uint8_t *input,
-                                    size_t input_length);
+psa_status_t mbedtls_psa_pake_input ( mbedtls_psa_pake_operation_t* operation,
+                                      psa_crypto_driver_pake_step_t step,
+                                      const uint8_t* input,
+                                      size_t input_length );
 
 /** Get implicitly confirmed shared secret from a PAKE.
  *
@@ -136,10 +136,10 @@ psa_status_t mbedtls_psa_pake_input(mbedtls_psa_pake_operation_t *operation,
  * \retval #PSA_ERROR_DATA_CORRUPT          \emptydescription
  * \retval #PSA_ERROR_DATA_INVALID          \emptydescription
  */
-psa_status_t mbedtls_psa_pake_get_implicit_key(
-    mbedtls_psa_pake_operation_t *operation,
-    uint8_t *output, size_t output_size,
-    size_t *output_length);
+psa_status_t mbedtls_psa_pake_get_implicit_key (
+  mbedtls_psa_pake_operation_t* operation,
+  uint8_t* output, size_t output_size,
+  size_t* output_length );
 
 /** Abort a PAKE operation.
  *
@@ -154,6 +154,6 @@ psa_status_t mbedtls_psa_pake_get_implicit_key(
  *         Success.
  * \retval #PSA_ERROR_CORRUPTION_DETECTED   \emptydescription
  */
-psa_status_t mbedtls_psa_pake_abort(mbedtls_psa_pake_operation_t *operation);
+psa_status_t mbedtls_psa_pake_abort ( mbedtls_psa_pake_operation_t* operation );
 
 #endif /* PSA_CRYPTO_PAKE_H */

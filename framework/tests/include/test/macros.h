@@ -19,7 +19,7 @@
 #include "mbedtls/platform.h"
 
 #if defined(MBEDTLS_MEMORY_BUFFER_ALLOC_C)
-#include "mbedtls/memory_buffer_alloc.h"
+  #include "mbedtls/memory_buffer_alloc.h"
 #endif
 #include "common.h"
 
@@ -41,23 +41,23 @@
  * \param   TEST    The test expression to be tested.
  */
 #define TEST_ASSERT(TEST)                                 \
-    do {                                                    \
-        if (!(TEST))                                       \
-        {                                                    \
-            mbedtls_test_fail( #TEST, __LINE__, __FILE__);   \
-            goto exit;                                        \
-        }                                                    \
-    } while (0)
+  do {                                                    \
+    if (!(TEST))                                       \
+    {                                                    \
+      mbedtls_test_fail( #TEST, __LINE__, __FILE__);   \
+      goto exit;                                        \
+    }                                                    \
+  } while (0)
 
 /** This macro asserts fails the test with given output message.
  *
  * \param   MESSAGE The message to be outputed on assertion
  */
 #define TEST_FAIL(MESSAGE)                           \
-    do {                                                  \
-        mbedtls_test_fail(MESSAGE, __LINE__, __FILE__);   \
-        goto exit;                                        \
-    } while (0)
+  do {                                                  \
+    mbedtls_test_fail(MESSAGE, __LINE__, __FILE__);   \
+    goto exit;                                        \
+  } while (0)
 
 /** Evaluate two integer expressions and fail the test case if they have
  * different values.
@@ -69,11 +69,11 @@
  * \param expr2     Another integral-typed expression to evaluate.
  */
 #define TEST_EQUAL(expr1, expr2)                                      \
-    do {                                                                \
-        if (!mbedtls_test_equal( #expr1 " == " #expr2, __LINE__, __FILE__, \
-                                 (unsigned long long) (expr1), (unsigned long long) (expr2)))                      \
-        goto exit;                                                  \
-    } while (0)
+  do {                                                                \
+    if (!mbedtls_test_equal( #expr1 " == " #expr2, __LINE__, __FILE__, \
+                             (unsigned long long) (expr1), (unsigned long long) (expr2)))                      \
+      goto exit;                                                  \
+  } while (0)
 
 /** Evaluate two unsigned integer expressions and fail the test case
  * if they are not in increasing order (left <= right).
@@ -82,11 +82,11 @@
  * \param expr2     Another integral-typed expression to evaluate.
  */
 #define TEST_LE_U(expr1, expr2)                                       \
-    do {                                                                \
-        if (!mbedtls_test_le_u( #expr1 " <= " #expr2, __LINE__, __FILE__, \
-                                expr1, expr2))                      \
-        goto exit;                                                  \
-    } while (0)
+  do {                                                                \
+    if (!mbedtls_test_le_u( #expr1 " <= " #expr2, __LINE__, __FILE__, \
+                            expr1, expr2))                      \
+      goto exit;                                                  \
+  } while (0)
 
 /** Evaluate two signed integer expressions and fail the test case
  * if they are not in increasing order (left <= right).
@@ -95,11 +95,11 @@
  * \param expr2     Another integral-typed expression to evaluate.
  */
 #define TEST_LE_S(expr1, expr2)                                       \
-    do {                                                                \
-        if (!mbedtls_test_le_s( #expr1 " <= " #expr2, __LINE__, __FILE__, \
-                                expr1, expr2))                      \
-        goto exit;                                                  \
-    } while (0)
+  do {                                                                \
+    if (!mbedtls_test_le_s( #expr1 " <= " #expr2, __LINE__, __FILE__, \
+                            expr1, expr2))                      \
+      goto exit;                                                  \
+  } while (0)
 
 /** Allocate memory dynamically and fail the test case if this fails.
  * The allocated memory will be filled with zeros.
@@ -122,14 +122,14 @@
  *
  */
 #define TEST_CALLOC(pointer, item_count)                    \
-    do {                                                    \
-        TEST_ASSERT((pointer) == NULL);                     \
-        if ((item_count) != 0) {                            \
-            (pointer) = mbedtls_calloc((item_count),        \
-                                       sizeof(*(pointer))); \
-            TEST_ASSERT((pointer) != NULL);                 \
-        }                                                   \
-    } while (0)
+  do {                                                    \
+    TEST_ASSERT((pointer) == NULL);                     \
+    if ((item_count) != 0) {                            \
+      (pointer) = mbedtls_calloc((item_count),        \
+                                 sizeof(*(pointer))); \
+      TEST_ASSERT((pointer) != NULL);                 \
+    }                                                   \
+  } while (0)
 
 /** Allocate memory dynamically and fail the test case if this fails.
  * The allocated memory will be filled with zeros.
@@ -153,15 +153,15 @@
  * non-NULL pointer.
  */
 #define TEST_CALLOC_NONNULL(pointer, item_count)            \
-    do {                                                    \
-        TEST_ASSERT((pointer) == NULL);                     \
-        (pointer) = mbedtls_calloc((item_count),            \
-                                   sizeof(*(pointer)));     \
-        if (((pointer) == NULL) && ((item_count) == 0)) {   \
-            (pointer) = mbedtls_calloc(1, 1);               \
-        }                                                   \
-        TEST_ASSERT((pointer) != NULL);                     \
-    } while (0)
+  do {                                                    \
+    TEST_ASSERT((pointer) == NULL);                     \
+    (pointer) = mbedtls_calloc((item_count),            \
+                               sizeof(*(pointer)));     \
+    if (((pointer) == NULL) && ((item_count) == 0)) {   \
+      (pointer) = mbedtls_calloc(1, 1);               \
+    }                                                   \
+    TEST_ASSERT((pointer) != NULL);                     \
+  } while (0)
 
 /* For backwards compatibility */
 #define ASSERT_ALLOC(pointer, item_count) TEST_CALLOC(pointer, item_count)
@@ -172,14 +172,14 @@
  * fails, it marks the test as skipped rather than failed.
  */
 #define TEST_CALLOC_OR_SKIP(pointer, item_count)            \
-    do {                                                    \
-        TEST_ASSERT((pointer) == NULL);                     \
-        if ((item_count) != 0) {                            \
-            (pointer) = mbedtls_calloc((item_count),        \
-                                       sizeof(*(pointer))); \
-            TEST_ASSUME((pointer) != NULL);                 \
-        }                                                   \
-    } while (0)
+  do {                                                    \
+    TEST_ASSERT((pointer) == NULL);                     \
+    if ((item_count) != 0) {                            \
+      (pointer) = mbedtls_calloc((item_count),        \
+                                 sizeof(*(pointer))); \
+      TEST_ASSUME((pointer) != NULL);                 \
+    }                                                   \
+  } while (0)
 
 /* For backwards compatibility */
 #define ASSERT_ALLOC_WEAK(pointer, item_count) TEST_CALLOC_OR_SKIP(pointer, item_count)
@@ -197,12 +197,12 @@
  *                  This expression may be evaluated multiple times.
  */
 #define TEST_MEMORY_COMPARE(p1, size1, p2, size2)              \
-    do {                                                       \
-        TEST_EQUAL((size1), (size2));                          \
-        if ((size1) != 0) {                                    \
-            TEST_ASSERT(memcmp((p1), (p2), (size1)) == 0);     \
-        }                                                      \
-    } while (0)
+  do {                                                       \
+    TEST_EQUAL((size1), (size2));                          \
+    if ((size1) != 0) {                                    \
+      TEST_ASSERT(memcmp((p1), (p2), (size1)) == 0);     \
+    }                                                      \
+  } while (0)
 
 /* For backwards compatibility */
 #define ASSERT_COMPARE(p1, size1, p2, size2) TEST_MEMORY_COMPARE(p1, size1, p2, size2)
@@ -214,20 +214,20 @@
  * \param   TEST    The test expression to be tested.
  */
 #define TEST_ASSUME(TEST)                                 \
-    do {                                                    \
-        if (!(TEST))                                      \
-        {                                                   \
-            mbedtls_test_skip( #TEST, __LINE__, __FILE__); \
-            goto exit;                                      \
-        }                                                   \
-    } while (0)
+  do {                                                    \
+    if (!(TEST))                                      \
+    {                                                   \
+      mbedtls_test_skip( #TEST, __LINE__, __FILE__); \
+      goto exit;                                      \
+    }                                                   \
+  } while (0)
 
 #define TEST_HELPER_ASSERT(a) if (!(a))                          \
-    {                                                                   \
-        mbedtls_fprintf(stderr, "Assertion Failed at %s:%d - %s\n",    \
-                        __FILE__, __LINE__, #a);              \
-        mbedtls_exit(1);                                              \
-    }
+  {                                                                   \
+    mbedtls_fprintf(stderr, "Assertion Failed at %s:%d - %s\n",    \
+                    __FILE__, __LINE__, #a);              \
+    mbedtls_exit(1);                                              \
+  }
 
 /** Return the smaller of two values.
  *

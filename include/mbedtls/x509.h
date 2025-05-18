@@ -17,7 +17,7 @@
 #include "mbedtls/pk.h"
 
 #if defined(MBEDTLS_RSA_C)
-#include "mbedtls/rsa.h"
+  #include "mbedtls/rsa.h"
 #endif
 
 /**
@@ -26,15 +26,15 @@
  */
 
 #if !defined(MBEDTLS_X509_MAX_INTERMEDIATE_CA)
-/**
- * Maximum number of intermediate CAs in a verification chain.
- * That is, maximum length of the chain, excluding the end-entity certificate
- * and the trusted root certificate.
- *
- * Set this to a low value to prevent an adversary from making you waste
- * resources verifying an overlong certificate chain.
- */
-#define MBEDTLS_X509_MAX_INTERMEDIATE_CA   8
+  /**
+  * Maximum number of intermediate CAs in a verification chain.
+  * That is, maximum length of the chain, excluding the end-entity certificate
+  * and the trusted root certificate.
+  *
+  * Set this to a low value to prevent an adversary from making you waste
+  * resources verifying an overlong certificate chain.
+  */
+  #define MBEDTLS_X509_MAX_INTERMEDIATE_CA   8
 #endif
 
 /**
@@ -234,18 +234,20 @@ typedef mbedtls_asn1_sequence mbedtls_x509_sequence;
 /*
  * Container for the fields of the Authority Key Identifier object
  */
-typedef struct mbedtls_x509_authority {
-    mbedtls_x509_buf keyIdentifier;
-    mbedtls_x509_sequence authorityCertIssuer;
-    mbedtls_x509_buf authorityCertSerialNumber;
-    mbedtls_x509_buf raw;
+typedef struct mbedtls_x509_authority
+{
+  mbedtls_x509_buf keyIdentifier;
+  mbedtls_x509_sequence authorityCertIssuer;
+  mbedtls_x509_buf authorityCertSerialNumber;
+  mbedtls_x509_buf raw;
 }
 mbedtls_x509_authority;
 
 /** Container for date and time (precision in seconds). */
-typedef struct mbedtls_x509_time {
-    int year, mon, day;         /**< Date. */
-    int hour, min, sec;         /**< Time. */
+typedef struct mbedtls_x509_time
+{
+  int year, mon, day;         /**< Date. */
+  int hour, min, sec;         /**< Time. */
 }
 mbedtls_x509_time;
 
@@ -258,27 +260,30 @@ mbedtls_x509_time;
  * Future versions of the library may add new fields to this structure or
  * to its embedded union and structure.
  */
-typedef struct mbedtls_x509_san_other_name {
+typedef struct mbedtls_x509_san_other_name
+{
+  /**
+   * The type_id is an OID as defined in RFC 5280.
+   * To check the value of the type id, you should use
+   * \p MBEDTLS_OID_CMP with a known OID mbedtls_x509_buf.
+   */
+  mbedtls_x509_buf type_id;                   /**< The type id. */
+  union
+  {
     /**
-     * The type_id is an OID as defined in RFC 5280.
-     * To check the value of the type id, you should use
-     * \p MBEDTLS_OID_CMP with a known OID mbedtls_x509_buf.
+     * From RFC 4108 section 5:
+     * HardwareModuleName ::= SEQUENCE {
+     *                         hwType OBJECT IDENTIFIER,
+     *                         hwSerialNum OCTET STRING }
      */
-    mbedtls_x509_buf type_id;                   /**< The type id. */
-    union {
-        /**
-         * From RFC 4108 section 5:
-         * HardwareModuleName ::= SEQUENCE {
-         *                         hwType OBJECT IDENTIFIER,
-         *                         hwSerialNum OCTET STRING }
-         */
-        struct {
-            mbedtls_x509_buf oid;               /**< The object identifier. */
-            mbedtls_x509_buf val;               /**< The named value. */
-        }
-        hardware_module_name;
+    struct
+    {
+      mbedtls_x509_buf oid;               /**< The object identifier. */
+      mbedtls_x509_buf val;               /**< The named value. */
     }
-    value;
+    hardware_module_name;
+  }
+  value;
 }
 mbedtls_x509_san_other_name;
 
@@ -289,20 +294,24 @@ mbedtls_x509_san_other_name;
  * Future versions of the library may add new fields to this structure or
  * to its embedded union and structure.
  */
-typedef struct mbedtls_x509_subject_alternative_name {
-    int type;                              /**< The SAN type, value of MBEDTLS_X509_SAN_XXX. */
-    union {
-        mbedtls_x509_san_other_name other_name;
-        mbedtls_x509_name directory_name;
-        mbedtls_x509_buf unstructured_name; /**< The buffer for the unstructured types. rfc822Name, dnsName and uniformResourceIdentifier are currently supported. */
-    }
-    san; /**< A union of the supported SAN types */
+typedef struct mbedtls_x509_subject_alternative_name
+{
+  int type;                              /**< The SAN type, value of MBEDTLS_X509_SAN_XXX. */
+  union
+  {
+    mbedtls_x509_san_other_name other_name;
+    mbedtls_x509_name directory_name;
+    mbedtls_x509_buf
+    unstructured_name; /**< The buffer for the unstructured types. rfc822Name, dnsName and uniformResourceIdentifier are currently supported. */
+  }
+  san; /**< A union of the supported SAN types */
 }
 mbedtls_x509_subject_alternative_name;
 
-typedef struct mbedtls_x509_san_list {
-    mbedtls_x509_subject_alternative_name node;
-    struct mbedtls_x509_san_list *next;
+typedef struct mbedtls_x509_san_list
+{
+  mbedtls_x509_subject_alternative_name node;
+  struct mbedtls_x509_san_list* next;
 }
 mbedtls_x509_san_list;
 
@@ -320,7 +329,7 @@ mbedtls_x509_san_list;
  * \return         The length of the string written (not including the
  *                 terminated nul byte), or a negative error code.
  */
-int mbedtls_x509_dn_gets(char *buf, size_t size, const mbedtls_x509_name *dn);
+int mbedtls_x509_dn_gets ( char* buf, size_t size, const mbedtls_x509_name* dn );
 
 /**
  * \brief            Convert the certificate DN string \p name into
@@ -337,7 +346,7 @@ int mbedtls_x509_dn_gets(char *buf, size_t size, const mbedtls_x509_name *dn);
  *
  * \return           0 on success, or a negative error code.
  */
-int mbedtls_x509_string_to_names(mbedtls_asn1_named_data **head, const char *name);
+int mbedtls_x509_string_to_names ( mbedtls_asn1_named_data** head, const char* name );
 
 /**
  * \brief          Return the next relative DN in an X509 name.
@@ -350,13 +359,15 @@ int mbedtls_x509_string_to_names(mbedtls_asn1_named_data **head, const char *nam
  * \return         Pointer to the first attribute-value pair of the
  *                 next RDN in sequence, or NULL if end is reached.
  */
-static inline mbedtls_x509_name *mbedtls_x509_dn_get_next(
-    mbedtls_x509_name *dn)
+static inline mbedtls_x509_name* mbedtls_x509_dn_get_next (
+  mbedtls_x509_name* dn )
 {
-    while (dn->MBEDTLS_PRIVATE(next_merged) && dn->next != NULL) {
-        dn = dn->next;
-    }
-    return dn->next;
+  while ( dn->MBEDTLS_PRIVATE ( next_merged ) && dn->next != NULL )
+  {
+    dn = dn->next;
+  }
+
+  return dn->next;
 }
 
 /**
@@ -370,7 +381,7 @@ static inline mbedtls_x509_name *mbedtls_x509_dn_get_next(
  * \return         The length of the string written (not including the
  *                 terminated nul byte), or a negative error code.
  */
-int mbedtls_x509_serial_gets(char *buf, size_t size, const mbedtls_x509_buf *serial);
+int mbedtls_x509_serial_gets ( char* buf, size_t size, const mbedtls_x509_buf* serial );
 
 /**
  * \brief          Compare pair of mbedtls_x509_time.
@@ -382,7 +393,7 @@ int mbedtls_x509_serial_gets(char *buf, size_t size, const mbedtls_x509_buf *ser
  *                   0 if t1 equals t2
  *                 > 0 if t1 is after t2
  */
-int mbedtls_x509_time_cmp(const mbedtls_x509_time *t1, const mbedtls_x509_time *t2);
+int mbedtls_x509_time_cmp ( const mbedtls_x509_time* t1, const mbedtls_x509_time* t2 );
 
 #if defined(MBEDTLS_HAVE_TIME_DATE)
 /**
@@ -394,7 +405,7 @@ int mbedtls_x509_time_cmp(const mbedtls_x509_time *t1, const mbedtls_x509_time *
  * \return         \c 0 on success
  * \return         A non-zero return value on failure.
  */
-int mbedtls_x509_time_gmtime(mbedtls_time_t tt, mbedtls_x509_time *now);
+int mbedtls_x509_time_gmtime ( mbedtls_time_t tt, mbedtls_x509_time* now );
 #endif /* MBEDTLS_HAVE_TIME_DATE */
 
 /**
@@ -409,7 +420,7 @@ int mbedtls_x509_time_gmtime(mbedtls_time_t tt, mbedtls_x509_time *now);
  * \return         1 if the given time is in the past or an error occurred,
  *                 0 otherwise.
  */
-int mbedtls_x509_time_is_past(const mbedtls_x509_time *to);
+int mbedtls_x509_time_is_past ( const mbedtls_x509_time* to );
 
 /**
  * \brief          Check a given mbedtls_x509_time against the system time
@@ -423,7 +434,7 @@ int mbedtls_x509_time_is_past(const mbedtls_x509_time *to);
  * \return         1 if the given time is in the future or an error occurred,
  *                 0 otherwise.
  */
-int mbedtls_x509_time_is_future(const mbedtls_x509_time *from);
+int mbedtls_x509_time_is_future ( const mbedtls_x509_time* from );
 
 /**
  * \brief          This function parses an item in the SubjectAlternativeNames
@@ -457,14 +468,14 @@ int mbedtls_x509_time_is_future(const mbedtls_x509_time *from);
  *                 SAN type.
  * \return         Another negative value for any other failure.
  */
-int mbedtls_x509_parse_subject_alt_name(const mbedtls_x509_buf *san_buf,
-                                        mbedtls_x509_subject_alternative_name *san);
+int mbedtls_x509_parse_subject_alt_name ( const mbedtls_x509_buf* san_buf,
+    mbedtls_x509_subject_alternative_name* san );
 /**
  * \brief          Unallocate all data related to subject alternative name
  *
  * \param san      SAN structure - extra memory owned by this structure will be freed
  */
-void mbedtls_x509_free_subject_alt_name(mbedtls_x509_subject_alternative_name *san);
+void mbedtls_x509_free_subject_alt_name ( mbedtls_x509_subject_alternative_name* san );
 
 /**
  * \brief          This function parses a CN string as an IP address.
@@ -481,16 +492,16 @@ void mbedtls_x509_free_subject_alt_name(mbedtls_x509_subject_alternative_name *s
  * \return         Length of binary IP address; num bytes written to target.
  * \return         \c 0 on failure to parse CN string as an IP address.
  */
-size_t mbedtls_x509_crt_parse_cn_inet_pton(const char *cn, void *dst);
+size_t mbedtls_x509_crt_parse_cn_inet_pton ( const char* cn, void* dst );
 
 #define MBEDTLS_X509_SAFE_SNPRINTF                          \
-    do {                                                    \
-        if (ret < 0 || (size_t) ret >= n)                  \
-        return MBEDTLS_ERR_X509_BUFFER_TOO_SMALL;    \
-                                                          \
-        n -= (size_t) ret;                                  \
-        p += (size_t) ret;                                  \
-    } while (0)
+  do {                                                    \
+    if (ret < 0 || (size_t) ret >= n)                  \
+      return MBEDTLS_ERR_X509_BUFFER_TOO_SMALL;    \
+    \
+    n -= (size_t) ret;                                  \
+    p += (size_t) ret;                                  \
+  } while (0)
 
 #ifdef __cplusplus
 }

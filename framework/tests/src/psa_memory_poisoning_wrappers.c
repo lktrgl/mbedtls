@@ -12,20 +12,20 @@
 #if defined(MBEDTLS_TEST_HOOKS)  && defined(MBEDTLS_PSA_CRYPTO_C) \
     && defined(MBEDTLS_TEST_MEMORY_CAN_POISON)
 
-void mbedtls_poison_test_hooks_setup(void)
+void mbedtls_poison_test_hooks_setup ( void )
 {
-    psa_input_pre_copy_hook = mbedtls_test_memory_unpoison;
-    psa_input_post_copy_hook = mbedtls_test_memory_poison;
-    psa_output_pre_copy_hook = mbedtls_test_memory_unpoison;
-    psa_output_post_copy_hook = mbedtls_test_memory_poison;
+  psa_input_pre_copy_hook = mbedtls_test_memory_unpoison;
+  psa_input_post_copy_hook = mbedtls_test_memory_poison;
+  psa_output_pre_copy_hook = mbedtls_test_memory_unpoison;
+  psa_output_post_copy_hook = mbedtls_test_memory_poison;
 }
 
-void mbedtls_poison_test_hooks_teardown(void)
+void mbedtls_poison_test_hooks_teardown ( void )
 {
-    psa_input_pre_copy_hook = NULL;
-    psa_input_post_copy_hook = NULL;
-    psa_output_pre_copy_hook = NULL;
-    psa_output_post_copy_hook = NULL;
+  psa_input_pre_copy_hook = NULL;
+  psa_input_post_copy_hook = NULL;
+  psa_output_pre_copy_hook = NULL;
+  psa_output_post_copy_hook = NULL;
 }
 
 #endif /* MBEDTLS_TEST_HOOKS && MBEDTLS_PSA_CRYPTO_C &&

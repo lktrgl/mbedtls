@@ -33,7 +33,7 @@
 #define PSA_KEY_ID_VOLATILE_MAX (MBEDTLS_PSA_KEY_ID_BUILTIN_MIN - 1)
 #else /* MBEDTLS_PSA_KEY_STORE_DYNAMIC */
 #define PSA_KEY_ID_VOLATILE_MAX                                 \
-    (PSA_KEY_ID_VOLATILE_MIN + MBEDTLS_PSA_KEY_SLOT_COUNT - 1)
+  (PSA_KEY_ID_VOLATILE_MIN + MBEDTLS_PSA_KEY_SLOT_COUNT - 1)
 #endif /* MBEDTLS_PSA_KEY_STORE_DYNAMIC */
 
 /** Test whether a key identifier is a volatile key identifier.
@@ -45,10 +45,10 @@
  * \retval 0
  *         The key identifier is not a volatile key identifier.
  */
-static inline int psa_key_id_is_volatile(psa_key_id_t key_id)
+static inline int psa_key_id_is_volatile ( psa_key_id_t key_id )
 {
-    return (key_id >= PSA_KEY_ID_VOLATILE_MIN) &&
-           (key_id <= PSA_KEY_ID_VOLATILE_MAX);
+  return ( key_id >= PSA_KEY_ID_VOLATILE_MIN ) &&
+         ( key_id <= PSA_KEY_ID_VOLATILE_MAX );
 }
 
 /** Get the description of a key given its identifier and lock it.
@@ -90,15 +90,15 @@ static inline int psa_key_id_is_volatile(psa_key_id_t key_id)
  * \retval #PSA_ERROR_STORAGE_FAILURE \emptydescription
  * \retval #PSA_ERROR_DATA_CORRUPT \emptydescription
  */
-psa_status_t psa_get_and_lock_key_slot(mbedtls_svc_key_id_t key,
-                                       psa_key_slot_t **p_slot);
+psa_status_t psa_get_and_lock_key_slot ( mbedtls_svc_key_id_t key,
+    psa_key_slot_t** p_slot );
 
 /** Initialize the key slot structures.
  *
  * \retval #PSA_SUCCESS
  *         Currently this function always succeeds.
  */
-psa_status_t psa_initialize_key_slots(void);
+psa_status_t psa_initialize_key_slots ( void );
 
 #if defined(MBEDTLS_TEST_HOOKS) && defined(MBEDTLS_PSA_KEY_STORE_DYNAMIC)
 /* Allow test code to customize the key slice length. We use this in tests
@@ -111,11 +111,11 @@ psa_status_t psa_initialize_key_slots(void);
  * The length for a given slice index must not change while
  * the key store is initialized.
  */
-extern size_t (*mbedtls_test_hook_psa_volatile_key_slice_length)(
-    size_t slice_idx);
+extern size_t ( *mbedtls_test_hook_psa_volatile_key_slice_length ) (
+  size_t slice_idx );
 
 /* The number of volatile key slices. */
-size_t psa_key_slot_volatile_slice_count(void);
+size_t psa_key_slot_volatile_slice_count ( void );
 #endif
 
 /** Delete all data from key slots in memory.
@@ -123,7 +123,7 @@ size_t psa_key_slot_volatile_slice_count(void);
  * state and reader count. It should only be called when no slot is in use.
  *
  * This does not affect persistent storage. */
-void psa_wipe_all_key_slots(void);
+void psa_wipe_all_key_slots ( void );
 
 /** Find a free key slot and reserve it to be filled with a key.
  *
@@ -158,8 +158,8 @@ void psa_wipe_all_key_slots(void);
  *         This function attempted to operate on a key slot which was in an
  *         unexpected state.
  */
-psa_status_t psa_reserve_free_key_slot(psa_key_id_t *volatile_key_id,
-                                       psa_key_slot_t **p_slot);
+psa_status_t psa_reserve_free_key_slot ( psa_key_id_t* volatile_key_id,
+    psa_key_slot_t** p_slot );
 
 #if defined(MBEDTLS_PSA_KEY_STORE_DYNAMIC)
 /** Return a key slot to the free list.
@@ -180,8 +180,8 @@ psa_status_t psa_reserve_free_key_slot(psa_key_id_t *volatile_key_id,
  *         This function attempted to operate on a key slot which was in an
  *         unexpected state.
  */
-psa_status_t psa_free_key_slot(size_t slice_idx,
-                               psa_key_slot_t *slot);
+psa_status_t psa_free_key_slot ( size_t slice_idx,
+                                 psa_key_slot_t* slot );
 #endif /* MBEDTLS_PSA_KEY_STORE_DYNAMIC */
 
 /** Change the state of a key slot.
@@ -202,15 +202,17 @@ psa_status_t psa_free_key_slot(size_t slice_idx,
  * \retval #PSA_ERROR_CORRUPTION_DETECTED
  *             The slot's state was not expected_state.
  */
-static inline psa_status_t psa_key_slot_state_transition(
-    psa_key_slot_t *slot, psa_key_slot_state_t expected_state,
-    psa_key_slot_state_t new_state)
+static inline psa_status_t psa_key_slot_state_transition (
+  psa_key_slot_t* slot, psa_key_slot_state_t expected_state,
+  psa_key_slot_state_t new_state )
 {
-    if (slot->state != expected_state) {
-        return PSA_ERROR_CORRUPTION_DETECTED;
-    }
-    slot->state = new_state;
-    return PSA_SUCCESS;
+  if ( slot->state != expected_state )
+  {
+    return PSA_ERROR_CORRUPTION_DETECTED;
+  }
+
+  slot->state = new_state;
+  return PSA_SUCCESS;
 }
 
 /** Register as a reader of a key slot.
@@ -227,15 +229,17 @@ static inline psa_status_t psa_key_slot_state_transition(
  *             The reader counter already reached its maximum value and was not
  *             increased, or the slot's state was not PSA_SLOT_FULL.
  */
-static inline psa_status_t psa_register_read(psa_key_slot_t *slot)
+static inline psa_status_t psa_register_read ( psa_key_slot_t* slot )
 {
-    if ((slot->state != PSA_SLOT_FULL) ||
-        (slot->var.occupied.registered_readers >= SIZE_MAX)) {
-        return PSA_ERROR_CORRUPTION_DETECTED;
-    }
-    slot->var.occupied.registered_readers++;
+  if ( ( slot->state != PSA_SLOT_FULL ) ||
+       ( slot->var.occupied.registered_readers >= SIZE_MAX ) )
+  {
+    return PSA_ERROR_CORRUPTION_DETECTED;
+  }
 
-    return PSA_SUCCESS;
+  slot->var.occupied.registered_readers++;
+
+  return PSA_SUCCESS;
 }
 
 /** Unregister from reading a key slot.
@@ -262,7 +266,7 @@ static inline psa_status_t psa_register_read(psa_key_slot_t *slot)
  *             PSA_SLOT_PENDING_DELETION.
  *             Or registered_readers was equal to 0.
  */
-psa_status_t psa_unregister_read(psa_key_slot_t *slot);
+psa_status_t psa_unregister_read ( psa_key_slot_t* slot );
 
 /** Wrap a call to psa_unregister_read in the global key slot mutex.
  *
@@ -283,7 +287,7 @@ psa_status_t psa_unregister_read(psa_key_slot_t *slot);
  *             PSA_SLOT_PENDING_DELETION.
  *             Or registered_readers was equal to 0.
  */
-psa_status_t psa_unregister_read_under_mutex(psa_key_slot_t *slot);
+psa_status_t psa_unregister_read_under_mutex ( psa_key_slot_t* slot );
 
 /** Test whether a lifetime designates a key in an external cryptoprocessor.
  *
@@ -297,10 +301,10 @@ psa_status_t psa_unregister_read_under_mutex(psa_key_slot_t *slot);
  *         The lifetime designates a key that is volatile or in internal
  *         storage.
  */
-static inline int psa_key_lifetime_is_external(psa_key_lifetime_t lifetime)
+static inline int psa_key_lifetime_is_external ( psa_key_lifetime_t lifetime )
 {
-    return PSA_KEY_LIFETIME_GET_LOCATION(lifetime)
-           != PSA_KEY_LOCATION_LOCAL_STORAGE;
+  return PSA_KEY_LIFETIME_GET_LOCATION ( lifetime )
+         != PSA_KEY_LOCATION_LOCAL_STORAGE;
 }
 
 /** Validate a key's location.
@@ -317,8 +321,8 @@ static inline int psa_key_lifetime_is_external(psa_key_lifetime_t lifetime)
  * \retval #PSA_SUCCESS \emptydescription
  * \retval #PSA_ERROR_INVALID_ARGUMENT \emptydescription
  */
-psa_status_t psa_validate_key_location(psa_key_lifetime_t lifetime,
-                                       psa_se_drv_table_entry_t **p_drv);
+psa_status_t psa_validate_key_location ( psa_key_lifetime_t lifetime,
+    psa_se_drv_table_entry_t** p_drv );
 
 /** Validate the persistence of a key.
  *
@@ -328,7 +332,7 @@ psa_status_t psa_validate_key_location(psa_key_lifetime_t lifetime,
  * \retval #PSA_ERROR_NOT_SUPPORTED The key is persistent but persistent keys
  *             are not supported.
  */
-psa_status_t psa_validate_key_persistence(psa_key_lifetime_t lifetime);
+psa_status_t psa_validate_key_persistence ( psa_key_lifetime_t lifetime );
 
 /** Validate a key identifier.
  *
@@ -339,6 +343,6 @@ psa_status_t psa_validate_key_persistence(psa_key_lifetime_t lifetime);
  *
  * \retval <> 0 if the key identifier is valid, 0 otherwise.
  */
-int psa_is_valid_key_id(mbedtls_svc_key_id_t key, int vendor_ok);
+int psa_is_valid_key_id ( mbedtls_svc_key_id_t key, int vendor_ok );
 
 #endif /* PSA_CRYPTO_SLOT_MANAGEMENT_H */

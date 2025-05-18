@@ -21,9 +21,9 @@
 #define MBEDTLS_ERR_PADLOCK_DATA_MISALIGNED               -0x0030  /**< Input data should be aligned. */
 
 #if defined(__has_feature)
-#if __has_feature(address_sanitizer)
-#define MBEDTLS_HAVE_ASAN
-#endif
+  #if __has_feature(address_sanitizer)
+    #define MBEDTLS_HAVE_ASAN
+  #endif
 #endif
 
 /*
@@ -60,7 +60,7 @@ extern "C" {
  *
  * \return         non-zero if CPU has support for the feature, 0 otherwise
  */
-int mbedtls_padlock_has_support(int feature);
+int mbedtls_padlock_has_support ( int feature );
 
 /**
  * \brief          Internal PadLock AES-ECB block en(de)cryption
@@ -75,10 +75,10 @@ int mbedtls_padlock_has_support(int feature);
  *
  * \return         0 if success, 1 if operation failed
  */
-int mbedtls_padlock_xcryptecb(mbedtls_aes_context *ctx,
-                              int mode,
-                              const unsigned char input[16],
-                              unsigned char output[16]);
+int mbedtls_padlock_xcryptecb ( mbedtls_aes_context* ctx,
+                                int mode,
+                                const unsigned char input[16],
+                                unsigned char output[16] );
 
 /**
  * \brief          Internal PadLock AES-CBC buffer en(de)cryption
@@ -95,12 +95,12 @@ int mbedtls_padlock_xcryptecb(mbedtls_aes_context *ctx,
  *
  * \return         0 if success, 1 if operation failed
  */
-int mbedtls_padlock_xcryptcbc(mbedtls_aes_context *ctx,
-                              int mode,
-                              size_t length,
-                              unsigned char iv[16],
-                              const unsigned char *input,
-                              unsigned char *output);
+int mbedtls_padlock_xcryptcbc ( mbedtls_aes_context* ctx,
+                                int mode,
+                                size_t length,
+                                unsigned char iv[16],
+                                const unsigned char* input,
+                                unsigned char* output );
 
 #ifdef __cplusplus
 }

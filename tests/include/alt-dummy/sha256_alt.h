@@ -7,8 +7,9 @@
 #ifndef SHA256_ALT_H
 #define SHA256_ALT_H
 
-typedef struct mbedtls_sha256_context {
-    int dummy;
+typedef struct mbedtls_sha256_context
+{
+  int dummy;
 }
 mbedtls_sha256_context;
 

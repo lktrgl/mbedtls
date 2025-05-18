@@ -254,19 +254,20 @@ extern "C" {
 /* Reminder: update mbedtls_ssl_premaster_secret when adding a new key exchange.
  * Reminder: update MBEDTLS_KEY_EXCHANGE__xxx below
  */
-typedef enum {
-    MBEDTLS_KEY_EXCHANGE_NONE = 0,
-    MBEDTLS_KEY_EXCHANGE_RSA,
-    MBEDTLS_KEY_EXCHANGE_DHE_RSA,
-    MBEDTLS_KEY_EXCHANGE_ECDHE_RSA,
-    MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA,
-    MBEDTLS_KEY_EXCHANGE_PSK,
-    MBEDTLS_KEY_EXCHANGE_DHE_PSK,
-    MBEDTLS_KEY_EXCHANGE_RSA_PSK,
-    MBEDTLS_KEY_EXCHANGE_ECDHE_PSK,
-    MBEDTLS_KEY_EXCHANGE_ECDH_RSA,
-    MBEDTLS_KEY_EXCHANGE_ECDH_ECDSA,
-    MBEDTLS_KEY_EXCHANGE_ECJPAKE,
+typedef enum
+{
+  MBEDTLS_KEY_EXCHANGE_NONE = 0,
+  MBEDTLS_KEY_EXCHANGE_RSA,
+  MBEDTLS_KEY_EXCHANGE_DHE_RSA,
+  MBEDTLS_KEY_EXCHANGE_ECDHE_RSA,
+  MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA,
+  MBEDTLS_KEY_EXCHANGE_PSK,
+  MBEDTLS_KEY_EXCHANGE_DHE_PSK,
+  MBEDTLS_KEY_EXCHANGE_RSA_PSK,
+  MBEDTLS_KEY_EXCHANGE_ECDHE_PSK,
+  MBEDTLS_KEY_EXCHANGE_ECDH_RSA,
+  MBEDTLS_KEY_EXCHANGE_ECDH_ECDSA,
+  MBEDTLS_KEY_EXCHANGE_ECJPAKE,
 } mbedtls_key_exchange_type_t;
 
 /* Key exchanges using a certificate */
@@ -445,35 +446,36 @@ typedef struct mbedtls_ssl_ciphersuite_t mbedtls_ssl_ciphersuite_t;
  *          in order to pack structure and reduce memory usage by internal
  *          \c ciphersuite_definitions[]
  */
-struct mbedtls_ssl_ciphersuite_t {
-    int MBEDTLS_PRIVATE(id);
-    const char *MBEDTLS_PRIVATE(name);
+struct mbedtls_ssl_ciphersuite_t
+{
+  int MBEDTLS_PRIVATE ( id );
+  const char* MBEDTLS_PRIVATE ( name );
 
-    uint8_t MBEDTLS_PRIVATE(cipher);           /* mbedtls_cipher_type_t */
-    uint8_t MBEDTLS_PRIVATE(mac);              /* mbedtls_md_type_t */
-    uint8_t MBEDTLS_PRIVATE(key_exchange);     /* mbedtls_key_exchange_type_t */
-    uint8_t MBEDTLS_PRIVATE(flags);
+  uint8_t MBEDTLS_PRIVATE ( cipher );        /* mbedtls_cipher_type_t */
+  uint8_t MBEDTLS_PRIVATE ( mac );           /* mbedtls_md_type_t */
+  uint8_t MBEDTLS_PRIVATE ( key_exchange );  /* mbedtls_key_exchange_type_t */
+  uint8_t MBEDTLS_PRIVATE ( flags );
 
-    uint16_t MBEDTLS_PRIVATE(min_tls_version); /* mbedtls_ssl_protocol_version */
-    uint16_t MBEDTLS_PRIVATE(max_tls_version); /* mbedtls_ssl_protocol_version */
+  uint16_t MBEDTLS_PRIVATE ( min_tls_version ); /* mbedtls_ssl_protocol_version */
+  uint16_t MBEDTLS_PRIVATE ( max_tls_version ); /* mbedtls_ssl_protocol_version */
 };
 
-const int *mbedtls_ssl_list_ciphersuites(void);
+const int* mbedtls_ssl_list_ciphersuites ( void );
 
-const mbedtls_ssl_ciphersuite_t *mbedtls_ssl_ciphersuite_from_string(const char *ciphersuite_name);
-const mbedtls_ssl_ciphersuite_t *mbedtls_ssl_ciphersuite_from_id(int ciphersuite_id);
+const mbedtls_ssl_ciphersuite_t* mbedtls_ssl_ciphersuite_from_string ( const char* ciphersuite_name );
+const mbedtls_ssl_ciphersuite_t* mbedtls_ssl_ciphersuite_from_id ( int ciphersuite_id );
 
-static inline const char *mbedtls_ssl_ciphersuite_get_name(const mbedtls_ssl_ciphersuite_t *info)
+static inline const char* mbedtls_ssl_ciphersuite_get_name ( const mbedtls_ssl_ciphersuite_t* info )
 {
-    return info->MBEDTLS_PRIVATE(name);
+  return info->MBEDTLS_PRIVATE ( name );
 }
 
-static inline int mbedtls_ssl_ciphersuite_get_id(const mbedtls_ssl_ciphersuite_t *info)
+static inline int mbedtls_ssl_ciphersuite_get_id ( const mbedtls_ssl_ciphersuite_t* info )
 {
-    return info->MBEDTLS_PRIVATE(id);
+  return info->MBEDTLS_PRIVATE ( id );
 }
 
-size_t mbedtls_ssl_ciphersuite_get_cipher_key_bitlen(const mbedtls_ssl_ciphersuite_t *info);
+size_t mbedtls_ssl_ciphersuite_get_cipher_key_bitlen ( const mbedtls_ssl_ciphersuite_t* info );
 
 #ifdef __cplusplus
 }

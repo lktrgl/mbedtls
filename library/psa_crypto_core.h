@@ -21,7 +21,7 @@
 #include "psa/crypto.h"
 #include "psa/crypto_se_driver.h"
 #if defined(MBEDTLS_THREADING_C)
-#include "mbedtls/threading.h"
+  #include "mbedtls/threading.h"
 #endif
 
 /**
@@ -34,122 +34,128 @@
  *
  * \return 1 if the driver subsytem is ready, 0 otherwise.
  */
-int psa_can_do_cipher(psa_key_type_t key_type, psa_algorithm_t cipher_alg);
+int psa_can_do_cipher ( psa_key_type_t key_type, psa_algorithm_t cipher_alg );
 
-typedef enum {
-    PSA_SLOT_EMPTY = 0,
-    PSA_SLOT_FILLING,
-    PSA_SLOT_FULL,
-    PSA_SLOT_PENDING_DELETION,
+typedef enum
+{
+  PSA_SLOT_EMPTY = 0,
+  PSA_SLOT_FILLING,
+  PSA_SLOT_FULL,
+  PSA_SLOT_PENDING_DELETION,
 } psa_key_slot_state_t;
 
 /** The data structure representing a key slot, containing key material
  * and metadata for one key.
  */
-typedef struct {
-    /* This field is accessed in a lot of places. Putting it first
-     * reduces the code size. */
-    psa_key_attributes_t attr;
+typedef struct
+{
+  /* This field is accessed in a lot of places. Putting it first
+   * reduces the code size. */
+  psa_key_attributes_t attr;
 
-    /*
-     * The current state of the key slot, as described in
-     * docs/architecture/psa-thread-safety/psa-thread-safety.md.
-     *
-     * Library functions can modify the state of a key slot by calling
-     * psa_key_slot_state_transition.
-     *
-     * The state variable is used to help determine whether library functions
-     * which operate on the slot succeed. For example, psa_finish_key_creation,
-     * which transfers the state of a slot from PSA_SLOT_FILLING to
-     * PSA_SLOT_FULL, must fail with error code PSA_ERROR_CORRUPTION_DETECTED
-     * if the state of the slot is not PSA_SLOT_FILLING.
-     *
-     * Library functions which traverse the array of key slots only consider
-     * slots that are in a suitable state for the function.
-     * For example, psa_get_and_lock_key_slot_in_memory, which finds a slot
-     * containing a given key ID, will only check slots whose state variable is
-     * PSA_SLOT_FULL.
-     */
-    psa_key_slot_state_t state;
+  /*
+   * The current state of the key slot, as described in
+   * docs/architecture/psa-thread-safety/psa-thread-safety.md.
+   *
+   * Library functions can modify the state of a key slot by calling
+   * psa_key_slot_state_transition.
+   *
+   * The state variable is used to help determine whether library functions
+   * which operate on the slot succeed. For example, psa_finish_key_creation,
+   * which transfers the state of a slot from PSA_SLOT_FILLING to
+   * PSA_SLOT_FULL, must fail with error code PSA_ERROR_CORRUPTION_DETECTED
+   * if the state of the slot is not PSA_SLOT_FILLING.
+   *
+   * Library functions which traverse the array of key slots only consider
+   * slots that are in a suitable state for the function.
+   * For example, psa_get_and_lock_key_slot_in_memory, which finds a slot
+   * containing a given key ID, will only check slots whose state variable is
+   * PSA_SLOT_FULL.
+   */
+  psa_key_slot_state_t state;
 
 #if defined(MBEDTLS_PSA_KEY_STORE_DYNAMIC)
-    /* The index of the slice containing this slot.
-     * This field must be filled if the slot contains a key
-     * (including keys being created or destroyed), and can be either
-     * filled or 0 when the slot is free.
-     *
-     * In most cases, the slice index can be deduced from the key identifer.
-     * We keep it in a separate field for robustness (it reduces the chance
-     * that a coding mistake in the key store will result in accessing the
-     * wrong slice), and also so that it's available even on code paths
-     * during creation or destruction where the key identifier might not be
-     * filled in.
-     * */
-    uint8_t slice_index;
+  /* The index of the slice containing this slot.
+   * This field must be filled if the slot contains a key
+   * (including keys being created or destroyed), and can be either
+   * filled or 0 when the slot is free.
+   *
+   * In most cases, the slice index can be deduced from the key identifer.
+   * We keep it in a separate field for robustness (it reduces the chance
+   * that a coding mistake in the key store will result in accessing the
+   * wrong slice), and also so that it's available even on code paths
+   * during creation or destruction where the key identifier might not be
+   * filled in.
+   * */
+  uint8_t slice_index;
 #endif /* MBEDTLS_PSA_KEY_STORE_DYNAMIC */
 
-    union {
-        struct {
-            /* The index of the next slot in the free list for this
-             * slice, relative * to the next array element.
-             *
-             * That is, 0 means the next slot, 1 means the next slot
-             * but one, etc. -1 would mean the slot itself. -2 means
-             * the previous slot, etc.
-             *
-             * If this is beyond the array length, the free list ends with the
-             * current element.
-             *
-             * The reason for this strange encoding is that 0 means the next
-             * element. This way, when we allocate a slice and initialize it
-             * to all-zero, the slice is ready for use, with a free list that
-             * consists of all the slots in order.
-             */
-            int32_t next_free_relative_to_next;
-        } free;
+  union
+  {
+    struct
+    {
+      /* The index of the next slot in the free list for this
+       * slice, relative * to the next array element.
+       *
+       * That is, 0 means the next slot, 1 means the next slot
+       * but one, etc. -1 would mean the slot itself. -2 means
+       * the previous slot, etc.
+       *
+       * If this is beyond the array length, the free list ends with the
+       * current element.
+       *
+       * The reason for this strange encoding is that 0 means the next
+       * element. This way, when we allocate a slice and initialize it
+       * to all-zero, the slice is ready for use, with a free list that
+       * consists of all the slots in order.
+       */
+      int32_t next_free_relative_to_next;
+    } free;
 
-        struct {
-            /*
-             * Number of functions registered as reading the material in the key slot.
-             *
-             * Library functions must not write directly to registered_readers
-             *
-             * A function must call psa_register_read(slot) before reading
-             * the current contents of the slot for an operation.
-             * They then must call psa_unregister_read(slot) once they have
-             * finished reading the current contents of the slot. If the key
-             * slot mutex is not held (when mutexes are enabled), this call
-             * must be done via a call to
-             * psa_unregister_read_under_mutex(slot).
-             * A function must call psa_key_slot_has_readers(slot) to check if
-             * the slot is in use for reading.
-             *
-             * This counter is used to prevent resetting the key slot while
-             * the library may access it. For example, such control is needed
-             * in the following scenarios:
-             * . In case of key slot starvation, all key slots contain the
-             *   description of a key, and the library asks for the
-             *   description of a persistent key not present in the
-             *   key slots, the key slots currently accessed by the
-             *   library cannot be reclaimed to free a key slot to load
-             *   the persistent key.
-             * . In case of a multi-threaded application where one thread
-             *   asks to close or purge or destroy a key while it is in use
-             *   by the library through another thread. */
-            size_t registered_readers;
-        } occupied;
-    } var;
+    struct
+    {
+      /*
+       * Number of functions registered as reading the material in the key slot.
+       *
+       * Library functions must not write directly to registered_readers
+       *
+       * A function must call psa_register_read(slot) before reading
+       * the current contents of the slot for an operation.
+       * They then must call psa_unregister_read(slot) once they have
+       * finished reading the current contents of the slot. If the key
+       * slot mutex is not held (when mutexes are enabled), this call
+       * must be done via a call to
+       * psa_unregister_read_under_mutex(slot).
+       * A function must call psa_key_slot_has_readers(slot) to check if
+       * the slot is in use for reading.
+       *
+       * This counter is used to prevent resetting the key slot while
+       * the library may access it. For example, such control is needed
+       * in the following scenarios:
+       * . In case of key slot starvation, all key slots contain the
+       *   description of a key, and the library asks for the
+       *   description of a persistent key not present in the
+       *   key slots, the key slots currently accessed by the
+       *   library cannot be reclaimed to free a key slot to load
+       *   the persistent key.
+       * . In case of a multi-threaded application where one thread
+       *   asks to close or purge or destroy a key while it is in use
+       *   by the library through another thread. */
+      size_t registered_readers;
+    } occupied;
+  } var;
 
-    /* Dynamically allocated key data buffer.
-     * Format as specified in psa_export_key(). */
-    struct key_data {
+  /* Dynamically allocated key data buffer.
+   * Format as specified in psa_export_key(). */
+  struct key_data
+  {
 #if defined(MBEDTLS_PSA_STATIC_KEY_SLOTS)
-        uint8_t data[MBEDTLS_PSA_STATIC_KEY_SLOT_BUFFER_SIZE];
+    uint8_t data[MBEDTLS_PSA_STATIC_KEY_SLOT_BUFFER_SIZE];
 #else
-        uint8_t *data;
+    uint8_t* data;
 #endif
-        size_t bytes;
-    } key;
+    size_t bytes;
+  } key;
 } psa_key_slot_t;
 
 #if defined(MBEDTLS_THREADING_C)
@@ -164,15 +170,15 @@ typedef struct {
  *  f is a mutex operation which returns 0 upon success.
  */
 #define PSA_THREADING_CHK_RET(f)                       \
-    do                                                 \
-    {                                                  \
-        if ((f) != 0) {                                \
-            if (status == PSA_SUCCESS) {               \
-                return PSA_ERROR_SERVICE_FAILURE;      \
-            }                                          \
-            return status;                             \
-        }                                              \
-    } while (0);
+  do                                                 \
+  {                                                  \
+    if ((f) != 0) {                                \
+      if (status == PSA_SUCCESS) {               \
+        return PSA_ERROR_SERVICE_FAILURE;      \
+      }                                          \
+      return status;                             \
+    }                                              \
+  } while (0);
 
 /** Perform a mutex operation and goto exit on failure.
  *
@@ -184,15 +190,15 @@ typedef struct {
  *  f is a mutex operation which returns 0 upon success.
  */
 #define PSA_THREADING_CHK_GOTO_EXIT(f)                 \
-    do                                                 \
-    {                                                  \
-        if ((f) != 0) {                                \
-            if (status == PSA_SUCCESS) {               \
-                status = PSA_ERROR_SERVICE_FAILURE;    \
-            }                                          \
-            goto exit;                                 \
-        }                                              \
-    } while (0);
+  do                                                 \
+  {                                                  \
+    if ((f) != 0) {                                \
+      if (status == PSA_SUCCESS) {               \
+        status = PSA_ERROR_SERVICE_FAILURE;    \
+      }                                          \
+      goto exit;                                 \
+    }                                              \
+  } while (0);
 #endif
 
 /** Test whether a key slot has any registered readers.
@@ -203,9 +209,9 @@ typedef struct {
  *
  * \return 1 if the slot has any registered readers, 0 otherwise.
  */
-static inline int psa_key_slot_has_readers(const psa_key_slot_t *slot)
+static inline int psa_key_slot_has_readers ( const psa_key_slot_t* slot )
 {
-    return slot->var.occupied.registered_readers > 0;
+  return slot->var.occupied.registered_readers > 0;
 }
 
 #if defined(MBEDTLS_PSA_CRYPTO_SE_C)
@@ -215,10 +221,10 @@ static inline int psa_key_slot_has_readers(const psa_key_slot_t *slot)
  *                   the description of a key of a dynamically registered
  *                   secure element, otherwise the behaviour is undefined.
  */
-static inline psa_key_slot_number_t psa_key_slot_get_slot_number(
-    const psa_key_slot_t *slot)
+static inline psa_key_slot_number_t psa_key_slot_get_slot_number (
+  const psa_key_slot_t* slot )
 {
-    return *((psa_key_slot_number_t *) (slot->key.data));
+  return * ( ( psa_key_slot_number_t* ) ( slot->key.data ) );
 }
 #endif
 
@@ -240,7 +246,7 @@ static inline psa_key_slot_number_t psa_key_slot_get_slot_number(
  *         the slot's state was PSA_SLOT_FILLING, and the amount
  *         of registered readers was not equal to 0.
  */
-psa_status_t psa_wipe_key_slot(psa_key_slot_t *slot);
+psa_status_t psa_wipe_key_slot ( psa_key_slot_t* slot );
 
 /** Try to allocate a buffer to an empty key slot.
  *
@@ -254,11 +260,11 @@ psa_status_t psa_wipe_key_slot(psa_key_slot_t *slot);
  * \retval #PSA_ERROR_ALREADY_EXISTS
  *         Trying to allocate a buffer to a non-empty key slot.
  */
-psa_status_t psa_allocate_buffer_to_slot(psa_key_slot_t *slot,
-                                         size_t buffer_length);
+psa_status_t psa_allocate_buffer_to_slot ( psa_key_slot_t* slot,
+    size_t buffer_length );
 
 /** Wipe key data from a slot. Preserves metadata such as the policy. */
-psa_status_t psa_remove_key_data_from_memory(psa_key_slot_t *slot);
+psa_status_t psa_remove_key_data_from_memory ( psa_key_slot_t* slot );
 
 /** Copy key data (in export format) into an empty key slot.
  *
@@ -277,9 +283,9 @@ psa_status_t psa_remove_key_data_from_memory(psa_key_slot_t *slot);
  * \retval #PSA_ERROR_ALREADY_EXISTS
  *         There was other key material already present in the slot.
  */
-psa_status_t psa_copy_key_material_into_slot(psa_key_slot_t *slot,
-                                             const uint8_t *data,
-                                             size_t data_length);
+psa_status_t psa_copy_key_material_into_slot ( psa_key_slot_t* slot,
+    const uint8_t* data,
+    size_t data_length );
 
 /** Convert an Mbed TLS error code to a PSA error code
  *
@@ -290,7 +296,7 @@ psa_status_t psa_copy_key_material_into_slot(psa_key_slot_t *slot,
  *
  * \return              The corresponding PSA error code
  */
-psa_status_t mbedtls_to_psa_error(int ret);
+psa_status_t mbedtls_to_psa_error ( int ret );
 
 /** Import a key in binary format.
  *
@@ -318,11 +324,11 @@ psa_status_t mbedtls_to_psa_error(int ret);
  * \retval #PSA_ERROR_INSUFFICIENT_MEMORY \emptydescription
  * \retval #PSA_ERROR_CORRUPTION_DETECTED \emptydescription
  */
-psa_status_t psa_import_key_into_slot(
-    const psa_key_attributes_t *attributes,
-    const uint8_t *data, size_t data_length,
-    uint8_t *key_buffer, size_t key_buffer_size,
-    size_t *key_buffer_length, size_t *bits);
+psa_status_t psa_import_key_into_slot (
+  const psa_key_attributes_t* attributes,
+  const uint8_t* data, size_t data_length,
+  uint8_t* key_buffer, size_t key_buffer_size,
+  size_t* key_buffer_length, size_t* bits );
 
 /** Export a key in binary format
  *
@@ -346,10 +352,10 @@ psa_status_t psa_import_key_into_slot(
  * \retval #PSA_ERROR_STORAGE_FAILURE \emptydescription
  * \retval #PSA_ERROR_INSUFFICIENT_MEMORY \emptydescription
  */
-psa_status_t psa_export_key_internal(
-    const psa_key_attributes_t *attributes,
-    const uint8_t *key_buffer, size_t key_buffer_size,
-    uint8_t *data, size_t data_size, size_t *data_length);
+psa_status_t psa_export_key_internal (
+  const psa_key_attributes_t* attributes,
+  const uint8_t* key_buffer, size_t key_buffer_size,
+  uint8_t* data, size_t data_size, size_t* data_length );
 
 /** Export a public key or the public part of a key pair in binary format.
  *
@@ -374,10 +380,10 @@ psa_status_t psa_export_key_internal(
  * \retval #PSA_ERROR_STORAGE_FAILURE \emptydescription
  * \retval #PSA_ERROR_INSUFFICIENT_MEMORY \emptydescription
  */
-psa_status_t psa_export_public_key_internal(
-    const psa_key_attributes_t *attributes,
-    const uint8_t *key_buffer, size_t key_buffer_size,
-    uint8_t *data, size_t data_size, size_t *data_length);
+psa_status_t psa_export_public_key_internal (
+  const psa_key_attributes_t* attributes,
+  const uint8_t* key_buffer, size_t key_buffer_size,
+  uint8_t* data, size_t data_size, size_t* data_length );
 
 /** Whether a key custom production parameters structure is the default.
  *
@@ -388,9 +394,9 @@ psa_status_t psa_export_public_key_internal(
  * \param custom_data_length    Size of the associated variable-length data
  *                              in bytes.
  */
-int psa_custom_key_parameters_are_default(
-    const psa_custom_key_parameters_t *custom,
-    size_t custom_data_length);
+int psa_custom_key_parameters_are_default (
+  const psa_custom_key_parameters_t* custom,
+  size_t custom_data_length );
 
 /**
  * \brief Generate a key.
@@ -415,13 +421,13 @@ int psa_custom_key_parameters_are_default(
  * \retval #PSA_ERROR_BUFFER_TOO_SMALL
  *         The size of \p key_buffer is too small.
  */
-psa_status_t psa_generate_key_internal(const psa_key_attributes_t *attributes,
-                                       const psa_custom_key_parameters_t *custom,
-                                       const uint8_t *custom_data,
-                                       size_t custom_data_length,
-                                       uint8_t *key_buffer,
-                                       size_t key_buffer_size,
-                                       size_t *key_buffer_length);
+psa_status_t psa_generate_key_internal ( const psa_key_attributes_t* attributes,
+    const psa_custom_key_parameters_t* custom,
+    const uint8_t* custom_data,
+    size_t custom_data_length,
+    uint8_t* key_buffer,
+    size_t key_buffer_size,
+    size_t* key_buffer_length );
 
 /** Sign a message with a private key. For hash-and-sign algorithms,
  *  this includes the hashing step.
@@ -460,11 +466,11 @@ psa_status_t psa_generate_key_internal(const psa_key_attributes_t *attributes,
  * \retval #PSA_ERROR_CORRUPTION_DETECTED \emptydescription
  * \retval #PSA_ERROR_INSUFFICIENT_ENTROPY \emptydescription
  */
-psa_status_t psa_sign_message_builtin(
-    const psa_key_attributes_t *attributes,
-    const uint8_t *key_buffer, size_t key_buffer_size,
-    psa_algorithm_t alg, const uint8_t *input, size_t input_length,
-    uint8_t *signature, size_t signature_size, size_t *signature_length);
+psa_status_t psa_sign_message_builtin (
+  const psa_key_attributes_t* attributes,
+  const uint8_t* key_buffer, size_t key_buffer_size,
+  psa_algorithm_t alg, const uint8_t* input, size_t input_length,
+  uint8_t* signature, size_t signature_size, size_t* signature_length );
 
 /** Verify the signature of a message with a public key, using
  *  a hash-and-sign verification algorithm.
@@ -497,11 +503,11 @@ psa_status_t psa_sign_message_builtin(
  * \retval #PSA_ERROR_INVALID_ARGUMENT \emptydescription
  * \retval #PSA_ERROR_INSUFFICIENT_MEMORY \emptydescription
  */
-psa_status_t psa_verify_message_builtin(
-    const psa_key_attributes_t *attributes,
-    const uint8_t *key_buffer, size_t key_buffer_size,
-    psa_algorithm_t alg, const uint8_t *input, size_t input_length,
-    const uint8_t *signature, size_t signature_length);
+psa_status_t psa_verify_message_builtin (
+  const psa_key_attributes_t* attributes,
+  const uint8_t* key_buffer, size_t key_buffer_size,
+  psa_algorithm_t alg, const uint8_t* input, size_t input_length,
+  const uint8_t* signature, size_t signature_length );
 
 /** Sign an already-calculated hash with a private key.
  *
@@ -536,11 +542,11 @@ psa_status_t psa_verify_message_builtin(
  * \retval #PSA_ERROR_CORRUPTION_DETECTED \emptydescription
  * \retval #PSA_ERROR_INSUFFICIENT_ENTROPY \emptydescription
  */
-psa_status_t psa_sign_hash_builtin(
-    const psa_key_attributes_t *attributes,
-    const uint8_t *key_buffer, size_t key_buffer_size,
-    psa_algorithm_t alg, const uint8_t *hash, size_t hash_length,
-    uint8_t *signature, size_t signature_size, size_t *signature_length);
+psa_status_t psa_sign_hash_builtin (
+  const psa_key_attributes_t* attributes,
+  const uint8_t* key_buffer, size_t key_buffer_size,
+  psa_algorithm_t alg, const uint8_t* hash, size_t hash_length,
+  uint8_t* signature, size_t signature_size, size_t* signature_length );
 
 /**
  * \brief Verify the signature a hash or short message using a public key.
@@ -571,11 +577,11 @@ psa_status_t psa_sign_hash_builtin(
  * \retval #PSA_ERROR_INVALID_ARGUMENT \emptydescription
  * \retval #PSA_ERROR_INSUFFICIENT_MEMORY \emptydescription
  */
-psa_status_t psa_verify_hash_builtin(
-    const psa_key_attributes_t *attributes,
-    const uint8_t *key_buffer, size_t key_buffer_size,
-    psa_algorithm_t alg, const uint8_t *hash, size_t hash_length,
-    const uint8_t *signature, size_t signature_length);
+psa_status_t psa_verify_hash_builtin (
+  const psa_key_attributes_t* attributes,
+  const uint8_t* key_buffer, size_t key_buffer_size,
+  psa_algorithm_t alg, const uint8_t* hash, size_t hash_length,
+  const uint8_t* signature, size_t signature_length );
 
 /**
  * \brief Validate the key bit size for unstructured keys.
@@ -594,8 +600,8 @@ psa_status_t psa_verify_hash_builtin(
  *         The type and/or the size in bits of the key or the combination of
  *         the two is not supported.
  */
-psa_status_t psa_validate_unstructured_key_bit_size(psa_key_type_t type,
-                                                    size_t bits);
+psa_status_t psa_validate_unstructured_key_bit_size ( psa_key_type_t type,
+    size_t bits );
 
 /** Perform a key agreement and return the raw shared secret, using
     built-in raw key agreement functions.
@@ -643,16 +649,16 @@ psa_status_t psa_validate_unstructured_key_bit_size(psa_key_type_t type,
  * \retval #PSA_ERROR_STORAGE_FAILURE \emptydescription
  * \retval #PSA_ERROR_BAD_STATE \emptydescription
  */
-psa_status_t psa_key_agreement_raw_builtin(
-    const psa_key_attributes_t *attributes,
-    const uint8_t *key_buffer,
-    size_t key_buffer_size,
-    psa_algorithm_t alg,
-    const uint8_t *peer_key,
-    size_t peer_key_length,
-    uint8_t *shared_secret,
-    size_t shared_secret_size,
-    size_t *shared_secret_length);
+psa_status_t psa_key_agreement_raw_builtin (
+  const psa_key_attributes_t* attributes,
+  const uint8_t* key_buffer,
+  size_t key_buffer_size,
+  psa_algorithm_t alg,
+  const uint8_t* peer_key,
+  size_t peer_key_length,
+  uint8_t* shared_secret,
+  size_t shared_secret_size,
+  size_t* shared_secret_length );
 
 /**
  * \brief Set the maximum number of ops allowed to be executed by an
@@ -669,7 +675,7 @@ psa_status_t psa_key_agreement_raw_builtin(
  *                              is obviously the least amount of work done per
  *                              call.
  */
-void mbedtls_psa_interruptible_set_max_ops(uint32_t max_ops);
+void mbedtls_psa_interruptible_set_max_ops ( uint32_t max_ops );
 
 /**
  * \brief Get the maximum number of ops allowed to be executed by an
@@ -683,7 +689,7 @@ void mbedtls_psa_interruptible_set_max_ops(uint32_t max_ops);
  * \return                      Maximum number of ops allowed to be executed
  *                              by an interruptible function in a single call.
  */
-uint32_t mbedtls_psa_interruptible_get_max_ops(void);
+uint32_t mbedtls_psa_interruptible_get_max_ops ( void );
 
 /**
  * \brief Get the number of ops that a hash signing operation has taken for the
@@ -703,8 +709,8 @@ uint32_t mbedtls_psa_interruptible_get_max_ops(void);
  *                              in the last call to \c
  *                              mbedtls_psa_sign_hash_complete().
  */
-uint32_t mbedtls_psa_sign_hash_get_num_ops(
-    const mbedtls_psa_sign_hash_interruptible_operation_t *operation);
+uint32_t mbedtls_psa_sign_hash_get_num_ops (
+  const mbedtls_psa_sign_hash_interruptible_operation_t* operation );
 
 /**
  * \brief Get the number of ops that a hash verification operation has taken for
@@ -724,8 +730,8 @@ uint32_t mbedtls_psa_sign_hash_get_num_ops(
  *                              in the last call to \c
  *                              mbedtls_psa_verify_hash_complete().
  */
-uint32_t mbedtls_psa_verify_hash_get_num_ops(
-    const mbedtls_psa_verify_hash_interruptible_operation_t *operation);
+uint32_t mbedtls_psa_verify_hash_get_num_ops (
+  const mbedtls_psa_verify_hash_interruptible_operation_t* operation );
 
 /**
  * \brief  Start signing a hash or short message with a private key, in an
@@ -759,11 +765,11 @@ uint32_t mbedtls_psa_verify_hash_get_num_ops(
  * \retval #PSA_ERROR_INSUFFICIENT_MEMORY
  *         There was insufficient memory to load the key representation.
  */
-psa_status_t mbedtls_psa_sign_hash_start(
-    mbedtls_psa_sign_hash_interruptible_operation_t *operation,
-    const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
-    size_t key_buffer_size, psa_algorithm_t alg,
-    const uint8_t *hash, size_t hash_length);
+psa_status_t mbedtls_psa_sign_hash_start (
+  mbedtls_psa_sign_hash_interruptible_operation_t* operation,
+  const psa_key_attributes_t* attributes, const uint8_t* key_buffer,
+  size_t key_buffer_size, psa_algorithm_t alg,
+  const uint8_t* hash, size_t hash_length );
 
 /**
  * \brief Continue and eventually complete the action of signing a hash or
@@ -806,10 +812,10 @@ psa_status_t mbedtls_psa_sign_hash_start(
  * \retval #PSA_ERROR_CORRUPTION_DETECTED \emptydescription
  * \retval #PSA_ERROR_INSUFFICIENT_ENTROPY \emptydescription
  */
-psa_status_t mbedtls_psa_sign_hash_complete(
-    mbedtls_psa_sign_hash_interruptible_operation_t *operation,
-    uint8_t *signature, size_t signature_size,
-    size_t *signature_length);
+psa_status_t mbedtls_psa_sign_hash_complete (
+  mbedtls_psa_sign_hash_interruptible_operation_t* operation,
+  uint8_t* signature, size_t signature_size,
+  size_t* signature_length );
 
 /**
  * \brief Abort a sign hash operation.
@@ -826,8 +832,8 @@ psa_status_t mbedtls_psa_sign_hash_complete(
  * \retval #PSA_SUCCESS
  *         The operation was aborted successfully.
  */
-psa_status_t mbedtls_psa_sign_hash_abort(
-    mbedtls_psa_sign_hash_interruptible_operation_t *operation);
+psa_status_t mbedtls_psa_sign_hash_abort (
+  mbedtls_psa_sign_hash_interruptible_operation_t* operation );
 
 /**
  * \brief  Start reading and verifying a hash or short message, in an
@@ -864,13 +870,13 @@ psa_status_t mbedtls_psa_sign_hash_abort(
  *        There was insufficient memory either to load the key representation,
  *        or to prepare the operation.
  */
-psa_status_t mbedtls_psa_verify_hash_start(
-    mbedtls_psa_verify_hash_interruptible_operation_t *operation,
-    const psa_key_attributes_t *attributes,
-    const uint8_t *key_buffer, size_t key_buffer_size,
-    psa_algorithm_t alg,
-    const uint8_t *hash, size_t hash_length,
-    const uint8_t *signature, size_t signature_length);
+psa_status_t mbedtls_psa_verify_hash_start (
+  mbedtls_psa_verify_hash_interruptible_operation_t* operation,
+  const psa_key_attributes_t* attributes,
+  const uint8_t* key_buffer, size_t key_buffer_size,
+  psa_algorithm_t alg,
+  const uint8_t* hash, size_t hash_length,
+  const uint8_t* signature, size_t signature_length );
 
 /**
  * \brief Continue and eventually complete the action of signing a hash or
@@ -901,8 +907,8 @@ psa_status_t mbedtls_psa_verify_hash_start(
  * \retval #PSA_ERROR_INVALID_ARGUMENT \emptydescription
  * \retval #PSA_ERROR_INSUFFICIENT_MEMORY \emptydescription
  */
-psa_status_t mbedtls_psa_verify_hash_complete(
-    mbedtls_psa_verify_hash_interruptible_operation_t *operation);
+psa_status_t mbedtls_psa_verify_hash_complete (
+  mbedtls_psa_verify_hash_interruptible_operation_t* operation );
 
 /**
  * \brief Abort a verify signed hash operation.
@@ -919,12 +925,13 @@ psa_status_t mbedtls_psa_verify_hash_complete(
  * \retval #PSA_SUCCESS
  *         The operation was aborted successfully.
  */
-psa_status_t mbedtls_psa_verify_hash_abort(
-    mbedtls_psa_verify_hash_interruptible_operation_t *operation);
+psa_status_t mbedtls_psa_verify_hash_abort (
+  mbedtls_psa_verify_hash_interruptible_operation_t* operation );
 
-typedef struct psa_crypto_local_input_s {
-    uint8_t *buffer;
-    size_t length;
+typedef struct psa_crypto_local_input_s
+{
+  uint8_t* buffer;
+  size_t length;
 } psa_crypto_local_input_t;
 
 #define PSA_CRYPTO_LOCAL_INPUT_INIT ((psa_crypto_local_input_t) { NULL, 0 })
@@ -940,8 +947,8 @@ typedef struct psa_crypto_local_input_s {
  * \return                      #PSA_ERROR_INSUFFICIENT_MEMORY, if a copy of
  *                              the buffer cannot be allocated.
  */
-psa_status_t psa_crypto_local_input_alloc(const uint8_t *input, size_t input_len,
-                                          psa_crypto_local_input_t *local_input);
+psa_status_t psa_crypto_local_input_alloc ( const uint8_t* input, size_t input_len,
+    psa_crypto_local_input_t* local_input );
 
 /** Free a local copy of an input buffer.
  *
@@ -949,12 +956,13 @@ psa_status_t psa_crypto_local_input_alloc(const uint8_t *input, size_t input_len
  *                              populated by a previous call to
  *                              psa_crypto_local_input_alloc().
  */
-void psa_crypto_local_input_free(psa_crypto_local_input_t *local_input);
+void psa_crypto_local_input_free ( psa_crypto_local_input_t* local_input );
 
-typedef struct psa_crypto_local_output_s {
-    uint8_t *original;
-    uint8_t *buffer;
-    size_t length;
+typedef struct psa_crypto_local_output_s
+{
+  uint8_t* original;
+  uint8_t* buffer;
+  size_t length;
 } psa_crypto_local_output_t;
 
 #define PSA_CRYPTO_LOCAL_OUTPUT_INIT ((psa_crypto_local_output_t) { NULL, NULL, 0 })
@@ -976,8 +984,8 @@ typedef struct psa_crypto_local_output_s {
  * \return                      #PSA_ERROR_INSUFFICIENT_MEMORY, if a copy of
  *                              the buffer cannot be allocated.
  */
-psa_status_t psa_crypto_local_output_alloc(uint8_t *output, size_t output_len,
-                                           psa_crypto_local_output_t *local_output);
+psa_status_t psa_crypto_local_output_alloc ( uint8_t* output, size_t output_len,
+    psa_crypto_local_output_t* local_output );
 
 /** Copy from a local copy of an output buffer back to the original, then
  *  free the local copy.
@@ -990,6 +998,6 @@ psa_status_t psa_crypto_local_output_alloc(uint8_t *output, size_t output_len,
  * \return                      #PSA_ERROR_CORRUPTION_DETECTED, if the output
  *                              could not be copied back to the original.
  */
-psa_status_t psa_crypto_local_output_free(psa_crypto_local_output_t *local_output);
+psa_status_t psa_crypto_local_output_free ( psa_crypto_local_output_t* local_output );
 
 #endif /* PSA_CRYPTO_CORE_H */

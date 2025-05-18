@@ -23,50 +23,58 @@
 
 #define BUFFER_LEN 1024
 
-static void usage(void)
+static void usage ( void )
 {
-    mbedtls_printf("Zeroize is a simple program to assist with testing\n");
-    mbedtls_printf("the mbedtls_platform_zeroize() function by using the\n");
-    mbedtls_printf("debugger. This program takes a file as input and\n");
-    mbedtls_printf("prints the first %d characters. Usage:\n\n", BUFFER_LEN);
-    mbedtls_printf("       zeroize <FILE>\n");
+  mbedtls_printf ( "Zeroize is a simple program to assist with testing\n" );
+  mbedtls_printf ( "the mbedtls_platform_zeroize() function by using the\n" );
+  mbedtls_printf ( "debugger. This program takes a file as input and\n" );
+  mbedtls_printf ( "prints the first %d characters. Usage:\n\n", BUFFER_LEN );
+  mbedtls_printf ( "       zeroize <FILE>\n" );
 }
 
-int main(int argc, char **argv)
+int main ( int argc, char** argv )
 {
-    int exit_code = MBEDTLS_EXIT_FAILURE;
-    FILE *fp;
-    char buf[BUFFER_LEN];
-    char *p = buf;
-    char *end = p + BUFFER_LEN;
-    int c;
+  int exit_code = MBEDTLS_EXIT_FAILURE;
+  FILE* fp;
+  char buf[BUFFER_LEN];
+  char* p = buf;
+  char* end = p + BUFFER_LEN;
+  int c;
 
-    if (argc != 2) {
-        mbedtls_printf("This program takes exactly 1 argument\n");
-        usage();
-        mbedtls_exit(exit_code);
-    }
+  if ( argc != 2 )
+  {
+    mbedtls_printf ( "This program takes exactly 1 argument\n" );
+    usage();
+    mbedtls_exit ( exit_code );
+  }
 
-    fp = fopen(argv[1], "r");
-    if (fp == NULL) {
-        mbedtls_printf("Could not open file '%s'\n", argv[1]);
-        mbedtls_exit(exit_code);
-    }
+  fp = fopen ( argv[1], "r" );
 
-    while ((c = fgetc(fp)) != EOF && p < end - 1) {
-        *p++ = (char) c;
-    }
-    *p = '\0';
+  if ( fp == NULL )
+  {
+    mbedtls_printf ( "Could not open file '%s'\n", argv[1] );
+    mbedtls_exit ( exit_code );
+  }
 
-    if (p - buf != 0) {
-        mbedtls_printf("%s\n", buf);
-        exit_code = MBEDTLS_EXIT_SUCCESS;
-    } else {
-        mbedtls_printf("The file is empty!\n");
-    }
+  while ( ( c = fgetc ( fp ) ) != EOF && p < end - 1 )
+  {
+    *p++ = ( char ) c;
+  }
 
-    fclose(fp);
-    mbedtls_platform_zeroize(buf, sizeof(buf));
+  *p = '\0';
 
-    mbedtls_exit(exit_code);   // GDB_BREAK_HERE -- don't remove this comment!
+  if ( p - buf != 0 )
+  {
+    mbedtls_printf ( "%s\n", buf );
+    exit_code = MBEDTLS_EXIT_SUCCESS;
+  }
+  else
+  {
+    mbedtls_printf ( "The file is empty!\n" );
+  }
+
+  fclose ( fp );
+  mbedtls_platform_zeroize ( buf, sizeof ( buf ) );
+
+  mbedtls_exit ( exit_code ); // GDB_BREAK_HERE -- don't remove this comment!
 }

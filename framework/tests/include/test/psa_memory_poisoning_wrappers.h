@@ -21,19 +21,19 @@
 
 #if defined(MBEDTLS_TEST_HOOKS) && defined(MBEDTLS_TEST_MEMORY_CAN_POISON)
 
-/**
- * \brief         Setup the memory poisoning test hooks used by
- *                psa_crypto_copy_input() and psa_crypto_copy_output() for
- *                memory poisoning.
- */
-void mbedtls_poison_test_hooks_setup(void);
+  /**
+  * \brief         Setup the memory poisoning test hooks used by
+  *                psa_crypto_copy_input() and psa_crypto_copy_output() for
+  *                memory poisoning.
+  */
+  void mbedtls_poison_test_hooks_setup ( void );
 
-/**
- * \brief         Teardown the memory poisoning test hooks used by
- *                psa_crypto_copy_input() and psa_crypto_copy_output() for
- *                memory poisoning.
- */
-void mbedtls_poison_test_hooks_teardown(void);
+  /**
+  * \brief         Teardown the memory poisoning test hooks used by
+  *                psa_crypto_copy_input() and psa_crypto_copy_output() for
+  *                memory poisoning.
+  */
+  void mbedtls_poison_test_hooks_teardown ( void );
 
 #endif /* MBEDTLS_TEST_HOOKS && MBEDTLS_TEST_MEMORY_CAN_POISON */
 

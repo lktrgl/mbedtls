@@ -9,15 +9,16 @@
 /* A series of macros that define C implementations of types that are not Low*,
  * to facilitate porting programs to Low*. */
 
-typedef const char *Prims_string;
+typedef const char* Prims_string;
 
-typedef struct {
+typedef struct
+{
   uint32_t length;
-  const char *data;
+  const char* data;
 } FStar_Bytes_bytes;
 
 typedef int32_t Prims_pos, Prims_nat, Prims_nonzero, Prims_int,
-    krml_checked_int_t;
+        krml_checked_int_t;
 
 #define RETURN_OR(x)                                                           \
   do {                                                                         \

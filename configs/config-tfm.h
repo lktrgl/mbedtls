@@ -49,10 +49,10 @@
  * variables accordingly.
  */
 #if defined(__IAR_SYSTEMS_ICC__) || defined(__ARMCC_VERSION) || defined(__ARM_EABI__)
-#define MBEDTLS_NO_PLATFORM_ENTROPY
+  #define MBEDTLS_NO_PLATFORM_ENTROPY
 #else
-/* Use built-in platform entropy functions (TF-M provides its own). */
-#undef MBEDTLS_NO_PLATFORM_ENTROPY
+  /* Use built-in platform entropy functions (TF-M provides its own). */
+  #undef MBEDTLS_NO_PLATFORM_ENTROPY
 #endif
 
 /***********************************************************************

@@ -7,8 +7,9 @@
 #ifndef NIST_KW_ALT_H
 #define NIST_KW_ALT_H
 
-typedef struct {
-    int dummy;
+typedef struct
+{
+  int dummy;
 } mbedtls_nist_kw_context;
 
 

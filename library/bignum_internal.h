@@ -43,8 +43,8 @@
  * \return         Another negative error code on different kinds of failures.
  *
  */
-int mbedtls_mpi_exp_mod_unsafe(mbedtls_mpi *X, const mbedtls_mpi *A,
-                               const mbedtls_mpi *E, const mbedtls_mpi *N,
-                               mbedtls_mpi *prec_RR);
+int mbedtls_mpi_exp_mod_unsafe ( mbedtls_mpi* X, const mbedtls_mpi* A,
+                                 const mbedtls_mpi* E, const mbedtls_mpi* N,
+                                 mbedtls_mpi* prec_RR );
 
 #endif /* bignum_internal.h */

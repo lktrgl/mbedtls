@@ -34,12 +34,13 @@ extern "C" {
  * It identifies the family (SHA3-256, SHA3-512, etc.)
  */
 
-typedef enum {
-    MBEDTLS_SHA3_NONE = 0, /*!< Operation not defined. */
-    MBEDTLS_SHA3_224, /*!< SHA3-224 */
-    MBEDTLS_SHA3_256, /*!< SHA3-256 */
-    MBEDTLS_SHA3_384, /*!< SHA3-384 */
-    MBEDTLS_SHA3_512, /*!< SHA3-512 */
+typedef enum
+{
+  MBEDTLS_SHA3_NONE = 0, /*!< Operation not defined. */
+  MBEDTLS_SHA3_224, /*!< SHA3-224 */
+  MBEDTLS_SHA3_256, /*!< SHA3-256 */
+  MBEDTLS_SHA3_384, /*!< SHA3-384 */
+  MBEDTLS_SHA3_512, /*!< SHA3-512 */
 } mbedtls_sha3_id;
 
 /**
@@ -47,11 +48,12 @@ typedef enum {
  *
  *                 The structure is used SHA-3 checksum calculations.
  */
-typedef struct {
-    uint64_t MBEDTLS_PRIVATE(state[25]);
-    uint32_t MBEDTLS_PRIVATE(index);
-    uint16_t MBEDTLS_PRIVATE(olen);
-    uint16_t MBEDTLS_PRIVATE(max_block_size);
+typedef struct
+{
+  uint64_t MBEDTLS_PRIVATE ( state[25] );
+  uint32_t MBEDTLS_PRIVATE ( index );
+  uint16_t MBEDTLS_PRIVATE ( olen );
+  uint16_t MBEDTLS_PRIVATE ( max_block_size );
 }
 mbedtls_sha3_context;
 
@@ -60,7 +62,7 @@ mbedtls_sha3_context;
  *
  * \param ctx      The SHA-3 context to initialize. This must not be \c NULL.
  */
-void mbedtls_sha3_init(mbedtls_sha3_context *ctx);
+void mbedtls_sha3_init ( mbedtls_sha3_context* ctx );
 
 /**
  * \brief          This function clears a SHA-3 context.
@@ -69,7 +71,7 @@ void mbedtls_sha3_init(mbedtls_sha3_context *ctx);
  *                 case this function returns immediately. If it is not \c NULL,
  *                 it must point to an initialized SHA-3 context.
  */
-void mbedtls_sha3_free(mbedtls_sha3_context *ctx);
+void mbedtls_sha3_free ( mbedtls_sha3_context* ctx );
 
 /**
  * \brief          This function clones the state of a SHA-3 context.
@@ -77,8 +79,8 @@ void mbedtls_sha3_free(mbedtls_sha3_context *ctx);
  * \param dst      The destination context. This must be initialized.
  * \param src      The context to clone. This must be initialized.
  */
-void mbedtls_sha3_clone(mbedtls_sha3_context *dst,
-                        const mbedtls_sha3_context *src);
+void mbedtls_sha3_clone ( mbedtls_sha3_context* dst,
+                          const mbedtls_sha3_context* src );
 
 /**
  * \brief          This function starts a SHA-3 checksum
@@ -90,7 +92,7 @@ void mbedtls_sha3_clone(mbedtls_sha3_context *dst,
  * \return         \c 0 on success.
  * \return         A negative error code on failure.
  */
-int mbedtls_sha3_starts(mbedtls_sha3_context *ctx, mbedtls_sha3_id id);
+int mbedtls_sha3_starts ( mbedtls_sha3_context* ctx, mbedtls_sha3_id id );
 
 /**
  * \brief          This function feeds an input buffer into an ongoing
@@ -105,9 +107,9 @@ int mbedtls_sha3_starts(mbedtls_sha3_context *ctx, mbedtls_sha3_id id);
  * \return         \c 0 on success.
  * \return         A negative error code on failure.
  */
-int mbedtls_sha3_update(mbedtls_sha3_context *ctx,
-                        const uint8_t *input,
-                        size_t ilen);
+int mbedtls_sha3_update ( mbedtls_sha3_context* ctx,
+                          const uint8_t* input,
+                          size_t ilen );
 
 /**
  * \brief          This function finishes the SHA-3 operation, and writes
@@ -124,8 +126,8 @@ int mbedtls_sha3_update(mbedtls_sha3_context *ctx,
  * \return         \c 0 on success.
  * \return         A negative error code on failure.
  */
-int mbedtls_sha3_finish(mbedtls_sha3_context *ctx,
-                        uint8_t *output, size_t olen);
+int mbedtls_sha3_finish ( mbedtls_sha3_context* ctx,
+                          uint8_t* output, size_t olen );
 
 /**
  * \brief          This function calculates the SHA-3
@@ -150,10 +152,10 @@ int mbedtls_sha3_finish(mbedtls_sha3_context *ctx,
  * \return         \c 0 on success.
  * \return         A negative error code on failure.
  */
-int mbedtls_sha3(mbedtls_sha3_id id, const uint8_t *input,
-                 size_t ilen,
-                 uint8_t *output,
-                 size_t olen);
+int mbedtls_sha3 ( mbedtls_sha3_id id, const uint8_t* input,
+                   size_t ilen,
+                   uint8_t* output,
+                   size_t olen );
 
 #if defined(MBEDTLS_SELF_TEST)
 /**
@@ -162,7 +164,7 @@ int mbedtls_sha3(mbedtls_sha3_id id, const uint8_t *input,
  *
  * \return         0 if successful, or 1 if the test failed.
  */
-int mbedtls_sha3_self_test(int verbose);
+int mbedtls_sha3_self_test ( int verbose );
 #endif /* MBEDTLS_SELF_TEST */
 
 #ifdef __cplusplus

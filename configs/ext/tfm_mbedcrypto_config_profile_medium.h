@@ -32,7 +32,7 @@
 #include "config_tfm.h"
 
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_DEPRECATE)
-#define _CRT_SECURE_NO_DEPRECATE 1
+  #define _CRT_SECURE_NO_DEPRECATE 1
 #endif
 
 /**
@@ -559,15 +559,15 @@
 /* \} name SECTION: Customisation configuration options */
 
 #if CRYPTO_NV_SEED
-#include "tfm_mbedcrypto_config_extra_nv_seed.h"
+  #include "tfm_mbedcrypto_config_extra_nv_seed.h"
 #endif /* CRYPTO_NV_SEED */
 
 #if !defined(CRYPTO_HW_ACCELERATOR) && defined(MBEDTLS_ENTROPY_NV_SEED)
-#include "mbedtls_entropy_nv_seed_config.h"
+  #include "mbedtls_entropy_nv_seed_config.h"
 #endif
 
 #ifdef CRYPTO_HW_ACCELERATOR
-#include "mbedtls_accelerator_config.h"
+  #include "mbedtls_accelerator_config.h"
 #endif
 
 #endif /* PROFILE_M_MBEDTLS_CONFIG_H */

@@ -26,10 +26,10 @@
  *              Note that this is only a valid pointer if the size of the
  *              buffer is at least \p n + 1.
  */
-static inline unsigned char *psa_crypto_buffer_offset(
-    unsigned char *p, size_t n)
+static inline unsigned char* psa_crypto_buffer_offset (
+  unsigned char* p, size_t n )
 {
-    return p == NULL ? NULL : p + n;
+  return p == NULL ? NULL : p + n;
 }
 
 /** Return an offset into a read-only buffer.
@@ -43,10 +43,10 @@ static inline unsigned char *psa_crypto_buffer_offset(
  *              Note that this is only a valid pointer if the size of the
  *              buffer is at least \p n + 1.
  */
-static inline const unsigned char *psa_crypto_buffer_offset_const(
-    const unsigned char *p, size_t n)
+static inline const unsigned char* psa_crypto_buffer_offset_const (
+  const unsigned char* p, size_t n )
 {
-    return p == NULL ? NULL : p + n;
+  return p == NULL ? NULL : p + n;
 }
 
 #endif /* PSA_CRYPTO_CORE_COMMON_H */

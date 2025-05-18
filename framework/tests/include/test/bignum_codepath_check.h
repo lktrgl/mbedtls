@@ -27,20 +27,20 @@ extern int mbedtls_codepath_check;
  * \brief         Setup the codepath test hooks used by optionally safe bignum functions to signal
  *                the path taken.
  */
-void mbedtls_codepath_test_hooks_setup(void);
+void mbedtls_codepath_test_hooks_setup ( void );
 
 /**
  * \brief         Teardown the codepath test hooks used by optionally safe bignum functions to
  *                signal the path taken.
  */
-void mbedtls_codepath_test_hooks_teardown(void);
+void mbedtls_codepath_test_hooks_teardown ( void );
 
 /**
  * \brief         Reset the state of the codepath to the initial state.
  */
-static inline void mbedtls_codepath_reset(void)
+static inline void mbedtls_codepath_reset ( void )
 {
-    mbedtls_codepath_check = MBEDTLS_MPI_IS_TEST;
+  mbedtls_codepath_check = MBEDTLS_MPI_IS_TEST;
 }
 
 /** Check the codepath taken and fail if it doesn't match.
@@ -58,14 +58,14 @@ static inline void mbedtls_codepath_reset(void)
  * \param E         The MPI parameter that can cause shortcuts.
  */
 #define ASSERT_BIGNUM_CODEPATH(path, ret, E)                            \
-    do {                                                                \
-        if ((ret) != 0 || (E).n == 0) {                                 \
-            TEST_ASSERT(mbedtls_codepath_check == (path) ||             \
-                        mbedtls_codepath_check == MBEDTLS_MPI_IS_TEST); \
-        } else {                                                        \
-            TEST_EQUAL(mbedtls_codepath_check, (path));                 \
-        }                                                               \
-    } while (0)
+  do {                                                                \
+    if ((ret) != 0 || (E).n == 0) {                                 \
+      TEST_ASSERT(mbedtls_codepath_check == (path) ||             \
+                  mbedtls_codepath_check == MBEDTLS_MPI_IS_TEST); \
+    } else {                                                        \
+      TEST_EQUAL(mbedtls_codepath_check, (path));                 \
+    }                                                               \
+  } while (0)
 
 /** Check the codepath taken and fail if it doesn't match.
  *
@@ -81,14 +81,14 @@ static inline void mbedtls_codepath_reset(void)
  * \param ret       The expected return value.
  */
 #define ASSERT_RSA_CODEPATH(path, ret)                                  \
-    do {                                                                \
-        if ((ret) != 0) {                                               \
-            TEST_ASSERT(mbedtls_codepath_check == (path) ||             \
-                        mbedtls_codepath_check == MBEDTLS_MPI_IS_TEST); \
-        } else {                                                        \
-            TEST_EQUAL(mbedtls_codepath_check, (path));                 \
-        }                                                               \
-    } while (0)
+  do {                                                                \
+    if ((ret) != 0) {                                               \
+      TEST_ASSERT(mbedtls_codepath_check == (path) ||             \
+                  mbedtls_codepath_check == MBEDTLS_MPI_IS_TEST); \
+    } else {                                                        \
+      TEST_EQUAL(mbedtls_codepath_check, (path));                 \
+    }                                                               \
+  } while (0)
 #endif /* MBEDTLS_TEST_HOOKS && !MBEDTLS_THREADING_C */
 
 #endif /* BIGNUM_CODEPATH_CHECK_H */

@@ -15,8 +15,8 @@
 
 #include <stddef.h>
 #if defined(MBEDTLS_HAVE_TIME_DATE)
-#include "mbedtls/platform_time.h"
-#include <time.h>
+  #include "mbedtls/platform_time.h"
+  #include <time.h>
 #endif /* MBEDTLS_HAVE_TIME_DATE */
 
 #ifdef __cplusplus
@@ -27,12 +27,12 @@ extern "C" {
 #if !defined(MBEDTLS_DEPRECATED_REMOVED)
 #if defined(MBEDTLS_DEPRECATED_WARNING)
 #define MBEDTLS_DEPRECATED __attribute__((deprecated))
-MBEDTLS_DEPRECATED typedef char const *mbedtls_deprecated_string_constant_t;
+MBEDTLS_DEPRECATED typedef char const* mbedtls_deprecated_string_constant_t;
 #define MBEDTLS_DEPRECATED_STRING_CONSTANT(VAL)       \
-    ((mbedtls_deprecated_string_constant_t) (VAL))
+  ((mbedtls_deprecated_string_constant_t) (VAL))
 MBEDTLS_DEPRECATED typedef int mbedtls_deprecated_numeric_constant_t;
 #define MBEDTLS_DEPRECATED_NUMERIC_CONSTANT(VAL)       \
-    ((mbedtls_deprecated_numeric_constant_t) (VAL))
+  ((mbedtls_deprecated_numeric_constant_t) (VAL))
 #else /* MBEDTLS_DEPRECATED_WARNING */
 #define MBEDTLS_DEPRECATED
 #define MBEDTLS_DEPRECATED_STRING_CONSTANT(VAL) VAL
@@ -156,7 +156,7 @@ MBEDTLS_DEPRECATED typedef int mbedtls_deprecated_numeric_constant_t;
  * \param len   Length of the buffer in bytes
  *
  */
-void mbedtls_platform_zeroize(void *buf, size_t len);
+void mbedtls_platform_zeroize ( void* buf, size_t len );
 #endif
 
 #if defined(MBEDTLS_HAVE_TIME_DATE)
@@ -186,8 +186,8 @@ void mbedtls_platform_zeroize(void *buf, size_t len);
  * \return      Pointer to an object of type struct tm on success, otherwise
  *              NULL
  */
-struct tm *mbedtls_platform_gmtime_r(const mbedtls_time_t *tt,
-                                     struct tm *tm_buf);
+struct tm* mbedtls_platform_gmtime_r ( const mbedtls_time_t* tt,
+                                       struct tm* tm_buf );
 #endif /* MBEDTLS_HAVE_TIME_DATE */
 
 #ifdef __cplusplus
