@@ -86,7 +86,7 @@ typedef struct mbedtls_hmac_drbg_context
   int MBEDTLS_PRIVATE ( reseed_interval );     /*!< reseed interval   */
 
   /* Callbacks */
-  int ( *MBEDTLS_PRIVATE ( f_entropy ) ) ( void*, unsigned char*, size_t ); /*!< entropy function */
+  int (*MBEDTLS_PRIVATE ( f_entropy ) ) ( void*, unsigned char*, size_t ); /*!< entropy function */
   void* MBEDTLS_PRIVATE ( p_entropy );         /*!< context for the entropy function        */
 
 #if defined(MBEDTLS_THREADING_C)
@@ -186,7 +186,7 @@ void mbedtls_hmac_drbg_init ( mbedtls_hmac_drbg_context* ctx );
  */
 int mbedtls_hmac_drbg_seed ( mbedtls_hmac_drbg_context* ctx,
                              const mbedtls_md_info_t* md_info,
-                             int ( *f_entropy ) ( void*, unsigned char*, size_t ),
+                             int (*f_entropy ) ( void*, unsigned char*, size_t ),
                              void* p_entropy,
                              const unsigned char* custom,
                              size_t len );
@@ -430,6 +430,7 @@ int mbedtls_hmac_drbg_self_test ( int verbose );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* hmac_drbg.h */

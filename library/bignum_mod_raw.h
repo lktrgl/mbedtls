@@ -369,7 +369,7 @@ int mbedtls_mpi_mod_raw_modulus_to_canonical_rep (
 int mbedtls_mpi_mod_raw_random ( mbedtls_mpi_uint* X,
                                  mbedtls_mpi_uint min,
                                  const mbedtls_mpi_mod_modulus* N,
-                                 int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                 int (*f_rng ) ( void*, unsigned char*, size_t ),
                                  void* p_rng );
 
 /** Convert an MPI into Montgomery form.

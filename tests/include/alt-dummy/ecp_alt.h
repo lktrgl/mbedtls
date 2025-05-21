@@ -18,6 +18,7 @@ typedef struct mbedtls_ecp_group
   const size_t pbits;
   const size_t nbits;
 }
+
 mbedtls_ecp_group;
 
 #endif /* ecp_alt.h */

@@ -130,6 +130,7 @@ static int mbedtls_a64_crypto_sha512_determine_support ( void )
 {
 return ( getauxval ( AT_HWCAP ) & HWCAP_SHA512 ) ? 1 : 0;
 }
+
 #elif defined(__APPLE__)
 #include <sys/types.h>
 #include <sys/sysctl.h>
@@ -143,6 +144,7 @@ int ret = sysctlbyname ( "hw.optional.armv8_2_sha512", &value, &value_len,
 NULL, 0 );
 return ret == 0 && value != 0;
 }
+
 #elif defined(MBEDTLS_PLATFORM_IS_WINDOWS_ON_ARM64)
 /*
  * As of March 2022, there don't appear to be any PF_ARM_V8_* flags
@@ -181,7 +183,7 @@ if ( sigprocmask ( 0, NULL, &old_mask ) )
 return 0;
 }
 
-sigemptyset ( &new_action.sa_mask );
+sigemptyset (&new_action.sa_mask );
 new_action.sa_flags = 0;
 new_action.sa_handler = sigill_handler;
 
@@ -201,6 +203,7 @@ sigprocmask ( SIG_SETMASK, &old_mask, NULL );
 
 return ret;
 }
+
 #else
 #warning "No mechanism to detect A64_CRYPTO found, using C code only"
 #undef MBEDTLS_SHA512_USE_A64_CRYPTO_IF_PRESENT
@@ -217,6 +220,7 @@ static void sha512_put_uint64_be ( uint64_t n, unsigned char* b, uint8_t i )
 {
 MBEDTLS_PUT_UINT64_BE ( n, b, i );
 }
+
 #else
 #define sha512_put_uint64_be    MBEDTLS_PUT_UINT64_BE
 #endif /* MBEDTLS_SHA512_SMALLER */
@@ -377,34 +381,38 @@ static inline uint64x2_t vsha512su0q_u64 ( uint64x2_t x, uint64x2_t y )
 asm ( "sha512su0 %0.2D,%1.2D" : "+w" ( x ) : "w" ( y ) );
 return x;
 }
+
 static inline uint64x2_t vsha512su1q_u64 ( uint64x2_t x, uint64x2_t y, uint64x2_t z )
 {
 asm ( "sha512su1 %0.2D,%1.2D,%2.2D" : "+w" ( x ) : "w" ( y ), "w" ( z ) );
 return x;
 }
+
 static inline uint64x2_t vsha512hq_u64 ( uint64x2_t x, uint64x2_t y, uint64x2_t z )
 {
 asm ( "sha512h %0,%1,%2.2D" : "+w" ( x ) : "w" ( y ), "w" ( z ) );
 return x;
 }
+
 static inline uint64x2_t vsha512h2q_u64 ( uint64x2_t x, uint64x2_t y, uint64x2_t z )
 {
 asm ( "sha512h2 %0,%1,%2.2D" : "+w" ( x ) : "w" ( y ), "w" ( z ) );
 return x;
 }
+
 #endif  /* __clang__ etc */
 
 static size_t mbedtls_internal_sha512_process_many_a64_crypto (
 mbedtls_sha512_context* ctx, const uint8_t* msg, size_t len )
 {
-uint64x2_t ab = vld1q_u64 ( &ctx->state[0] );
-uint64x2_t cd = vld1q_u64 ( &ctx->state[2] );
-uint64x2_t ef = vld1q_u64 ( &ctx->state[4] );
-uint64x2_t gh = vld1q_u64 ( &ctx->state[6] );
+uint64x2_t ab = vld1q_u64 (&ctx->state[0] );
+uint64x2_t cd = vld1q_u64 (&ctx->state[2] );
+uint64x2_t ef = vld1q_u64 (&ctx->state[4] );
+uint64x2_t gh = vld1q_u64 (&ctx->state[6] );
 
 size_t processed = 0;
 
-for ( ;
+for (;
 len >= SHA512_BLOCK_SIZE;
 processed += SHA512_BLOCK_SIZE,
 msg += SHA512_BLOCK_SIZE,
@@ -438,56 +446,56 @@ s7 = vreinterpretq_u64_u8 ( vrev64q_u8 ( vreinterpretq_u8_u64 ( s7 ) ) );
 #endif
 
 /* Rounds 0 and 1 */
-initial_sum = vaddq_u64 ( s0, vld1q_u64 ( &K[0] ) );
+initial_sum = vaddq_u64 ( s0, vld1q_u64 (&K[0] ) );
 sum = vaddq_u64 ( vextq_u64 ( initial_sum, initial_sum, 1 ), gh );
 intermed = vsha512hq_u64 ( sum, vextq_u64 ( ef, gh, 1 ), vextq_u64 ( cd, ef, 1 ) );
 gh = vsha512h2q_u64 ( intermed, cd, ab );
 cd = vaddq_u64 ( cd, intermed );
 
 /* Rounds 2 and 3 */
-initial_sum = vaddq_u64 ( s1, vld1q_u64 ( &K[2] ) );
+initial_sum = vaddq_u64 ( s1, vld1q_u64 (&K[2] ) );
 sum = vaddq_u64 ( vextq_u64 ( initial_sum, initial_sum, 1 ), ef );
 intermed = vsha512hq_u64 ( sum, vextq_u64 ( cd, ef, 1 ), vextq_u64 ( ab, cd, 1 ) );
 ef = vsha512h2q_u64 ( intermed, ab, gh );
 ab = vaddq_u64 ( ab, intermed );
 
 /* Rounds 4 and 5 */
-initial_sum = vaddq_u64 ( s2, vld1q_u64 ( &K[4] ) );
+initial_sum = vaddq_u64 ( s2, vld1q_u64 (&K[4] ) );
 sum = vaddq_u64 ( vextq_u64 ( initial_sum, initial_sum, 1 ), cd );
 intermed = vsha512hq_u64 ( sum, vextq_u64 ( ab, cd, 1 ), vextq_u64 ( gh, ab, 1 ) );
 cd = vsha512h2q_u64 ( intermed, gh, ef );
 gh = vaddq_u64 ( gh, intermed );
 
 /* Rounds 6 and 7 */
-initial_sum = vaddq_u64 ( s3, vld1q_u64 ( &K[6] ) );
+initial_sum = vaddq_u64 ( s3, vld1q_u64 (&K[6] ) );
 sum = vaddq_u64 ( vextq_u64 ( initial_sum, initial_sum, 1 ), ab );
 intermed = vsha512hq_u64 ( sum, vextq_u64 ( gh, ab, 1 ), vextq_u64 ( ef, gh, 1 ) );
 ab = vsha512h2q_u64 ( intermed, ef, cd );
 ef = vaddq_u64 ( ef, intermed );
 
 /* Rounds 8 and 9 */
-initial_sum = vaddq_u64 ( s4, vld1q_u64 ( &K[8] ) );
+initial_sum = vaddq_u64 ( s4, vld1q_u64 (&K[8] ) );
 sum = vaddq_u64 ( vextq_u64 ( initial_sum, initial_sum, 1 ), gh );
 intermed = vsha512hq_u64 ( sum, vextq_u64 ( ef, gh, 1 ), vextq_u64 ( cd, ef, 1 ) );
 gh = vsha512h2q_u64 ( intermed, cd, ab );
 cd = vaddq_u64 ( cd, intermed );
 
 /* Rounds 10 and 11 */
-initial_sum = vaddq_u64 ( s5, vld1q_u64 ( &K[10] ) );
+initial_sum = vaddq_u64 ( s5, vld1q_u64 (&K[10] ) );
 sum = vaddq_u64 ( vextq_u64 ( initial_sum, initial_sum, 1 ), ef );
 intermed = vsha512hq_u64 ( sum, vextq_u64 ( cd, ef, 1 ), vextq_u64 ( ab, cd, 1 ) );
 ef = vsha512h2q_u64 ( intermed, ab, gh );
 ab = vaddq_u64 ( ab, intermed );
 
 /* Rounds 12 and 13 */
-initial_sum = vaddq_u64 ( s6, vld1q_u64 ( &K[12] ) );
+initial_sum = vaddq_u64 ( s6, vld1q_u64 (&K[12] ) );
 sum = vaddq_u64 ( vextq_u64 ( initial_sum, initial_sum, 1 ), cd );
 intermed = vsha512hq_u64 ( sum, vextq_u64 ( ab, cd, 1 ), vextq_u64 ( gh, ab, 1 ) );
 cd = vsha512h2q_u64 ( intermed, gh, ef );
 gh = vaddq_u64 ( gh, intermed );
 
 /* Rounds 14 and 15 */
-initial_sum = vaddq_u64 ( s7, vld1q_u64 ( &K[14] ) );
+initial_sum = vaddq_u64 ( s7, vld1q_u64 (&K[14] ) );
 sum = vaddq_u64 ( vextq_u64 ( initial_sum, initial_sum, 1 ), ab );
 intermed = vsha512hq_u64 ( sum, vextq_u64 ( gh, ab, 1 ), vextq_u64 ( ef, gh, 1 ) );
 ab = vsha512h2q_u64 ( intermed, ef, cd );
@@ -497,7 +505,7 @@ for ( unsigned int t = 16; t < 80; t += 16 )
 {
 /* Rounds t and t + 1 */
 s0 = vsha512su1q_u64 ( vsha512su0q_u64 ( s0, s1 ), s7, vextq_u64 ( s4, s5, 1 ) );
-initial_sum = vaddq_u64 ( s0, vld1q_u64 ( &K[t] ) );
+initial_sum = vaddq_u64 ( s0, vld1q_u64 (&K[t] ) );
 sum = vaddq_u64 ( vextq_u64 ( initial_sum, initial_sum, 1 ), gh );
 intermed = vsha512hq_u64 ( sum, vextq_u64 ( ef, gh, 1 ), vextq_u64 ( cd, ef, 1 ) );
 gh = vsha512h2q_u64 ( intermed, cd, ab );
@@ -505,7 +513,7 @@ cd = vaddq_u64 ( cd, intermed );
 
 /* Rounds t + 2 and t + 3 */
 s1 = vsha512su1q_u64 ( vsha512su0q_u64 ( s1, s2 ), s0, vextq_u64 ( s5, s6, 1 ) );
-initial_sum = vaddq_u64 ( s1, vld1q_u64 ( &K[t + 2] ) );
+initial_sum = vaddq_u64 ( s1, vld1q_u64 (&K[t + 2] ) );
 sum = vaddq_u64 ( vextq_u64 ( initial_sum, initial_sum, 1 ), ef );
 intermed = vsha512hq_u64 ( sum, vextq_u64 ( cd, ef, 1 ), vextq_u64 ( ab, cd, 1 ) );
 ef = vsha512h2q_u64 ( intermed, ab, gh );
@@ -513,7 +521,7 @@ ab = vaddq_u64 ( ab, intermed );
 
 /* Rounds t + 4 and t + 5 */
 s2 = vsha512su1q_u64 ( vsha512su0q_u64 ( s2, s3 ), s1, vextq_u64 ( s6, s7, 1 ) );
-initial_sum = vaddq_u64 ( s2, vld1q_u64 ( &K[t + 4] ) );
+initial_sum = vaddq_u64 ( s2, vld1q_u64 (&K[t + 4] ) );
 sum = vaddq_u64 ( vextq_u64 ( initial_sum, initial_sum, 1 ), cd );
 intermed = vsha512hq_u64 ( sum, vextq_u64 ( ab, cd, 1 ), vextq_u64 ( gh, ab, 1 ) );
 cd = vsha512h2q_u64 ( intermed, gh, ef );
@@ -521,7 +529,7 @@ gh = vaddq_u64 ( gh, intermed );
 
 /* Rounds t + 6 and t + 7 */
 s3 = vsha512su1q_u64 ( vsha512su0q_u64 ( s3, s4 ), s2, vextq_u64 ( s7, s0, 1 ) );
-initial_sum = vaddq_u64 ( s3, vld1q_u64 ( &K[t + 6] ) );
+initial_sum = vaddq_u64 ( s3, vld1q_u64 (&K[t + 6] ) );
 sum = vaddq_u64 ( vextq_u64 ( initial_sum, initial_sum, 1 ), ab );
 intermed = vsha512hq_u64 ( sum, vextq_u64 ( gh, ab, 1 ), vextq_u64 ( ef, gh, 1 ) );
 ab = vsha512h2q_u64 ( intermed, ef, cd );
@@ -529,7 +537,7 @@ ef = vaddq_u64 ( ef, intermed );
 
 /* Rounds t + 8 and t + 9 */
 s4 = vsha512su1q_u64 ( vsha512su0q_u64 ( s4, s5 ), s3, vextq_u64 ( s0, s1, 1 ) );
-initial_sum = vaddq_u64 ( s4, vld1q_u64 ( &K[t + 8] ) );
+initial_sum = vaddq_u64 ( s4, vld1q_u64 (&K[t + 8] ) );
 sum = vaddq_u64 ( vextq_u64 ( initial_sum, initial_sum, 1 ), gh );
 intermed = vsha512hq_u64 ( sum, vextq_u64 ( ef, gh, 1 ), vextq_u64 ( cd, ef, 1 ) );
 gh = vsha512h2q_u64 ( intermed, cd, ab );
@@ -537,7 +545,7 @@ cd = vaddq_u64 ( cd, intermed );
 
 /* Rounds t + 10 and t + 11 */
 s5 = vsha512su1q_u64 ( vsha512su0q_u64 ( s5, s6 ), s4, vextq_u64 ( s1, s2, 1 ) );
-initial_sum = vaddq_u64 ( s5, vld1q_u64 ( &K[t + 10] ) );
+initial_sum = vaddq_u64 ( s5, vld1q_u64 (&K[t + 10] ) );
 sum = vaddq_u64 ( vextq_u64 ( initial_sum, initial_sum, 1 ), ef );
 intermed = vsha512hq_u64 ( sum, vextq_u64 ( cd, ef, 1 ), vextq_u64 ( ab, cd, 1 ) );
 ef = vsha512h2q_u64 ( intermed, ab, gh );
@@ -545,7 +553,7 @@ ab = vaddq_u64 ( ab, intermed );
 
 /* Rounds t + 12 and t + 13 */
 s6 = vsha512su1q_u64 ( vsha512su0q_u64 ( s6, s7 ), s5, vextq_u64 ( s2, s3, 1 ) );
-initial_sum = vaddq_u64 ( s6, vld1q_u64 ( &K[t + 12] ) );
+initial_sum = vaddq_u64 ( s6, vld1q_u64 (&K[t + 12] ) );
 sum = vaddq_u64 ( vextq_u64 ( initial_sum, initial_sum, 1 ), cd );
 intermed = vsha512hq_u64 ( sum, vextq_u64 ( ab, cd, 1 ), vextq_u64 ( gh, ab, 1 ) );
 cd = vsha512h2q_u64 ( intermed, gh, ef );
@@ -553,7 +561,7 @@ gh = vaddq_u64 ( gh, intermed );
 
 /* Rounds t + 14 and t + 15 */
 s7 = vsha512su1q_u64 ( vsha512su0q_u64 ( s7, s0 ), s6, vextq_u64 ( s3, s4, 1 ) );
-initial_sum = vaddq_u64 ( s7, vld1q_u64 ( &K[t + 14] ) );
+initial_sum = vaddq_u64 ( s7, vld1q_u64 (&K[t + 14] ) );
 sum = vaddq_u64 ( vextq_u64 ( initial_sum, initial_sum, 1 ), ab );
 intermed = vsha512hq_u64 ( sum, vextq_u64 ( gh, ab, 1 ), vextq_u64 ( ef, gh, 1 ) );
 ab = vsha512h2q_u64 ( intermed, ef, cd );
@@ -566,10 +574,10 @@ ef = vaddq_u64 ( ef, ef_orig );
 gh = vaddq_u64 ( gh, gh_orig );
 }
 
-vst1q_u64 ( &ctx->state[0], ab );
-vst1q_u64 ( &ctx->state[2], cd );
-vst1q_u64 ( &ctx->state[4], ef );
-vst1q_u64 ( &ctx->state[6], gh );
+vst1q_u64 (&ctx->state[0], ab );
+vst1q_u64 (&ctx->state[2], cd );
+vst1q_u64 (&ctx->state[4], ef );
+vst1q_u64 (&ctx->state[6], gh );
 
 return processed;
 }
@@ -686,7 +694,7 @@ for ( i = 0; i < 16; i++ )
 local.W[i] = MBEDTLS_GET_UINT64_BE ( data, i << 3 );
 }
 
-for ( ; i < 80; i++ )
+for (; i < 80; i++ )
 {
 local.W[i] = S1 ( local.W[i -  2] ) + local.W[i -  7] +
 S0 ( local.W[i - 15] ) + local.W[i - 16];
@@ -731,7 +739,7 @@ ctx->state[i] += local.A[i];
 }
 
 /* Zeroise buffers and variables to clear sensitive data from memory. */
-mbedtls_platform_zeroize ( &local, sizeof ( local ) );
+mbedtls_platform_zeroize (&local, sizeof ( local ) );
 
 return 0;
 }
@@ -772,7 +780,7 @@ static int mbedtls_a64_crypto_sha512_has_support ( void )
 static int done = 0;
 static int supported = 0;
 
-if ( !done )
+if (!done )
 {
 supported = mbedtls_a64_crypto_sha512_determine_support();
 done = 1;
@@ -936,7 +944,7 @@ sha512_put_uint64_be ( ctx->state[5], output, 40 );
 truncated = ctx->is384;
 #endif
 
-if ( !truncated )
+if (!truncated )
 {
 sha512_put_uint64_be ( ctx->state[6], output, 48 );
 sha512_put_uint64_be ( ctx->state[7], output, 56 );
@@ -985,25 +993,25 @@ return MBEDTLS_ERR_SHA512_BAD_INPUT_DATA;
 
 #endif
 
-mbedtls_sha512_init ( &ctx );
+mbedtls_sha512_init (&ctx );
 
-if ( ( ret = mbedtls_sha512_starts ( &ctx, is384 ) ) != 0 )
+if ( ( ret = mbedtls_sha512_starts (&ctx, is384 ) ) != 0 )
 {
 goto exit;
 }
 
-if ( ( ret = mbedtls_sha512_update ( &ctx, input, ilen ) ) != 0 )
+if ( ( ret = mbedtls_sha512_update (&ctx, input, ilen ) ) != 0 )
 {
 goto exit;
 }
 
-if ( ( ret = mbedtls_sha512_finish ( &ctx, output ) ) != 0 )
+if ( ( ret = mbedtls_sha512_finish (&ctx, output ) ) != 0 )
 {
 goto exit;
 }
 
 exit:
-mbedtls_sha512_free ( &ctx );
+mbedtls_sha512_free (&ctx );
 
 return ret;
 }
@@ -1128,7 +1136,7 @@ mbedtls_printf ( "Buffer allocation failed\n" );
 return 1;
 }
 
-mbedtls_sha512_init ( &ctx );
+mbedtls_sha512_init (&ctx );
 
 for ( i = 0; i < 3; i++ )
 {
@@ -1137,7 +1145,7 @@ if ( verbose != 0 )
 mbedtls_printf ( "  SHA-%d test #%d: ", 512 - is384 * 128, i + 1 );
 }
 
-if ( ( ret = mbedtls_sha512_starts ( &ctx, is384 ) ) != 0 )
+if ( ( ret = mbedtls_sha512_starts (&ctx, is384 ) ) != 0 )
 {
 goto fail;
 }
@@ -1148,7 +1156,7 @@ memset ( buf, 'a', buflen = 1000 );
 
 for ( int j = 0; j < 1000; j++ )
 {
-ret = mbedtls_sha512_update ( &ctx, buf, buflen );
+ret = mbedtls_sha512_update (&ctx, buf, buflen );
 
 if ( ret != 0 )
 {
@@ -1158,7 +1166,7 @@ goto fail;
 }
 else
 {
-ret = mbedtls_sha512_update ( &ctx, sha_test_buf[i],
+ret = mbedtls_sha512_update (&ctx, sha_test_buf[i],
 sha_test_buflen[i] );
 
 if ( ret != 0 )
@@ -1167,7 +1175,7 @@ goto fail;
 }
 }
 
-if ( ( ret = mbedtls_sha512_finish ( &ctx, sha512sum ) ) != 0 )
+if ( ( ret = mbedtls_sha512_finish (&ctx, sha512sum ) ) != 0 )
 {
 goto fail;
 }
@@ -1199,7 +1207,7 @@ mbedtls_printf ( "failed\n" );
 }
 
 exit:
-mbedtls_sha512_free ( &ctx );
+mbedtls_sha512_free (&ctx );
 mbedtls_free ( buf );
 
 return ret;
@@ -1210,6 +1218,7 @@ int mbedtls_sha512_self_test ( int verbose )
 {
 return mbedtls_sha512_common_self_test ( verbose, 0 );
 }
+
 #endif /* MBEDTLS_SHA512_C */
 
 #if defined(MBEDTLS_SHA384_C)
@@ -1217,6 +1226,7 @@ int mbedtls_sha384_self_test ( int verbose )
 {
 return mbedtls_sha512_common_self_test ( verbose, 1 );
 }
+
 #endif /* MBEDTLS_SHA384_C */
 
 #undef ARRAY_LENGTH

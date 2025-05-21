@@ -33,6 +33,7 @@ typedef struct mbedtls_ripemd160_context
   uint32_t MBEDTLS_PRIVATE ( state ) [5];      /*!< intermediate digest state  */
   unsigned char MBEDTLS_PRIVATE ( buffer ) [64]; /*!< data block being processed */
 }
+
 mbedtls_ripemd160_context;
 
 #else  /* MBEDTLS_RIPEMD160_ALT */
@@ -132,6 +133,7 @@ int mbedtls_ripemd160_self_test ( int verbose );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* mbedtls_ripemd160.h */

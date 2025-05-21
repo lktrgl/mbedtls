@@ -11,6 +11,7 @@ typedef struct mbedtls_platform_context
 {
   int dummy;
 }
+
 mbedtls_platform_context;
 
 

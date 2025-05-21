@@ -56,6 +56,7 @@ typedef struct mbedtls_chachapoly_context
   int MBEDTLS_PRIVATE ( state );                           /**< The current state of the context. */
   mbedtls_chachapoly_mode_t MBEDTLS_PRIVATE ( mode );      /**< Cipher mode (encrypt or decrypt). */
 }
+
 mbedtls_chachapoly_context;
 
 #else /* !MBEDTLS_CHACHAPOLY_ALT */
@@ -340,6 +341,7 @@ int mbedtls_chachapoly_self_test ( int verbose );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* MBEDTLS_CHACHAPOLY_H */

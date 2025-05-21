@@ -61,8 +61,8 @@ static int pkcs5_parse_pbkdf2_params ( const mbedtls_asn1_buf* params,
    *  }
    *
    */
-  if ( ( ret = mbedtls_asn1_get_tag ( &p, end, &salt->len,
-                                      MBEDTLS_ASN1_OCTET_STRING ) ) != 0 )
+  if ( ( ret = mbedtls_asn1_get_tag (&p, end, &salt->len,
+                                     MBEDTLS_ASN1_OCTET_STRING ) ) != 0 )
   {
     return MBEDTLS_ERROR_ADD ( MBEDTLS_ERR_PKCS5_INVALID_FORMAT, ret );
   }
@@ -70,7 +70,7 @@ static int pkcs5_parse_pbkdf2_params ( const mbedtls_asn1_buf* params,
   salt->p = p;
   p += salt->len;
 
-  if ( ( ret = mbedtls_asn1_get_int ( &p, end, iterations ) ) != 0 )
+  if ( ( ret = mbedtls_asn1_get_int (&p, end, iterations ) ) != 0 )
   {
     return MBEDTLS_ERROR_ADD ( MBEDTLS_ERR_PKCS5_INVALID_FORMAT, ret );
   }
@@ -80,7 +80,7 @@ static int pkcs5_parse_pbkdf2_params ( const mbedtls_asn1_buf* params,
     return 0;
   }
 
-  if ( ( ret = mbedtls_asn1_get_int ( &p, end, keylen ) ) != 0 )
+  if ( ( ret = mbedtls_asn1_get_int (&p, end, keylen ) ) != 0 )
   {
     if ( ret != MBEDTLS_ERR_ASN1_UNEXPECTED_TAG )
     {
@@ -93,12 +93,12 @@ static int pkcs5_parse_pbkdf2_params ( const mbedtls_asn1_buf* params,
     return 0;
   }
 
-  if ( ( ret = mbedtls_asn1_get_alg_null ( &p, end, &prf_alg_oid ) ) != 0 )
+  if ( ( ret = mbedtls_asn1_get_alg_null (&p, end, &prf_alg_oid ) ) != 0 )
   {
     return MBEDTLS_ERROR_ADD ( MBEDTLS_ERR_PKCS5_INVALID_FORMAT, ret );
   }
 
-  if ( mbedtls_oid_get_md_hmac ( &prf_alg_oid, md_type ) != 0 )
+  if ( mbedtls_oid_get_md_hmac (&prf_alg_oid, md_type ) != 0 )
   {
     return MBEDTLS_ERR_PKCS5_FEATURE_UNAVAILABLE;
   }
@@ -135,6 +135,7 @@ int mbedtls_pkcs5_pbes2 ( const mbedtls_asn1_buf* pbe_params, int mode,
   return mbedtls_pkcs5_pbes2_ext ( pbe_params, mode, pwd, pwdlen, data,
                                    datalen, output, SIZE_MAX, &output_len );
 }
+
 #endif
 
 int mbedtls_pkcs5_pbes2_ext ( const mbedtls_asn1_buf* pbe_params, int mode,
@@ -144,7 +145,7 @@ int mbedtls_pkcs5_pbes2_ext ( const mbedtls_asn1_buf* pbe_params, int mode,
                               size_t* output_len )
 {
   int ret, iterations = 0, keylen = 0;
-  unsigned char* p, *end;
+  unsigned char* p, * end;
   mbedtls_asn1_buf kdf_alg_oid, enc_scheme_oid, kdf_alg_params, enc_scheme_params;
   mbedtls_asn1_buf salt;
   mbedtls_md_type_t md_type = MBEDTLS_MD_SHA1;
@@ -169,8 +170,8 @@ int mbedtls_pkcs5_pbes2_ext ( const mbedtls_asn1_buf* pbe_params, int mode,
                                MBEDTLS_ERR_ASN1_UNEXPECTED_TAG );
   }
 
-  if ( ( ret = mbedtls_asn1_get_alg ( &p, end, &kdf_alg_oid,
-                                      &kdf_alg_params ) ) != 0 )
+  if ( ( ret = mbedtls_asn1_get_alg (&p, end, &kdf_alg_oid,
+                                     &kdf_alg_params ) ) != 0 )
   {
     return MBEDTLS_ERROR_ADD ( MBEDTLS_ERR_PKCS5_INVALID_FORMAT, ret );
   }
@@ -182,20 +183,20 @@ int mbedtls_pkcs5_pbes2_ext ( const mbedtls_asn1_buf* pbe_params, int mode,
     return MBEDTLS_ERR_PKCS5_FEATURE_UNAVAILABLE;
   }
 
-  if ( ( ret = pkcs5_parse_pbkdf2_params ( &kdf_alg_params,
-               &salt, &iterations, &keylen,
-               &md_type ) ) != 0 )
+  if ( ( ret = pkcs5_parse_pbkdf2_params (&kdf_alg_params,
+                                          &salt, &iterations, &keylen,
+                                          &md_type ) ) != 0 )
   {
     return ret;
   }
 
-  if ( ( ret = mbedtls_asn1_get_alg ( &p, end, &enc_scheme_oid,
-                                      &enc_scheme_params ) ) != 0 )
+  if ( ( ret = mbedtls_asn1_get_alg (&p, end, &enc_scheme_oid,
+                                     &enc_scheme_params ) ) != 0 )
   {
     return MBEDTLS_ERROR_ADD ( MBEDTLS_ERR_PKCS5_INVALID_FORMAT, ret );
   }
 
-  if ( mbedtls_oid_get_cipher_alg ( &enc_scheme_oid, &cipher_alg ) != 0 )
+  if ( mbedtls_oid_get_cipher_alg (&enc_scheme_oid, &cipher_alg ) != 0 )
   {
     return MBEDTLS_ERR_PKCS5_FEATURE_UNAVAILABLE;
   }
@@ -237,7 +238,7 @@ int mbedtls_pkcs5_pbes2_ext ( const mbedtls_asn1_buf* pbe_params, int mode,
     }
   }
 
-  mbedtls_cipher_init ( &cipher_ctx );
+  mbedtls_cipher_init (&cipher_ctx );
 
   memcpy ( iv, enc_scheme_params.p, enc_scheme_params.len );
 
@@ -248,13 +249,13 @@ int mbedtls_pkcs5_pbes2_ext ( const mbedtls_asn1_buf* pbe_params, int mode,
     goto exit;
   }
 
-  if ( ( ret = mbedtls_cipher_setup ( &cipher_ctx, cipher_info ) ) != 0 )
+  if ( ( ret = mbedtls_cipher_setup (&cipher_ctx, cipher_info ) ) != 0 )
   {
     goto exit;
   }
 
-  if ( ( ret = mbedtls_cipher_setkey ( &cipher_ctx, key, 8 * keylen,
-                                       ( mbedtls_operation_t ) mode ) ) != 0 )
+  if ( ( ret = mbedtls_cipher_setkey (&cipher_ctx, key, 8 * keylen,
+                                      ( mbedtls_operation_t ) mode ) ) != 0 )
   {
     goto exit;
   }
@@ -280,24 +281,26 @@ int mbedtls_pkcs5_pbes2_ext ( const mbedtls_asn1_buf* pbe_params, int mode,
 
 #endif
 
-    if ( ( ret = mbedtls_cipher_set_padding_mode ( &cipher_ctx, padding ) ) != 0 )
+    if ( ( ret = mbedtls_cipher_set_padding_mode (&cipher_ctx, padding ) ) != 0 )
     {
       goto exit;
     }
   }
+
 #endif /* MBEDTLS_CIPHER_MODE_WITH_PADDING */
 
-  if ( ( ret = mbedtls_cipher_crypt ( &cipher_ctx, iv, enc_scheme_params.len,
-                                      data, datalen, output, output_len ) ) != 0 )
+  if ( ( ret = mbedtls_cipher_crypt (&cipher_ctx, iv, enc_scheme_params.len,
+                                     data, datalen, output, output_len ) ) != 0 )
   {
     ret = MBEDTLS_ERR_PKCS5_PASSWORD_MISMATCH;
   }
 
 exit:
-  mbedtls_cipher_free ( &cipher_ctx );
+  mbedtls_cipher_free (&cipher_ctx );
 
   return ret;
 }
+
 #endif /* MBEDTLS_ASN1_PARSE_C && MBEDTLS_CIPHER_C */
 
 static int pkcs5_pbkdf2_hmac ( mbedtls_md_context_t* ctx,
@@ -390,7 +393,7 @@ static int pkcs5_pbkdf2_hmac ( mbedtls_md_context_t* ctx,
 
     for ( i = 4; i > 0; i-- )
     {
-      if ( ++counter[i - 1] != 0 )
+      if (++counter[i - 1] != 0 )
       {
         break;
       }
@@ -415,6 +418,7 @@ int mbedtls_pkcs5_pbkdf2_hmac ( mbedtls_md_context_t* ctx,
   return pkcs5_pbkdf2_hmac ( ctx, password, plen, salt, slen, iteration_count,
                              key_length, output );
 }
+
 #endif
 
 int mbedtls_pkcs5_pbkdf2_hmac_ext ( mbedtls_md_type_t md_alg,
@@ -434,17 +438,17 @@ int mbedtls_pkcs5_pbkdf2_hmac_ext ( mbedtls_md_type_t md_alg,
     return MBEDTLS_ERR_PKCS5_FEATURE_UNAVAILABLE;
   }
 
-  mbedtls_md_init ( &md_ctx );
+  mbedtls_md_init (&md_ctx );
 
-  if ( ( ret = mbedtls_md_setup ( &md_ctx, md_info, 1 ) ) != 0 )
+  if ( ( ret = mbedtls_md_setup (&md_ctx, md_info, 1 ) ) != 0 )
   {
     goto exit;
   }
 
-  ret = pkcs5_pbkdf2_hmac ( &md_ctx, password, plen, salt, slen,
-                            iteration_count, key_length, output );
+  ret = pkcs5_pbkdf2_hmac (&md_ctx, password, plen, salt, slen,
+                           iteration_count, key_length, output );
 exit:
-  mbedtls_md_free ( &md_ctx );
+  mbedtls_md_free (&md_ctx );
   return ret;
 }
 
@@ -460,6 +464,7 @@ int mbedtls_pkcs5_self_test ( int verbose )
 
   return 0;
 }
+
 #else
 
 #define MAX_TESTS   6
@@ -566,6 +571,7 @@ int mbedtls_pkcs5_self_test ( int verbose )
 exit:
   return ret;
 }
+
 #endif /* MBEDTLS_MD_CAN_SHA1 */
 
 #endif /* MBEDTLS_SELF_TEST */

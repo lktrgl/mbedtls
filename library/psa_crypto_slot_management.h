@@ -111,7 +111,7 @@ psa_status_t psa_initialize_key_slots ( void );
  * The length for a given slice index must not change while
  * the key store is initialized.
  */
-extern size_t ( *mbedtls_test_hook_psa_volatile_key_slice_length ) (
+extern size_t (*mbedtls_test_hook_psa_volatile_key_slice_length ) (
   size_t slice_idx );
 
 /* The number of volatile key slices. */

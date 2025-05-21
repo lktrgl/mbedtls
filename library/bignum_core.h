@@ -571,7 +571,7 @@ void mbedtls_mpi_core_ct_uint_table_lookup ( mbedtls_mpi_uint* dest,
  */
 int mbedtls_mpi_core_fill_random ( mbedtls_mpi_uint* X, size_t X_limbs,
                                    size_t bytes,
-                                   int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                   int (*f_rng ) ( void*, unsigned char*, size_t ),
                                    void* p_rng );
 
 /** Generate a random number uniformly in a range.
@@ -608,7 +608,7 @@ int mbedtls_mpi_core_random ( mbedtls_mpi_uint* X,
                               mbedtls_mpi_uint min,
                               const mbedtls_mpi_uint* N,
                               size_t limbs,
-                              int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                              int (*f_rng ) ( void*, unsigned char*, size_t ),
                               void* p_rng );
 
 /**

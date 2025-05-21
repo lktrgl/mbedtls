@@ -154,6 +154,7 @@ int mbedtls_aesni_setkey_enc ( unsigned char* rk,
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* MBEDTLS_AESNI_HAVE_CODE */

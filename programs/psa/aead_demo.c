@@ -53,6 +53,7 @@ int main ( void )
            "MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER defined\r\n" );
   return 0;
 }
+
 #else
 
 /* The real program starts here. */
@@ -160,13 +161,13 @@ static psa_status_t aead_prepare ( const char* info,
 
   /* Prepare key attributes */
   psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
-  psa_set_key_usage_flags ( &attributes, PSA_KEY_USAGE_ENCRYPT );
-  psa_set_key_algorithm ( &attributes, *alg );
-  psa_set_key_type ( &attributes, key_type );
-  psa_set_key_bits ( &attributes, key_bits ); // optional
+  psa_set_key_usage_flags (&attributes, PSA_KEY_USAGE_ENCRYPT );
+  psa_set_key_algorithm (&attributes, *alg );
+  psa_set_key_type (&attributes, key_type );
+  psa_set_key_bits (&attributes, key_bits ); // optional
 
   /* Import key */
-  PSA_CHECK ( psa_import_key ( &attributes, key_bytes, key_bits / 8, key ) );
+  PSA_CHECK ( psa_import_key (&attributes, key_bytes, key_bits / 8, key ) );
 
 exit:
   return status;
@@ -182,8 +183,8 @@ static void aead_info ( psa_key_id_t key, psa_algorithm_t alg )
 {
   psa_key_attributes_t attr = PSA_KEY_ATTRIBUTES_INIT;
   ( void ) psa_get_key_attributes ( key, &attr );
-  psa_key_type_t key_type = psa_get_key_type ( &attr );
-  size_t key_bits = psa_get_key_bits ( &attr );
+  psa_key_type_t key_type = psa_get_key_type (&attr );
+  size_t key_bits = psa_get_key_bits (&attr );
   psa_algorithm_t base_alg = PSA_ALG_AEAD_WITH_DEFAULT_LENGTH_TAG ( alg );
   size_t tag_len = PSA_AEAD_TAG_LENGTH ( key_type, key_bits, alg );
 
@@ -210,20 +211,20 @@ static int aead_encrypt ( psa_key_id_t key, psa_algorithm_t alg,
   psa_status_t status;
   size_t olen, olen_tag;
   unsigned char out[PSA_AEAD_ENCRYPT_OUTPUT_MAX_SIZE ( MSG_MAX_SIZE )];
-  unsigned char* p = out, *end = out + sizeof ( out );
+  unsigned char* p = out, * end = out + sizeof ( out );
   unsigned char tag[PSA_AEAD_TAG_MAX_SIZE];
 
   psa_aead_operation_t op = PSA_AEAD_OPERATION_INIT;
-  PSA_CHECK ( psa_aead_encrypt_setup ( &op, key, alg ) );
+  PSA_CHECK ( psa_aead_encrypt_setup (&op, key, alg ) );
 
-  PSA_CHECK ( psa_aead_set_nonce ( &op, iv, iv_len ) );
-  PSA_CHECK ( psa_aead_update_ad ( &op, ad, ad_len ) );
-  PSA_CHECK ( psa_aead_update ( &op, part1, part1_len, p, end - p, &olen ) );
+  PSA_CHECK ( psa_aead_set_nonce (&op, iv, iv_len ) );
+  PSA_CHECK ( psa_aead_update_ad (&op, ad, ad_len ) );
+  PSA_CHECK ( psa_aead_update (&op, part1, part1_len, p, end - p, &olen ) );
   p += olen;
-  PSA_CHECK ( psa_aead_update ( &op, part2, part2_len, p, end - p, &olen ) );
+  PSA_CHECK ( psa_aead_update (&op, part2, part2_len, p, end - p, &olen ) );
   p += olen;
-  PSA_CHECK ( psa_aead_finish ( &op, p, end - p, &olen,
-                                tag, sizeof ( tag ), &olen_tag ) );
+  PSA_CHECK ( psa_aead_finish (&op, p, end - p, &olen,
+                               tag, sizeof ( tag ), &olen_tag ) );
   p += olen;
   memcpy ( p, tag, olen_tag );
   p += olen_tag;
@@ -232,7 +233,7 @@ static int aead_encrypt ( psa_key_id_t key, psa_algorithm_t alg,
   print_buf ( "out", out, olen );
 
 exit:
-  psa_aead_abort ( &op ); // required on errors, harmless on success
+  psa_aead_abort (&op ); // required on errors, harmless on success
   return status;
 }
 

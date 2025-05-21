@@ -52,8 +52,8 @@ volatile int false_but_the_compiler_does_not_know = 0;
 /* Hide calls to calloc/free from static checkers such as
  * `gcc-12 -Wuse-after-free`, to avoid compile-time complaints about
  * code where we do mean to cause a runtime error. */
-void* ( * volatile calloc_but_the_compiler_does_not_know ) ( size_t, size_t ) = mbedtls_calloc;
-void ( *volatile free_but_the_compiler_does_not_know ) ( void* ) = mbedtls_free;
+void* (* volatile calloc_but_the_compiler_does_not_know ) ( size_t, size_t ) = mbedtls_calloc;
+void (*volatile free_but_the_compiler_does_not_know ) ( void* ) = mbedtls_free;
 
 /* Set n bytes at the address p to all-bits-zero, in such a way that
  * the compiler should not know that p is all-bits-zero. */
@@ -68,7 +68,8 @@ static void do_nothing_with_object ( void* p )
 {
   ( void ) p;
 }
-void ( *volatile do_nothing_with_object_but_the_compiler_does_not_know ) ( void* ) =
+
+void (*volatile do_nothing_with_object_but_the_compiler_does_not_know ) ( void* ) =
   do_nothing_with_object;
 
 
@@ -126,7 +127,7 @@ static void null_pointer_dereference ( const char* name )
 {
   ( void ) name;
   volatile char* volatile p;
-  set_to_zero_but_the_compiler_does_not_know ( &p, sizeof ( p ) );
+  set_to_zero_but_the_compiler_does_not_know (&p, sizeof ( p ) );
   /* Undefined behavior (read from null data pointer) */
   mbedtls_printf ( "%p -> %u\n", ( void* ) p, ( unsigned ) *p );
 }
@@ -134,8 +135,8 @@ static void null_pointer_dereference ( const char* name )
 static void null_pointer_call ( const char* name )
 {
   ( void ) name;
-  unsigned ( *volatile p ) ( void );
-  set_to_zero_but_the_compiler_does_not_know ( &p, sizeof ( p ) );
+  unsigned (*volatile p ) ( void );
+  set_to_zero_but_the_compiler_does_not_know (&p, sizeof ( p ) );
   /* Undefined behavior (execute null function pointer) */
   /* The pointer representation may be truncated, but we don't care:
    * the only point of printing it is to have some use of the pointer
@@ -180,7 +181,7 @@ static void read_uninitialized_stack ( const char* name )
 
   char* volatile p = buf;
 
-  if ( *p != 0 )
+  if (*p != 0 )
   {
     /* Unspecified result (read from uninitialized memory) */
     mbedtls_printf ( "%u\n", ( unsigned ) *p );
@@ -276,12 +277,12 @@ static void mutex_lock_not_initialized ( const char* name )
   ( void ) name;
 #if defined(MBEDTLS_THREADING_C)
   mbedtls_threading_mutex_t mutex;
-  memset ( &mutex, 0, sizeof ( mutex ) );
+  memset (&mutex, 0, sizeof ( mutex ) );
   /* This mutex usage error is detected by our test framework's mutex usage
    * verification framework. See framework/tests/src/threading_helpers.c. Other
    * threading implementations (e.g. pthread without our instrumentation)
    * might consider this normal usage. */
-  TEST_ASSERT ( mbedtls_mutex_lock ( &mutex ) == 0 );
+  TEST_ASSERT ( mbedtls_mutex_lock (&mutex ) == 0 );
 exit:
   ;
 #endif
@@ -292,12 +293,12 @@ static void mutex_unlock_not_initialized ( const char* name )
   ( void ) name;
 #if defined(MBEDTLS_THREADING_C)
   mbedtls_threading_mutex_t mutex;
-  memset ( &mutex, 0, sizeof ( mutex ) );
+  memset (&mutex, 0, sizeof ( mutex ) );
   /* This mutex usage error is detected by our test framework's mutex usage
    * verification framework. See framework/tests/src/threading_helpers.c. Other
    * threading implementations (e.g. pthread without our instrumentation)
    * might consider this normal usage. */
-  TEST_ASSERT ( mbedtls_mutex_unlock ( &mutex ) == 0 );
+  TEST_ASSERT ( mbedtls_mutex_unlock (&mutex ) == 0 );
 exit:
   ;
 #endif
@@ -308,12 +309,12 @@ static void mutex_free_not_initialized ( const char* name )
   ( void ) name;
 #if defined(MBEDTLS_THREADING_C)
   mbedtls_threading_mutex_t mutex;
-  memset ( &mutex, 0, sizeof ( mutex ) );
+  memset (&mutex, 0, sizeof ( mutex ) );
   /* This mutex usage error is detected by our test framework's mutex usage
    * verification framework. See framework/tests/src/threading_helpers.c. Other
    * threading implementations (e.g. pthread without our instrumentation)
    * might consider this normal usage. */
-  mbedtls_mutex_free ( &mutex );
+  mbedtls_mutex_free (&mutex );
 #endif
 }
 
@@ -322,13 +323,13 @@ static void mutex_double_init ( const char* name )
   ( void ) name;
 #if defined(MBEDTLS_THREADING_C)
   mbedtls_threading_mutex_t mutex;
-  mbedtls_mutex_init ( &mutex );
+  mbedtls_mutex_init (&mutex );
   /* This mutex usage error is detected by our test framework's mutex usage
    * verification framework. See framework/tests/src/threading_helpers.c. Other
    * threading implementations (e.g. pthread without our instrumentation)
    * might consider this normal usage. */
-  mbedtls_mutex_init ( &mutex );
-  mbedtls_mutex_free ( &mutex );
+  mbedtls_mutex_init (&mutex );
+  mbedtls_mutex_free (&mutex );
 #endif
 }
 
@@ -337,13 +338,13 @@ static void mutex_double_free ( const char* name )
   ( void ) name;
 #if defined(MBEDTLS_THREADING_C)
   mbedtls_threading_mutex_t mutex;
-  mbedtls_mutex_init ( &mutex );
-  mbedtls_mutex_free ( &mutex );
+  mbedtls_mutex_init (&mutex );
+  mbedtls_mutex_free (&mutex );
   /* This mutex usage error is detected by our test framework's mutex usage
    * verification framework. See framework/tests/src/threading_helpers.c. Other
    * threading implementations (e.g. pthread without our instrumentation)
    * might consider this normal usage. */
-  mbedtls_mutex_free ( &mutex );
+  mbedtls_mutex_free (&mutex );
 #endif
 }
 
@@ -352,7 +353,7 @@ static void mutex_leak ( const char* name )
   ( void ) name;
 #if defined(MBEDTLS_THREADING_C)
   mbedtls_threading_mutex_t mutex;
-  mbedtls_mutex_init ( &mutex );
+  mbedtls_mutex_init (&mutex );
 #endif
   /* This mutex usage error is detected by our test framework's mutex usage
    * verification framework. See framework/tests/src/threading_helpers.c. Other
@@ -396,7 +397,7 @@ typedef struct
    * When executed on a non-conforming platform, the function may return
    * normally or may have unpredictable behavior.
    */
-  void ( *entry_point ) ( const char* name );
+  void (*entry_point ) ( const char* name );
 } metatest_t;
 
 /* The list of available meta-tests. Remember to register new functions here!
@@ -464,7 +465,7 @@ int main ( int argc, char* argv[] )
   /* Support "-help", "--help", "--list", etc. */
   const char* command = argv[1];
 
-  while ( *command == '-' )
+  while (*command == '-' )
   {
     ++command;
   }

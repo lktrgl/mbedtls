@@ -42,6 +42,7 @@ typedef struct
   uint8_t MBEDTLS_PRIVATE ( prk ) [PSA_HASH_MAX_SIZE];
   struct psa_mac_operation_s MBEDTLS_PRIVATE ( hmac );
 } psa_hkdf_key_derivation_t;
+
 #endif /* MBEDTLS_PSA_BUILTIN_ALG_HKDF ||
           MBEDTLS_PSA_BUILTIN_ALG_HKDF_EXTRACT ||
           MBEDTLS_PSA_BUILTIN_ALG_HKDF_EXPAND */
@@ -50,6 +51,7 @@ typedef struct
 {
   uint8_t MBEDTLS_PRIVATE ( data ) [PSA_TLS12_ECJPAKE_TO_PMS_DATA_SIZE];
 } psa_tls12_ecjpake_to_pms_t;
+
 #endif /* MBEDTLS_PSA_BUILTIN_ALG_TLS12_ECJPAKE_TO_PMS */
 
 #if defined(MBEDTLS_PSA_BUILTIN_ALG_TLS12_PRF) || \
@@ -95,6 +97,7 @@ typedef struct psa_tls12_prf_key_derivation_s
   /* `HMAC_hash( prk, A( i ) + seed )` in the notation of RFC 5246, Sect. 5. */
   uint8_t MBEDTLS_PRIVATE ( output_block ) [PSA_HASH_MAX_SIZE];
 } psa_tls12_prf_key_derivation_t;
+
 #endif /* MBEDTLS_PSA_BUILTIN_ALG_TLS12_PRF) ||
         * MBEDTLS_PSA_BUILTIN_ALG_TLS12_PSK_TO_MS */
 #if defined(PSA_HAVE_SOFT_PBKDF2)
@@ -119,6 +122,7 @@ typedef struct
   uint8_t MBEDTLS_PRIVATE ( bytes_used );
   uint32_t MBEDTLS_PRIVATE ( block_number );
 } psa_pbkdf2_key_derivation_t;
+
 #endif /* PSA_HAVE_SOFT_PBKDF2 */
 
 #endif /* PSA_CRYPTO_BUILTIN_KEY_DERIVATION_H */

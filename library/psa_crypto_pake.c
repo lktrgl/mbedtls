@@ -126,6 +126,7 @@ static psa_status_t mbedtls_ecjpake_to_psa_error ( int ret )
     return PSA_ERROR_GENERIC_ERROR;
   }
 }
+
 #endif
 
 #if defined(MBEDTLS_PSA_BUILTIN_PAKE)
@@ -134,14 +135,14 @@ static psa_status_t psa_pake_ecjpake_setup ( mbedtls_psa_pake_operation_t* opera
 {
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
 
-  mbedtls_ecjpake_init ( &operation->ctx.jpake );
+  mbedtls_ecjpake_init (&operation->ctx.jpake );
 
-  ret = mbedtls_ecjpake_setup ( &operation->ctx.jpake,
-                                operation->role,
-                                MBEDTLS_MD_SHA256,
-                                MBEDTLS_ECP_DP_SECP256R1,
-                                operation->password,
-                                operation->password_len );
+  ret = mbedtls_ecjpake_setup (&operation->ctx.jpake,
+                               operation->role,
+                               MBEDTLS_MD_SHA256,
+                               MBEDTLS_ECP_DP_SECP256R1,
+                               operation->password,
+                               operation->password_len );
 
   mbedtls_platform_zeroize ( operation->password, operation->password_len );
 
@@ -152,6 +153,7 @@ static psa_status_t psa_pake_ecjpake_setup ( mbedtls_psa_pake_operation_t* opera
 
   return PSA_SUCCESS;
 }
+
 #endif
 
 /* The only two JPAKE user/peer identifiers supported in built-in implementation. */
@@ -163,7 +165,7 @@ psa_status_t mbedtls_psa_pake_setup ( mbedtls_psa_pake_operation_t* operation,
 {
   psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
   size_t user_len = 0, peer_len = 0, password_len = 0;
-  uint8_t* peer = NULL, *user = NULL;
+  uint8_t* peer = NULL, * user = NULL;
   size_t actual_user_len = 0, actual_peer_len = 0, actual_password_len = 0;
   psa_pake_cipher_suite_t cipher_suite = psa_pake_cipher_suite_init();
 
@@ -354,12 +356,12 @@ static psa_status_t mbedtls_psa_pake_output_internal (
     /* Initialize & write round on KEY_SHARE sequences */
     if ( step == PSA_JPAKE_X1_STEP_KEY_SHARE )
     {
-      ret = mbedtls_ecjpake_write_round_one ( &operation->ctx.jpake,
-                                              operation->buffer,
-                                              sizeof ( operation->buffer ),
-                                              &operation->buffer_length,
-                                              mbedtls_psa_get_random,
-                                              MBEDTLS_PSA_RANDOM_STATE );
+      ret = mbedtls_ecjpake_write_round_one (&operation->ctx.jpake,
+                                             operation->buffer,
+                                             sizeof ( operation->buffer ),
+                                             &operation->buffer_length,
+                                             mbedtls_psa_get_random,
+                                             MBEDTLS_PSA_RANDOM_STATE );
 
       if ( ret != 0 )
       {
@@ -370,12 +372,12 @@ static psa_status_t mbedtls_psa_pake_output_internal (
     }
     else if ( step == PSA_JPAKE_X2S_STEP_KEY_SHARE )
     {
-      ret = mbedtls_ecjpake_write_round_two ( &operation->ctx.jpake,
-                                              operation->buffer,
-                                              sizeof ( operation->buffer ),
-                                              &operation->buffer_length,
-                                              mbedtls_psa_get_random,
-                                              MBEDTLS_PSA_RANDOM_STATE );
+      ret = mbedtls_ecjpake_write_round_two (&operation->ctx.jpake,
+                                             operation->buffer,
+                                             sizeof ( operation->buffer ),
+                                             &operation->buffer_length,
+                                             mbedtls_psa_get_random,
+                                             MBEDTLS_PSA_RANDOM_STATE );
 
       if ( ret != 0 )
       {
@@ -541,9 +543,9 @@ static psa_status_t mbedtls_psa_pake_input_internal (
     /* Load buffer at each last round ZK_PROOF */
     if ( step == PSA_JPAKE_X2_STEP_ZK_PROOF )
     {
-      ret = mbedtls_ecjpake_read_round_one ( &operation->ctx.jpake,
-                                             operation->buffer,
-                                             operation->buffer_length );
+      ret = mbedtls_ecjpake_read_round_one (&operation->ctx.jpake,
+                                            operation->buffer,
+                                            operation->buffer_length );
 
       mbedtls_platform_zeroize ( operation->buffer, sizeof ( operation->buffer ) );
       operation->buffer_length = 0;
@@ -555,9 +557,9 @@ static psa_status_t mbedtls_psa_pake_input_internal (
     }
     else if ( step == PSA_JPAKE_X4S_STEP_ZK_PROOF )
     {
-      ret = mbedtls_ecjpake_read_round_two ( &operation->ctx.jpake,
-                                             operation->buffer,
-                                             operation->buffer_length );
+      ret = mbedtls_ecjpake_read_round_two (&operation->ctx.jpake,
+                                            operation->buffer,
+                                            operation->buffer_length );
 
       mbedtls_platform_zeroize ( operation->buffer, sizeof ( operation->buffer ) );
       operation->buffer_length = 0;
@@ -604,12 +606,12 @@ psa_status_t mbedtls_psa_pake_get_implicit_key (
 
   if ( operation->alg == PSA_ALG_JPAKE )
   {
-    ret = mbedtls_ecjpake_write_shared_key ( &operation->ctx.jpake,
-          output,
-          output_size,
-          output_length,
-          mbedtls_psa_get_random,
-          MBEDTLS_PSA_RANDOM_STATE );
+    ret = mbedtls_ecjpake_write_shared_key (&operation->ctx.jpake,
+                                            output,
+                                            output_size,
+                                            output_length,
+                                            mbedtls_psa_get_random,
+                                            MBEDTLS_PSA_RANDOM_STATE );
 
     if ( ret != 0 )
     {
@@ -642,7 +644,7 @@ psa_status_t mbedtls_psa_pake_abort ( mbedtls_psa_pake_operation_t* operation )
     mbedtls_platform_zeroize ( operation->buffer, sizeof ( operation->buffer ) );
     operation->buffer_length = 0;
     operation->buffer_offset = 0;
-    mbedtls_ecjpake_free ( &operation->ctx.jpake );
+    mbedtls_ecjpake_free (&operation->ctx.jpake );
   }
 
 #endif

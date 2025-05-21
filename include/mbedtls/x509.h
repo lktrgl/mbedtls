@@ -241,6 +241,7 @@ typedef struct mbedtls_x509_authority
   mbedtls_x509_buf authorityCertSerialNumber;
   mbedtls_x509_buf raw;
 }
+
 mbedtls_x509_authority;
 
 /** Container for date and time (precision in seconds). */
@@ -249,6 +250,7 @@ typedef struct mbedtls_x509_time
   int year, mon, day;         /**< Date. */
   int hour, min, sec;         /**< Time. */
 }
+
 mbedtls_x509_time;
 
 /**
@@ -281,10 +283,13 @@ typedef struct mbedtls_x509_san_other_name
       mbedtls_x509_buf oid;               /**< The object identifier. */
       mbedtls_x509_buf val;               /**< The named value. */
     }
+
     hardware_module_name;
   }
+
   value;
 }
+
 mbedtls_x509_san_other_name;
 
 /**
@@ -304,8 +309,10 @@ typedef struct mbedtls_x509_subject_alternative_name
     mbedtls_x509_buf
     unstructured_name; /**< The buffer for the unstructured types. rfc822Name, dnsName and uniformResourceIdentifier are currently supported. */
   }
+
   san; /**< A union of the supported SAN types */
 }
+
 mbedtls_x509_subject_alternative_name;
 
 typedef struct mbedtls_x509_san_list
@@ -313,6 +320,7 @@ typedef struct mbedtls_x509_san_list
   mbedtls_x509_subject_alternative_name node;
   struct mbedtls_x509_san_list* next;
 }
+
 mbedtls_x509_san_list;
 
 /** \} name Structures for parsing X.509 certificates, CRLs and CSRs */
@@ -505,6 +513,7 @@ size_t mbedtls_x509_crt_parse_cn_inet_pton ( const char* cn, void* dst );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* MBEDTLS_X509_H */

@@ -4956,6 +4956,7 @@ psa_status_t psa_verify_hash_abort (
 
 #ifdef __cplusplus
 }
+
 #endif
 
 /* The file "crypto_sizes.h" contains definitions for size calculation

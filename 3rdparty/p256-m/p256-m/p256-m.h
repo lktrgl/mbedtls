@@ -130,6 +130,7 @@ int p256_public_from_private ( uint8_t pub[64], const uint8_t priv[32] );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* P256_M_H */

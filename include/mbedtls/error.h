@@ -118,7 +118,7 @@ extern "C" {
  * \brief Testing hook called before adding/combining two error codes together.
  *        Only used when invasive testing is enabled via MBEDTLS_TEST_HOOKS.
  */
-extern void ( *mbedtls_test_hook_error_add ) ( int, int, const char*, int );
+extern void (*mbedtls_test_hook_error_add ) ( int, int, const char*, int );
 #endif
 
 /**
@@ -144,9 +144,9 @@ static inline int mbedtls_error_add ( int high, int low,
 {
 #if defined(MBEDTLS_TEST_HOOKS)
 
-  if ( *mbedtls_test_hook_error_add != NULL )
+  if (*mbedtls_test_hook_error_add != NULL )
   {
-    ( *mbedtls_test_hook_error_add ) ( high, low, file, line );
+    (*mbedtls_test_hook_error_add ) ( high, low, file, line );
   }
 
 #endif
@@ -199,6 +199,7 @@ const char* mbedtls_low_level_strerr ( int error_code );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* error.h */

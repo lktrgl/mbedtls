@@ -43,6 +43,7 @@ typedef struct mbedtls_camellia_context
   int MBEDTLS_PRIVATE ( nr );                  /*!<  number of rounds  */
   uint32_t MBEDTLS_PRIVATE ( rk ) [68];        /*!<  CAMELLIA round keys    */
 }
+
 mbedtls_camellia_context;
 
 #else  /* MBEDTLS_CAMELLIA_ALT */
@@ -301,6 +302,7 @@ int mbedtls_camellia_self_test ( int verbose );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* camellia.h */

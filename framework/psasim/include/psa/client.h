@@ -75,6 +75,7 @@ void psa_close ( psa_handle_t handle );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* __PSA_CLIENT_H__ */

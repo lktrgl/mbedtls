@@ -11,6 +11,7 @@ typedef struct mbedtls_sha1_context
 {
   int dummy;
 }
+
 mbedtls_sha1_context;
 
 

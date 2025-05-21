@@ -27,6 +27,7 @@ int main ( void )
   mbedtls_printf ( "MBEDTLS_ERROR_C and/or MBEDTLS_ERROR_STRERROR_DUMMY not defined.\n" );
   mbedtls_exit ( 0 );
 }
+
 #else
 int main ( int argc, char* argv[] )
 {
@@ -41,11 +42,11 @@ int main ( int argc, char* argv[] )
 
   val = strtol ( argv[1], &end, 10 );
 
-  if ( *end != '\0' )
+  if (*end != '\0' )
   {
     val = strtol ( argv[1], &end, 16 );
 
-    if ( *end != '\0' )
+    if (*end != '\0' )
     {
       mbedtls_printf ( USAGE );
       return 0;
@@ -66,4 +67,5 @@ int main ( int argc, char* argv[] )
 
   mbedtls_exit ( val );
 }
+
 #endif /* MBEDTLS_ERROR_C */

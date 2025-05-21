@@ -44,6 +44,7 @@ int main ( void )
            "and/or MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER defined\r\n" );
   return 0;
 }
+
 #else
 
 /* The real program starts here. */
@@ -105,13 +106,13 @@ static psa_status_t hmac_demo ( void )
   psa_key_id_t key = 0;
 
   /* prepare key */
-  psa_set_key_usage_flags ( &attributes, PSA_KEY_USAGE_SIGN_MESSAGE );
-  psa_set_key_algorithm ( &attributes, alg );
-  psa_set_key_type ( &attributes, PSA_KEY_TYPE_HMAC );
-  psa_set_key_bits ( &attributes, 8 * sizeof ( key_bytes ) ); // optional
+  psa_set_key_usage_flags (&attributes, PSA_KEY_USAGE_SIGN_MESSAGE );
+  psa_set_key_algorithm (&attributes, alg );
+  psa_set_key_type (&attributes, PSA_KEY_TYPE_HMAC );
+  psa_set_key_bits (&attributes, 8 * sizeof ( key_bytes ) ); // optional
 
-  status = psa_import_key ( &attributes,
-                            key_bytes, sizeof ( key_bytes ), &key );
+  status = psa_import_key (&attributes,
+                           key_bytes, sizeof ( key_bytes ), &key );
 
   if ( status != PSA_SUCCESS )
   {
@@ -123,21 +124,21 @@ static psa_status_t hmac_demo ( void )
   size_t out_len = 0;
 
   /* compute HMAC(key, msg1_part1 | msg1_part2) */
-  PSA_CHECK ( psa_mac_sign_setup ( &op, key, alg ) );
-  PSA_CHECK ( psa_mac_update ( &op, msg1_part1, sizeof ( msg1_part1 ) ) );
-  PSA_CHECK ( psa_mac_update ( &op, msg1_part2, sizeof ( msg1_part2 ) ) );
-  PSA_CHECK ( psa_mac_sign_finish ( &op, out, sizeof ( out ), &out_len ) );
+  PSA_CHECK ( psa_mac_sign_setup (&op, key, alg ) );
+  PSA_CHECK ( psa_mac_update (&op, msg1_part1, sizeof ( msg1_part1 ) ) );
+  PSA_CHECK ( psa_mac_update (&op, msg1_part2, sizeof ( msg1_part2 ) ) );
+  PSA_CHECK ( psa_mac_sign_finish (&op, out, sizeof ( out ), &out_len ) );
   print_buf ( "msg1", out, out_len );
 
   /* compute HMAC(key, msg2_part1 | msg2_part2) */
-  PSA_CHECK ( psa_mac_sign_setup ( &op, key, alg ) );
-  PSA_CHECK ( psa_mac_update ( &op, msg2_part1, sizeof ( msg2_part1 ) ) );
-  PSA_CHECK ( psa_mac_update ( &op, msg2_part2, sizeof ( msg2_part2 ) ) );
-  PSA_CHECK ( psa_mac_sign_finish ( &op, out, sizeof ( out ), &out_len ) );
+  PSA_CHECK ( psa_mac_sign_setup (&op, key, alg ) );
+  PSA_CHECK ( psa_mac_update (&op, msg2_part1, sizeof ( msg2_part1 ) ) );
+  PSA_CHECK ( psa_mac_update (&op, msg2_part2, sizeof ( msg2_part2 ) ) );
+  PSA_CHECK ( psa_mac_sign_finish (&op, out, sizeof ( out ), &out_len ) );
   print_buf ( "msg2", out, out_len );
 
 exit:
-  psa_mac_abort ( &op ); // needed on error, harmless on success
+  psa_mac_abort (&op ); // needed on error, harmless on success
   psa_destroy_key ( key );
   mbedtls_platform_zeroize ( out, sizeof ( out ) );
 

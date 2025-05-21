@@ -75,6 +75,7 @@ typedef struct
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* MBEDTLS_BLOCK_CIPHER_H */

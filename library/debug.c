@@ -204,6 +204,7 @@ void mbedtls_debug_print_ecp ( const mbedtls_ssl_context* ssl, int level,
   mbedtls_snprintf ( str, sizeof ( str ), "%s(Y)", text );
   mbedtls_debug_print_mpi ( ssl, level, file, line, str, &X->Y );
 }
+
 #endif /* MBEDTLS_ECP_LIGHT */
 
 #if defined(MBEDTLS_PK_USE_PSA_EC_DATA)
@@ -283,6 +284,7 @@ void mbedtls_debug_print_psa_ec ( const mbedtls_ssl_context* ssl, int level,
   mbedtls_snprintf ( str, sizeof ( str ), "%s(Y)", text );
   mbedtls_debug_print_ec_coord ( ssl, level, file, line, str, coord_start, coord_len );
 }
+
 #endif /* MBEDTLS_PK_USE_PSA_EC_DATA */
 
 #if defined(MBEDTLS_BIGNUM_C)
@@ -345,6 +347,7 @@ void mbedtls_debug_print_mpi ( const mbedtls_ssl_context* ssl, int level,
     debug_send_line ( ssl, level, file, line, str );
   }
 }
+
 #endif /* MBEDTLS_BIGNUM_C */
 
 #if defined(MBEDTLS_X509_CRT_PARSE_C) && !defined(MBEDTLS_X509_REMOVE_INFO)
@@ -408,13 +411,13 @@ static void debug_print_line_by_line ( const mbedtls_ssl_context* ssl, int level
                                        const char* file, int line, const char* text )
 {
   char str[DEBUG_BUF_SIZE];
-  const char* start, *cur;
+  const char* start, * cur;
 
   start = text;
 
   for ( cur = text; *cur != '\0'; cur++ )
   {
-    if ( *cur == '\n' )
+    if (*cur == '\n' )
     {
       size_t len = ( size_t ) ( cur - start ) + 1;
 
@@ -464,6 +467,7 @@ void mbedtls_debug_print_crt ( const mbedtls_ssl_context* ssl, int level,
     crt = crt->next;
   }
 }
+
 #endif /* MBEDTLS_X509_CRT_PARSE_C && MBEDTLS_X509_REMOVE_INFO */
 
 #if defined(MBEDTLS_KEY_EXCHANGE_SOME_ECDH_OR_ECDHE_ANY_ENABLED) && \
@@ -520,6 +524,7 @@ void mbedtls_debug_printf_ecdh ( const mbedtls_ssl_context* ssl, int level,
 
 #endif
 }
+
 #endif /* MBEDTLS_KEY_EXCHANGE_SOME_ECDH_OR_ECDHE_ANY_ENABLED &&
           MBEDTLS_ECDH_C */
 

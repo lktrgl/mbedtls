@@ -42,7 +42,7 @@ static int check_ecc_parameters ( psa_ecc_family_t family, size_t* bits )
   switch ( family )
   {
   case PSA_ECC_FAMILY_SECP_R1:
-    switch ( *bits )
+    switch (*bits )
     {
     case 192:
     case 224:
@@ -59,7 +59,7 @@ static int check_ecc_parameters ( psa_ecc_family_t family, size_t* bits )
     break;
 
   case PSA_ECC_FAMILY_BRAINPOOL_P_R1:
-    switch ( *bits )
+    switch (*bits )
     {
     case 256:
     case 384:
@@ -70,7 +70,7 @@ static int check_ecc_parameters ( psa_ecc_family_t family, size_t* bits )
     break;
 
   case PSA_ECC_FAMILY_MONTGOMERY:
-    switch ( *bits )
+    switch (*bits )
     {
     case 448:
     case 255:
@@ -84,7 +84,7 @@ static int check_ecc_parameters ( psa_ecc_family_t family, size_t* bits )
     break;
 
   case PSA_ECC_FAMILY_SECP_K1:
-    switch ( *bits )
+    switch (*bits )
     {
     case 192:
 
@@ -177,7 +177,7 @@ psa_status_t mbedtls_psa_ecp_load_representation (
   }
 
   status = mbedtls_to_psa_error (
-             mbedtls_ecp_group_load ( &ecp->grp, grp_id ) );
+             mbedtls_ecp_group_load (&ecp->grp, grp_id ) );
 
   if ( status != PSA_SUCCESS )
   {
@@ -189,9 +189,9 @@ psa_status_t mbedtls_psa_ecp_load_representation (
   {
     /* Load the public value. */
     status = mbedtls_to_psa_error (
-               mbedtls_ecp_point_read_binary ( &ecp->grp, &ecp->Q,
-                   data,
-                   data_length ) );
+               mbedtls_ecp_point_read_binary (&ecp->grp, &ecp->Q,
+                 data,
+                 data_length ) );
 
     if ( status != PSA_SUCCESS )
     {
@@ -200,7 +200,7 @@ psa_status_t mbedtls_psa_ecp_load_representation (
 
     /* Check that the point is on the curve. */
     status = mbedtls_to_psa_error (
-               mbedtls_ecp_check_pubkey ( &ecp->grp, &ecp->Q ) );
+               mbedtls_ecp_check_pubkey (&ecp->grp, &ecp->Q ) );
 
     if ( status != PSA_SUCCESS )
     {
@@ -233,6 +233,7 @@ exit:
 
   return status;
 }
+
 #endif /* defined(MBEDTLS_PSA_BUILTIN_KEY_TYPE_ECC_KEY_PAIR_BASIC) ||
         * defined(MBEDTLS_PSA_BUILTIN_KEY_TYPE_ECC_KEY_PAIR_IMPORT) ||
         * defined(MBEDTLS_PSA_BUILTIN_KEY_TYPE_ECC_KEY_PAIR_EXPORT) ||
@@ -303,13 +304,13 @@ psa_status_t mbedtls_psa_ecp_export_key ( psa_key_type_t type,
   if ( PSA_KEY_TYPE_IS_PUBLIC_KEY ( type ) )
   {
     /* Check whether the public part is loaded */
-    if ( mbedtls_ecp_is_zero ( &ecp->Q ) )
+    if ( mbedtls_ecp_is_zero (&ecp->Q ) )
     {
       /* Calculate the public key */
       status = mbedtls_to_psa_error (
-                 mbedtls_ecp_mul ( &ecp->grp, &ecp->Q, &ecp->d, &ecp->grp.G,
-                                   mbedtls_psa_get_random,
-                                   MBEDTLS_PSA_RANDOM_STATE ) );
+                 mbedtls_ecp_mul (&ecp->grp, &ecp->Q, &ecp->d, &ecp->grp.G,
+                                  mbedtls_psa_get_random,
+                                  MBEDTLS_PSA_RANDOM_STATE ) );
 
       if ( status != PSA_SUCCESS )
       {
@@ -318,11 +319,11 @@ psa_status_t mbedtls_psa_ecp_export_key ( psa_key_type_t type,
     }
 
     status = mbedtls_to_psa_error (
-               mbedtls_ecp_point_write_binary ( &ecp->grp, &ecp->Q,
-                   MBEDTLS_ECP_PF_UNCOMPRESSED,
-                   data_length,
-                   data,
-                   data_size ) );
+               mbedtls_ecp_point_write_binary (&ecp->grp, &ecp->Q,
+                 MBEDTLS_ECP_PF_UNCOMPRESSED,
+                 data_length,
+                 data,
+                 data_size ) );
 
     if ( status != PSA_SUCCESS )
     {
@@ -366,6 +367,7 @@ psa_status_t mbedtls_psa_ecp_export_public_key (
 
   return status;
 }
+
 #endif /* defined(MBEDTLS_PSA_BUILTIN_KEY_TYPE_ECC_KEY_PAIR_IMPORT) ||
         * defined(MBEDTLS_PSA_BUILTIN_KEY_TYPE_ECC_KEY_PAIR_EXPORT) ||
         * defined(MBEDTLS_PSA_BUILTIN_KEY_TYPE_ECC_PUBLIC_KEY) */
@@ -386,32 +388,33 @@ psa_status_t mbedtls_psa_ecp_generate_key (
   }
 
   mbedtls_ecp_keypair ecp;
-  mbedtls_ecp_keypair_init ( &ecp );
+  mbedtls_ecp_keypair_init (&ecp );
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
 
-  ret = mbedtls_ecp_group_load ( &ecp.grp, grp_id );
+  ret = mbedtls_ecp_group_load (&ecp.grp, grp_id );
 
   if ( ret != 0 )
   {
     goto exit;
   }
 
-  ret = mbedtls_ecp_gen_privkey ( &ecp.grp, &ecp.d,
-                                  mbedtls_psa_get_random,
-                                  MBEDTLS_PSA_RANDOM_STATE );
+  ret = mbedtls_ecp_gen_privkey (&ecp.grp, &ecp.d,
+                                 mbedtls_psa_get_random,
+                                 MBEDTLS_PSA_RANDOM_STATE );
 
   if ( ret != 0 )
   {
     goto exit;
   }
 
-  ret = mbedtls_ecp_write_key_ext ( &ecp, key_buffer_length,
-                                    key_buffer, key_buffer_size );
+  ret = mbedtls_ecp_write_key_ext (&ecp, key_buffer_length,
+                                   key_buffer, key_buffer_size );
 
 exit:
-  mbedtls_ecp_keypair_free ( &ecp );
+  mbedtls_ecp_keypair_free (&ecp );
   return mbedtls_to_psa_error ( ret );
 }
+
 #endif /* MBEDTLS_PSA_BUILTIN_KEY_TYPE_ECC_KEY_PAIR_GENERATE */
 
 /****************************************************************/
@@ -444,8 +447,8 @@ psa_status_t mbedtls_psa_ecdsa_sign_hash (
   }
 
   curve_bytes = PSA_BITS_TO_BYTES ( ecp->grp.pbits );
-  mbedtls_mpi_init ( &r );
-  mbedtls_mpi_init ( &s );
+  mbedtls_mpi_init (&r );
+  mbedtls_mpi_init (&s );
 
   if ( signature_size < 2 * curve_bytes )
   {
@@ -472,21 +475,21 @@ psa_status_t mbedtls_psa_ecdsa_sign_hash (
   else
   {
     ( void ) alg;
-    MBEDTLS_MPI_CHK ( mbedtls_ecdsa_sign ( &ecp->grp, &r, &s, &ecp->d,
-                                           hash, hash_length,
-                                           mbedtls_psa_get_random,
-                                           MBEDTLS_PSA_RANDOM_STATE ) );
+    MBEDTLS_MPI_CHK ( mbedtls_ecdsa_sign (&ecp->grp, &r, &s, &ecp->d,
+                                          hash, hash_length,
+                                          mbedtls_psa_get_random,
+                                          MBEDTLS_PSA_RANDOM_STATE ) );
   }
 
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_write_binary ( &r,
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_write_binary (&r,
                     signature,
                     curve_bytes ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_write_binary ( &s,
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_write_binary (&s,
                     signature + curve_bytes,
                     curve_bytes ) );
 cleanup:
-  mbedtls_mpi_free ( &r );
-  mbedtls_mpi_free ( &s );
+  mbedtls_mpi_free (&r );
+  mbedtls_mpi_free (&s );
 
   if ( ret == 0 )
   {
@@ -504,12 +507,12 @@ psa_status_t mbedtls_psa_ecp_load_public_part ( mbedtls_ecp_keypair* ecp )
   int ret = 0;
 
   /* Check whether the public part is loaded. If not, load it. */
-  if ( mbedtls_ecp_is_zero ( &ecp->Q ) )
+  if ( mbedtls_ecp_is_zero (&ecp->Q ) )
   {
-    ret = mbedtls_ecp_mul ( &ecp->grp, &ecp->Q,
-                            &ecp->d, &ecp->grp.G,
-                            mbedtls_psa_get_random,
-                            MBEDTLS_PSA_RANDOM_STATE );
+    ret = mbedtls_ecp_mul (&ecp->grp, &ecp->Q,
+                           &ecp->d, &ecp->grp.G,
+                           mbedtls_psa_get_random,
+                           MBEDTLS_PSA_RANDOM_STATE );
   }
 
   return mbedtls_to_psa_error ( ret );
@@ -540,8 +543,8 @@ psa_status_t mbedtls_psa_ecdsa_verify_hash (
   }
 
   curve_bytes = PSA_BITS_TO_BYTES ( ecp->grp.pbits );
-  mbedtls_mpi_init ( &r );
-  mbedtls_mpi_init ( &s );
+  mbedtls_mpi_init (&r );
+  mbedtls_mpi_init (&s );
 
   if ( signature_length != 2 * curve_bytes )
   {
@@ -549,7 +552,7 @@ psa_status_t mbedtls_psa_ecdsa_verify_hash (
     goto cleanup;
   }
 
-  status = mbedtls_to_psa_error ( mbedtls_mpi_read_binary ( &r,
+  status = mbedtls_to_psa_error ( mbedtls_mpi_read_binary (&r,
                                   signature,
                                   curve_bytes ) );
 
@@ -558,7 +561,7 @@ psa_status_t mbedtls_psa_ecdsa_verify_hash (
     goto cleanup;
   }
 
-  status = mbedtls_to_psa_error ( mbedtls_mpi_read_binary ( &s,
+  status = mbedtls_to_psa_error ( mbedtls_mpi_read_binary (&s,
                                   signature + curve_bytes,
                                   curve_bytes ) );
 
@@ -574,12 +577,12 @@ psa_status_t mbedtls_psa_ecdsa_verify_hash (
     goto cleanup;
   }
 
-  status = mbedtls_to_psa_error ( mbedtls_ecdsa_verify ( &ecp->grp, hash,
+  status = mbedtls_to_psa_error ( mbedtls_ecdsa_verify (&ecp->grp, hash,
                                   hash_length, &ecp->Q,
                                   &r, &s ) );
 cleanup:
-  mbedtls_mpi_free ( &r );
-  mbedtls_mpi_free ( &s );
+  mbedtls_mpi_free (&r );
+  mbedtls_mpi_free (&s );
   mbedtls_ecp_keypair_free ( ecp );
   mbedtls_free ( ecp );
 
@@ -603,8 +606,8 @@ psa_status_t mbedtls_psa_key_agreement_ecdh (
 {
   psa_status_t status;
 
-  if ( !PSA_KEY_TYPE_IS_ECC_KEY_PAIR ( attributes->type ) ||
-       !PSA_ALG_IS_ECDH ( alg ) )
+  if (!PSA_KEY_TYPE_IS_ECC_KEY_PAIR ( attributes->type ) ||
+      !PSA_ALG_IS_ECDH ( alg ) )
   {
     return PSA_ERROR_INVALID_ARGUMENT;
   }
@@ -626,7 +629,7 @@ psa_status_t mbedtls_psa_key_agreement_ecdh (
   mbedtls_ecdh_context ecdh;
   size_t bits = 0;
   psa_ecc_family_t curve = mbedtls_ecc_group_to_psa ( ecp->grp.id, &bits );
-  mbedtls_ecdh_init ( &ecdh );
+  mbedtls_ecdh_init (&ecdh );
 
   status = mbedtls_psa_ecp_load_representation (
              PSA_KEY_TYPE_ECC_PUBLIC_KEY ( curve ),
@@ -641,7 +644,7 @@ psa_status_t mbedtls_psa_key_agreement_ecdh (
   }
 
   status = mbedtls_to_psa_error (
-             mbedtls_ecdh_get_params ( &ecdh, their_key, MBEDTLS_ECDH_THEIRS ) );
+             mbedtls_ecdh_get_params (&ecdh, their_key, MBEDTLS_ECDH_THEIRS ) );
 
   if ( status != PSA_SUCCESS )
   {
@@ -649,7 +652,7 @@ psa_status_t mbedtls_psa_key_agreement_ecdh (
   }
 
   status = mbedtls_to_psa_error (
-             mbedtls_ecdh_get_params ( &ecdh, ecp, MBEDTLS_ECDH_OURS ) );
+             mbedtls_ecdh_get_params (&ecdh, ecp, MBEDTLS_ECDH_OURS ) );
 
   if ( status != PSA_SUCCESS )
   {
@@ -657,11 +660,11 @@ psa_status_t mbedtls_psa_key_agreement_ecdh (
   }
 
   status = mbedtls_to_psa_error (
-             mbedtls_ecdh_calc_secret ( &ecdh,
-                                        shared_secret_length,
-                                        shared_secret, shared_secret_size,
-                                        mbedtls_psa_get_random,
-                                        MBEDTLS_PSA_RANDOM_STATE ) );
+             mbedtls_ecdh_calc_secret (&ecdh,
+                                       shared_secret_length,
+                                       shared_secret, shared_secret_size,
+                                       mbedtls_psa_get_random,
+                                       MBEDTLS_PSA_RANDOM_STATE ) );
 
   if ( status != PSA_SUCCESS )
   {
@@ -680,13 +683,14 @@ exit:
     mbedtls_platform_zeroize ( shared_secret, shared_secret_size );
   }
 
-  mbedtls_ecdh_free ( &ecdh );
+  mbedtls_ecdh_free (&ecdh );
   mbedtls_ecp_keypair_free ( their_key );
   mbedtls_free ( their_key );
   mbedtls_ecp_keypair_free ( ecp );
   mbedtls_free ( ecp );
   return status;
 }
+
 #endif /* MBEDTLS_PSA_BUILTIN_ALG_ECDH */
 
 

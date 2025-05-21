@@ -86,6 +86,7 @@ typedef struct
   unsigned case_uses_negative_0;
 #endif
 }
+
 mbedtls_test_info_t;
 
 /**

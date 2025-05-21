@@ -11,6 +11,7 @@ typedef struct mbedtls_dhm_context
 {
   int dummy;
 }
+
 mbedtls_dhm_context;
 
 

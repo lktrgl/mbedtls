@@ -11,6 +11,7 @@ typedef struct mbedtls_gcm_context
 {
   int dummy;
 }
+
 mbedtls_gcm_context;
 
 

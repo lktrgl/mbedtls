@@ -66,7 +66,7 @@ static int pkcs12_parse_pbe_params ( mbedtls_asn1_buf* params,
     return MBEDTLS_ERROR_ADD ( MBEDTLS_ERR_PKCS12_PBE_INVALID_FORMAT, ret );
   }
 
-  if ( *p != end )
+  if (*p != end )
   {
     return MBEDTLS_ERROR_ADD ( MBEDTLS_ERR_PKCS12_PBE_INVALID_FORMAT,
                                MBEDTLS_ERR_ASN1_LENGTH_MISMATCH );
@@ -92,8 +92,8 @@ static int pkcs12_pbe_derive_key_iv ( mbedtls_asn1_buf* pbe_params, mbedtls_md_t
     return MBEDTLS_ERR_PKCS12_BAD_INPUT_DATA;
   }
 
-  memset ( &salt, 0, sizeof ( mbedtls_asn1_buf ) );
-  memset ( &unipwd, 0, sizeof ( unipwd ) );
+  memset (&salt, 0, sizeof ( mbedtls_asn1_buf ) );
+  memset (&unipwd, 0, sizeof ( unipwd ) );
 
   if ( ( ret = pkcs12_parse_pbe_params ( pbe_params, &salt,
                                          &iterations ) ) != 0 )
@@ -156,6 +156,7 @@ int mbedtls_pkcs12_pbe ( mbedtls_asn1_buf* pbe_params, int mode,
                                   pwd, pwdlen, data, len, output, SIZE_MAX,
                                   &output_len );
 }
+
 #endif
 
 int mbedtls_pkcs12_pbe_ext ( mbedtls_asn1_buf* pbe_params, int mode,
@@ -215,15 +216,15 @@ int mbedtls_pkcs12_pbe_ext ( mbedtls_asn1_buf* pbe_params, int mode,
     return ret;
   }
 
-  mbedtls_cipher_init ( &cipher_ctx );
+  mbedtls_cipher_init (&cipher_ctx );
 
-  if ( ( ret = mbedtls_cipher_setup ( &cipher_ctx, cipher_info ) ) != 0 )
+  if ( ( ret = mbedtls_cipher_setup (&cipher_ctx, cipher_info ) ) != 0 )
   {
     goto exit;
   }
 
-  if ( ( ret = mbedtls_cipher_setkey ( &cipher_ctx, key, 8 * keylen,
-                                       ( mbedtls_operation_t ) mode ) ) != 0 )
+  if ( ( ret = mbedtls_cipher_setkey (&cipher_ctx, key, 8 * keylen,
+                                      ( mbedtls_operation_t ) mode ) ) != 0 )
   {
     goto exit;
   }
@@ -246,14 +247,15 @@ int mbedtls_pkcs12_pbe_ext ( mbedtls_asn1_buf* pbe_params, int mode,
 
 #endif
 
-    if ( ( ret = mbedtls_cipher_set_padding_mode ( &cipher_ctx, padding ) ) != 0 )
+    if ( ( ret = mbedtls_cipher_set_padding_mode (&cipher_ctx, padding ) ) != 0 )
     {
       goto exit;
     }
   }
+
 #endif /* MBEDTLS_CIPHER_MODE_WITH_PADDING */
 
-  ret = mbedtls_cipher_crypt ( &cipher_ctx, iv, iv_len, data, len, output, &finish_olen );
+  ret = mbedtls_cipher_crypt (&cipher_ctx, iv, iv_len, data, len, output, &finish_olen );
 
   if ( ret == MBEDTLS_ERR_CIPHER_INVALID_PADDING )
   {
@@ -265,7 +267,7 @@ int mbedtls_pkcs12_pbe_ext ( mbedtls_asn1_buf* pbe_params, int mode,
 exit:
   mbedtls_platform_zeroize ( key, sizeof ( key ) );
   mbedtls_platform_zeroize ( iv,  sizeof ( iv ) );
-  mbedtls_cipher_free ( &cipher_ctx );
+  mbedtls_cipher_free (&cipher_ctx );
 
   return ret;
 }
@@ -315,27 +317,27 @@ static int calculate_hashes ( mbedtls_md_type_t md_type, int iterations,
     return MBEDTLS_ERR_PKCS12_FEATURE_UNAVAILABLE;
   }
 
-  mbedtls_md_init ( &md_ctx );
+  mbedtls_md_init (&md_ctx );
 
-  if ( ( ret = mbedtls_md_setup ( &md_ctx, md_info, 0 ) ) != 0 )
+  if ( ( ret = mbedtls_md_setup (&md_ctx, md_info, 0 ) ) != 0 )
   {
     return ret;
   }
 
   // Calculate hash( diversifier || salt_block || pwd_block )
-  if ( ( ret = mbedtls_md_starts ( &md_ctx ) ) != 0 )
+  if ( ( ret = mbedtls_md_starts (&md_ctx ) ) != 0 )
   {
     goto exit;
   }
 
-  if ( ( ret = mbedtls_md_update ( &md_ctx, diversifier, v ) ) != 0 )
+  if ( ( ret = mbedtls_md_update (&md_ctx, diversifier, v ) ) != 0 )
   {
     goto exit;
   }
 
   if ( use_salt != 0 )
   {
-    if ( ( ret = mbedtls_md_update ( &md_ctx, salt_block, v ) ) != 0 )
+    if ( ( ret = mbedtls_md_update (&md_ctx, salt_block, v ) ) != 0 )
     {
       goto exit;
     }
@@ -343,13 +345,13 @@ static int calculate_hashes ( mbedtls_md_type_t md_type, int iterations,
 
   if ( use_password != 0 )
   {
-    if ( ( ret = mbedtls_md_update ( &md_ctx, pwd_block, v ) ) != 0 )
+    if ( ( ret = mbedtls_md_update (&md_ctx, pwd_block, v ) ) != 0 )
     {
       goto exit;
     }
   }
 
-  if ( ( ret = mbedtls_md_finish ( &md_ctx, hash_output ) ) != 0 )
+  if ( ( ret = mbedtls_md_finish (&md_ctx, hash_output ) ) != 0 )
   {
     goto exit;
   }
@@ -365,7 +367,7 @@ static int calculate_hashes ( mbedtls_md_type_t md_type, int iterations,
   }
 
 exit:
-  mbedtls_md_free ( &md_ctx );
+  mbedtls_md_free (&md_ctx );
   return ret;
 }
 
@@ -457,7 +459,7 @@ int mbedtls_pkcs12_derivation ( unsigned char* data, size_t datalen,
     // B += 1
     for ( i = v; i > 0; i-- )
     {
-      if ( ++hash_block[i - 1] != 0 )
+      if (++hash_block[i - 1] != 0 )
       {
         break;
       }

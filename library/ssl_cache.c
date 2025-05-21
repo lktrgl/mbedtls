@@ -29,7 +29,7 @@ void mbedtls_ssl_cache_init ( mbedtls_ssl_cache_context* cache )
   cache->max_entries = MBEDTLS_SSL_CACHE_DEFAULT_MAX_ENTRIES;
 
 #if defined(MBEDTLS_THREADING_C)
-  mbedtls_mutex_init ( &cache->mutex );
+  mbedtls_mutex_init (&cache->mutex );
 #endif
 }
 
@@ -88,7 +88,7 @@ int mbedtls_ssl_cache_get ( void* data,
 
 #if defined(MBEDTLS_THREADING_C)
 
-  if ( ( ret = mbedtls_mutex_lock ( &cache->mutex ) ) != 0 )
+  if ( ( ret = mbedtls_mutex_lock (&cache->mutex ) ) != 0 )
   {
     return ret;
   }
@@ -116,7 +116,7 @@ int mbedtls_ssl_cache_get ( void* data,
 exit:
 #if defined(MBEDTLS_THREADING_C)
 
-  if ( mbedtls_mutex_unlock ( &cache->mutex ) != 0 )
+  if ( mbedtls_mutex_unlock (&cache->mutex ) != 0 )
   {
     ret = MBEDTLS_ERR_THREADING_MUTEX_ERROR;
   }
@@ -156,7 +156,7 @@ static int ssl_cache_pick_writing_slot ( mbedtls_ssl_cache_context* cache,
 
   mbedtls_ssl_cache_entry* old = NULL;
   int count = 0;
-  mbedtls_ssl_cache_entry* cur, *last;
+  mbedtls_ssl_cache_entry* cur, * last;
 
   /* Check 1: Is there already an entry with the given session ID?
    *
@@ -297,7 +297,7 @@ int mbedtls_ssl_cache_set ( void* data,
 
 #if defined(MBEDTLS_THREADING_C)
 
-  if ( ( ret = mbedtls_mutex_lock ( &cache->mutex ) ) != 0 )
+  if ( ( ret = mbedtls_mutex_lock (&cache->mutex ) ) != 0 )
   {
     return ret;
   }
@@ -359,7 +359,7 @@ int mbedtls_ssl_cache_set ( void* data,
 exit:
 #if defined(MBEDTLS_THREADING_C)
 
-  if ( mbedtls_mutex_unlock ( &cache->mutex ) != 0 )
+  if ( mbedtls_mutex_unlock (&cache->mutex ) != 0 )
   {
     ret = MBEDTLS_ERR_THREADING_MUTEX_ERROR;
   }
@@ -386,7 +386,7 @@ int mbedtls_ssl_cache_remove ( void* data,
 
 #if defined(MBEDTLS_THREADING_C)
 
-  if ( ( ret = mbedtls_mutex_lock ( &cache->mutex ) ) != 0 )
+  if ( ( ret = mbedtls_mutex_lock (&cache->mutex ) ) != 0 )
   {
     return ret;
   }
@@ -426,7 +426,7 @@ free:
 exit:
 #if defined(MBEDTLS_THREADING_C)
 
-  if ( mbedtls_mutex_unlock ( &cache->mutex ) != 0 )
+  if ( mbedtls_mutex_unlock (&cache->mutex ) != 0 )
   {
     ret = MBEDTLS_ERR_THREADING_MUTEX_ERROR;
   }
@@ -446,6 +446,7 @@ void mbedtls_ssl_cache_set_timeout ( mbedtls_ssl_cache_context* cache, int timeo
 
   cache->timeout = timeout;
 }
+
 #endif /* MBEDTLS_HAVE_TIME */
 
 void mbedtls_ssl_cache_set_max_entries ( mbedtls_ssl_cache_context* cache, int max )
@@ -460,7 +461,7 @@ void mbedtls_ssl_cache_set_max_entries ( mbedtls_ssl_cache_context* cache, int m
 
 void mbedtls_ssl_cache_free ( mbedtls_ssl_cache_context* cache )
 {
-  mbedtls_ssl_cache_entry* cur, *prv;
+  mbedtls_ssl_cache_entry* cur, * prv;
 
   cur = cache->chain;
 
@@ -474,7 +475,7 @@ void mbedtls_ssl_cache_free ( mbedtls_ssl_cache_context* cache )
   }
 
 #if defined(MBEDTLS_THREADING_C)
-  mbedtls_mutex_free ( &cache->mutex );
+  mbedtls_mutex_free (&cache->mutex );
 #endif
   cache->chain = NULL;
 }

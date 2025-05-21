@@ -151,7 +151,7 @@ psa_status_t mbedtls_test_transparent_cipher_encrypt_setup (
    * useful for the test suite, since it gives a chance of catching memory
    * corruption errors should the core not have allocated (enough) memory for
    * our context struct. */
-  memset ( operation, 0, sizeof ( *operation ) );
+  memset ( operation, 0, sizeof (*operation ) );
 
   if ( mbedtls_test_driver_cipher_hooks.forced_status != PSA_SUCCESS )
   {
@@ -215,7 +215,7 @@ psa_status_t mbedtls_test_transparent_cipher_abort (
    * useful for the test suite, since it gives a chance of catching memory
    * corruption errors should the core not have allocated (enough) memory for
    * our context struct. */
-  memset ( operation, 0, sizeof ( *operation ) );
+  memset ( operation, 0, sizeof (*operation ) );
 
   return mbedtls_test_driver_cipher_hooks.forced_status;
 }
@@ -452,4 +452,5 @@ psa_status_t mbedtls_test_opaque_cipher_finish (
   ( void ) output_length;
   return PSA_ERROR_NOT_SUPPORTED;
 }
+
 #endif /* PSA_CRYPTO_DRIVER_TEST */

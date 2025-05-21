@@ -50,29 +50,29 @@
 /* Compiler version checks. */
 #if defined(__clang__)
   #if defined(MBEDTLS_ARCH_IS_ARM32) && (__clang_major__ < 11)
-    #       error "Minimum version of Clang for MBEDTLS_AESCE_C on 32-bit Arm or Thumb is 11.0."
+    #error "Minimum version of Clang for MBEDTLS_AESCE_C on 32-bit Arm or Thumb is 11.0."
   #elif defined(MBEDTLS_ARCH_IS_ARM64) && (__clang_major__ < 4)
-    #       error "Minimum version of Clang for MBEDTLS_AESCE_C on aarch64 is 4.0."
+    #error "Minimum version of Clang for MBEDTLS_AESCE_C on aarch64 is 4.0."
   #endif
 #elif defined(__GNUC__)
   #if __GNUC__ < 6
-    #       error "Minimum version of GCC for MBEDTLS_AESCE_C is 6.0."
+    #error "Minimum version of GCC for MBEDTLS_AESCE_C is 6.0."
   #endif
 #elif defined(_MSC_VER)
   /* TODO: We haven't verified MSVC from 1920 to 1928. If someone verified that,
   *       please update this and document of `MBEDTLS_AESCE_C` in
   *       `mbedtls_config.h`. */
   #if _MSC_VER < 1929
-    #       error "Minimum version of MSVC for MBEDTLS_AESCE_C is 2019 version 16.11.2."
+    #error "Minimum version of MSVC for MBEDTLS_AESCE_C is 2019 version 16.11.2."
   #endif
 #elif defined(__ARMCC_VERSION)
   #if defined(MBEDTLS_ARCH_IS_ARM32) && (__ARMCC_VERSION < 6200002)
     /* TODO: We haven't verified armclang for 32-bit Arm/Thumb prior to 6.20.
     * If someone verified that, please update this and document of
     * `MBEDTLS_AESCE_C` in `mbedtls_config.h`. */
-    #         error "Minimum version of armclang for MBEDTLS_AESCE_C on 32-bit Arm is 6.20."
+    #error "Minimum version of armclang for MBEDTLS_AESCE_C on 32-bit Arm is 6.20."
   #elif defined(MBEDTLS_ARCH_IS_ARM64) && (__ARMCC_VERSION < 6060000)
-    #         error "Minimum version of armclang for MBEDTLS_AESCE_C on aarch64 is 6.6."
+    #error "Minimum version of armclang for MBEDTLS_AESCE_C on aarch64 is 6.6."
   #endif
 #endif
 
@@ -80,7 +80,7 @@
   defined(MBEDTLS_ENABLE_ARM_CRYPTO_EXTENSIONS_COMPILER_FLAG)
   #if defined(__ARMCOMPILER_VERSION)
     #if __ARMCOMPILER_VERSION <= 6090000
-      #           error "Must use minimum -march=armv8-a+crypto for MBEDTLS_AESCE_C"
+      #error "Must use minimum -march=armv8-a+crypto for MBEDTLS_AESCE_C"
     #else
       #pragma clang attribute push (__attribute__((target("aes"))), apply_to=function)
       #define MBEDTLS_POP_TARGET_PRAGMA
@@ -93,7 +93,7 @@
     #pragma GCC target ("+crypto")
     #define MBEDTLS_POP_TARGET_PRAGMA
   #elif defined(_MSC_VER)
-    #       error "Required feature(__ARM_FEATURE_AES) is not enabled."
+    #error "Required feature(__ARM_FEATURE_AES) is not enabled."
   #endif
 #endif /* !(__ARM_FEATURE_CRYPTO || __ARM_FEATURE_AES) ||
 MBEDTLS_ENABLE_ARM_CRYPTO_EXTENSIONS_COMPILER_FLAG */
@@ -162,6 +162,7 @@ int mbedtls_aesce_has_support_impl ( void )
 
   return mbedtls_aesce_has_support_result;
 }
+
 #endif
 
 #endif /* defined(__linux__) && !defined(MBEDTLS_AES_USE_HARDWARE_ONLY) */
@@ -277,6 +278,7 @@ rounds_10:
 
   return block;
 }
+
 #endif
 
 /*
@@ -287,7 +289,7 @@ int mbedtls_aesce_crypt_ecb ( mbedtls_aes_context* ctx,
                               const unsigned char input[16],
                               unsigned char output[16] )
 {
-  uint8x16_t block = vld1q_u8 ( &input[0] );
+  uint8x16_t block = vld1q_u8 (&input[0] );
   unsigned char* keys = ( unsigned char* ) ( ctx->buf + ctx->rk_offset );
 
 #if !defined(MBEDTLS_BLOCK_CIPHER_NO_DECRYPT)
@@ -304,7 +306,8 @@ int mbedtls_aesce_crypt_ecb ( mbedtls_aes_context* ctx,
   {
     block = aesce_encrypt_block ( block, keys, ctx->nr );
   }
-  vst1q_u8 ( &output[0], block );
+
+  vst1q_u8 (&output[0], block );
 
   return 0;
 }
@@ -330,6 +333,7 @@ void mbedtls_aesce_inverse_key ( unsigned char* invkey,
   vst1q_u8 ( invkey + i * 16, vld1q_u8 ( fwdkey + j * 16 ) );
 
 }
+
 #endif
 
 static inline uint32_t aes_rot_word ( uint32_t word )
@@ -485,11 +489,11 @@ static inline uint8x16_t vrbitq_u8 ( uint8x16_t x )
         "stm  %[p], { r2-r5 } \n\t"
         :
         /* Output: 16 bytes of memory pointed to by &x */
-        "+m" ( * ( uint8_t ( * ) [16] ) &x )
+  "+m" (* ( uint8_t (* ) [16] ) &x )
         :
-        [p] "r" ( &x )
+        [p] "r" (&x )
         :
-        "r2", "r3", "r4", "r5"
+  "r2", "r3", "r4", "r5"
       );
   return x;
 }
@@ -635,10 +639,10 @@ void mbedtls_aesce_gcm_mult ( unsigned char c[16],
                               const unsigned char b[16] )
 {
   uint8x16_t va, vb, vc;
-  va = vrbitq_u8 ( vld1q_u8 ( &a[0] ) );
-  vb = vrbitq_u8 ( vld1q_u8 ( &b[0] ) );
+  va = vrbitq_u8 ( vld1q_u8 (&a[0] ) );
+  vb = vrbitq_u8 ( vld1q_u8 (&b[0] ) );
   vc = vrbitq_u8 ( poly_mult_reduce ( poly_mult_128 ( va, vb ) ) );
-  vst1q_u8 ( &c[0], vc );
+  vst1q_u8 (&c[0], vc );
 }
 
 #endif /* MBEDTLS_GCM_C */

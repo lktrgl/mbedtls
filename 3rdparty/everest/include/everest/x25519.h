@@ -80,7 +80,7 @@ void mbedtls_x25519_free ( mbedtls_x25519_context* ctx );
  */
 int mbedtls_x25519_make_params ( mbedtls_x25519_context* ctx, size_t* olen,
                                  unsigned char* buf, size_t blen,
-                                 int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                 int (*f_rng ) ( void*, unsigned char*, size_t ),
                                  void* p_rng );
 
 /**
@@ -139,7 +139,7 @@ int mbedtls_x25519_get_params ( mbedtls_x25519_context* ctx, const mbedtls_ecp_k
  */
 int mbedtls_x25519_calc_secret ( mbedtls_x25519_context* ctx, size_t* olen,
                                  unsigned char* buf, size_t blen,
-                                 int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                 int (*f_rng ) ( void*, unsigned char*, size_t ),
                                  void* p_rng );
 
 /**
@@ -162,7 +162,7 @@ int mbedtls_x25519_calc_secret ( mbedtls_x25519_context* ctx, size_t* olen,
  */
 int mbedtls_x25519_make_public ( mbedtls_x25519_context* ctx, size_t* olen,
                                  unsigned char* buf, size_t blen,
-                                 int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                 int (*f_rng ) ( void*, unsigned char*, size_t ),
                                  void* p_rng );
 
 /**
@@ -185,6 +185,7 @@ int mbedtls_x25519_read_public ( mbedtls_x25519_context* ctx,
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* x25519.h */

@@ -299,7 +299,7 @@ psa_status_t psa_parse_key_data_from_storage ( const uint8_t* storage_data,
     ( const psa_persistent_key_storage_format* ) storage_data;
   uint32_t version;
 
-  if ( storage_data_length < sizeof ( *storage_format ) )
+  if ( storage_data_length < sizeof (*storage_format ) )
   {
     return PSA_ERROR_DATA_INVALID;
   }
@@ -320,13 +320,13 @@ psa_status_t psa_parse_key_data_from_storage ( const uint8_t* storage_data,
 
   *key_data_length = MBEDTLS_GET_UINT32_LE ( storage_format->data_len, 0 );
 
-  if ( *key_data_length > ( storage_data_length - sizeof ( *storage_format ) ) ||
-       *key_data_length > PSA_CRYPTO_MAX_STORAGE_SIZE )
+  if (*key_data_length > ( storage_data_length - sizeof (*storage_format ) ) ||
+      *key_data_length > PSA_CRYPTO_MAX_STORAGE_SIZE )
   {
     return PSA_ERROR_DATA_INVALID;
   }
 
-  if ( *key_data_length == 0 )
+  if (*key_data_length == 0 )
   {
     *key_data = NULL;
   }
@@ -334,12 +334,12 @@ psa_status_t psa_parse_key_data_from_storage ( const uint8_t* storage_data,
   {
     *key_data = mbedtls_calloc ( 1, *key_data_length );
 
-    if ( *key_data == NULL )
+    if (*key_data == NULL )
     {
       return PSA_ERROR_INSUFFICIENT_MEMORY;
     }
 
-    memcpy ( *key_data, storage_format->key_data, *key_data_length );
+    memcpy (*key_data, storage_format->key_data, *key_data_length );
   }
 
   attr->lifetime = MBEDTLS_GET_UINT32_LE ( storage_format->lifetime, 0 );
@@ -430,7 +430,7 @@ psa_status_t psa_load_persistent_key ( psa_key_attributes_t* attr,
 
   /* All keys saved to persistent storage always have a key context */
   if ( status == PSA_SUCCESS &&
-       ( *data == NULL || *data_length == 0 ) )
+       (*data == NULL || *data_length == 0 ) )
   {
     status = PSA_ERROR_STORAGE_FAILURE;
   }
@@ -500,7 +500,7 @@ psa_status_t psa_crypto_stop_transaction ( void )
   /* Whether or not updating the storage succeeded, the transaction is
    * finished now. It's too late to go back, so zero out the in-memory
    * data. */
-  memset ( &psa_crypto_transaction, 0, sizeof ( psa_crypto_transaction ) );
+  memset (&psa_crypto_transaction, 0, sizeof ( psa_crypto_transaction ) );
   return status;
 }
 
@@ -533,6 +533,7 @@ psa_status_t mbedtls_psa_storage_inject_entropy ( const unsigned char* seed,
 
   return status;
 }
+
 #endif /* MBEDTLS_PSA_INJECT_ENTROPY */
 
 

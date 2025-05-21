@@ -22,6 +22,7 @@ int main ( void )
                    "not defined.\n" );
   mbedtls_exit ( 0 );
 }
+
 #else
 
 #include <string.h>
@@ -91,12 +92,12 @@ int main ( int argc, char* argv[] )
   /*
    * 0. Initialize the RNG and the session data
    */
-  mbedtls_net_init ( &server_fd );
-  mbedtls_ssl_init ( &ssl );
-  mbedtls_ssl_config_init ( &conf );
-  mbedtls_x509_crt_init ( &cacert );
-  mbedtls_ctr_drbg_init ( &ctr_drbg );
-  mbedtls_entropy_init ( &entropy );
+  mbedtls_net_init (&server_fd );
+  mbedtls_ssl_init (&ssl );
+  mbedtls_ssl_config_init (&conf );
+  mbedtls_x509_crt_init (&cacert );
+  mbedtls_ctr_drbg_init (&ctr_drbg );
+  mbedtls_entropy_init (&entropy );
 
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
   psa_status_t status = psa_crypto_init();
@@ -114,9 +115,9 @@ int main ( int argc, char* argv[] )
   mbedtls_printf ( "\n  . Seeding the random number generator..." );
   fflush ( stdout );
 
-  if ( ( ret = mbedtls_ctr_drbg_seed ( &ctr_drbg, mbedtls_entropy_func, &entropy,
-                                       ( const unsigned char* ) pers,
-                                       strlen ( pers ) ) ) != 0 )
+  if ( ( ret = mbedtls_ctr_drbg_seed (&ctr_drbg, mbedtls_entropy_func, &entropy,
+                                      ( const unsigned char* ) pers,
+                                      strlen ( pers ) ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_ctr_drbg_seed returned %d\n", ret );
     goto exit;
@@ -130,8 +131,8 @@ int main ( int argc, char* argv[] )
   mbedtls_printf ( "  . Loading the CA root certificate ..." );
   fflush ( stdout );
 
-  ret = mbedtls_x509_crt_parse ( &cacert, ( const unsigned char* ) mbedtls_test_cas_pem,
-                                 mbedtls_test_cas_pem_len );
+  ret = mbedtls_x509_crt_parse (&cacert, ( const unsigned char* ) mbedtls_test_cas_pem,
+                                mbedtls_test_cas_pem_len );
 
   if ( ret < 0 )
   {
@@ -148,8 +149,8 @@ int main ( int argc, char* argv[] )
   mbedtls_printf ( "  . Connecting to udp/%s/%s...", SERVER_NAME, SERVER_PORT );
   fflush ( stdout );
 
-  if ( ( ret = mbedtls_net_connect ( &server_fd, SERVER_ADDR,
-                                     SERVER_PORT, MBEDTLS_NET_PROTO_UDP ) ) != 0 )
+  if ( ( ret = mbedtls_net_connect (&server_fd, SERVER_ADDR,
+                                    SERVER_PORT, MBEDTLS_NET_PROTO_UDP ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_net_connect returned %d\n\n", ret );
     goto exit;
@@ -163,7 +164,7 @@ int main ( int argc, char* argv[] )
   mbedtls_printf ( "  . Setting up the DTLS structure..." );
   fflush ( stdout );
 
-  if ( ( ret = mbedtls_ssl_config_defaults ( &conf,
+  if ( ( ret = mbedtls_ssl_config_defaults (&conf,
                MBEDTLS_SSL_IS_CLIENT,
                MBEDTLS_SSL_TRANSPORT_DATAGRAM,
                MBEDTLS_SSL_PRESET_DEFAULT ) ) != 0 )
@@ -175,29 +176,29 @@ int main ( int argc, char* argv[] )
   /* OPTIONAL is usually a bad choice for security, but makes interop easier
    * in this simplified example, in which the ca chain is hardcoded.
    * Production code should set a proper ca chain and use REQUIRED. */
-  mbedtls_ssl_conf_authmode ( &conf, MBEDTLS_SSL_VERIFY_OPTIONAL );
-  mbedtls_ssl_conf_ca_chain ( &conf, &cacert, NULL );
-  mbedtls_ssl_conf_rng ( &conf, mbedtls_ctr_drbg_random, &ctr_drbg );
-  mbedtls_ssl_conf_dbg ( &conf, my_debug, stdout );
-  mbedtls_ssl_conf_read_timeout ( &conf, READ_TIMEOUT_MS );
+  mbedtls_ssl_conf_authmode (&conf, MBEDTLS_SSL_VERIFY_OPTIONAL );
+  mbedtls_ssl_conf_ca_chain (&conf, &cacert, NULL );
+  mbedtls_ssl_conf_rng (&conf, mbedtls_ctr_drbg_random, &ctr_drbg );
+  mbedtls_ssl_conf_dbg (&conf, my_debug, stdout );
+  mbedtls_ssl_conf_read_timeout (&conf, READ_TIMEOUT_MS );
 
-  if ( ( ret = mbedtls_ssl_setup ( &ssl, &conf ) ) != 0 )
+  if ( ( ret = mbedtls_ssl_setup (&ssl, &conf ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_ssl_setup returned %d\n\n", ret );
     goto exit;
   }
 
-  if ( ( ret = mbedtls_ssl_set_hostname ( &ssl, SERVER_NAME ) ) != 0 )
+  if ( ( ret = mbedtls_ssl_set_hostname (&ssl, SERVER_NAME ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_ssl_set_hostname returned %d\n\n", ret );
     goto exit;
   }
 
-  mbedtls_ssl_set_bio ( &ssl, &server_fd,
-                        mbedtls_net_send, mbedtls_net_recv, mbedtls_net_recv_timeout );
+  mbedtls_ssl_set_bio (&ssl, &server_fd,
+                       mbedtls_net_send, mbedtls_net_recv, mbedtls_net_recv_timeout );
 
-  mbedtls_ssl_set_timer_cb ( &ssl, &timer, mbedtls_timing_set_delay,
-                             mbedtls_timing_get_delay );
+  mbedtls_ssl_set_timer_cb (&ssl, &timer, mbedtls_timing_set_delay,
+                            mbedtls_timing_get_delay );
 
   mbedtls_printf ( " ok\n" );
 
@@ -209,7 +210,7 @@ int main ( int argc, char* argv[] )
 
   do
   {
-    ret = mbedtls_ssl_handshake ( &ssl );
+    ret = mbedtls_ssl_handshake (&ssl );
   }
   while ( ret == MBEDTLS_ERR_SSL_WANT_READ ||
           ret == MBEDTLS_ERR_SSL_WANT_WRITE );
@@ -231,7 +232,7 @@ int main ( int argc, char* argv[] )
   /* In real life, we would have used MBEDTLS_SSL_VERIFY_REQUIRED so that the
    * handshake would not succeed if the peer's cert is bad.  Even if we used
    * MBEDTLS_SSL_VERIFY_OPTIONAL, we would bail out here if ret != 0 */
-  if ( ( flags = mbedtls_ssl_get_verify_result ( &ssl ) ) != 0 )
+  if ( ( flags = mbedtls_ssl_get_verify_result (&ssl ) ) != 0 )
   {
 #if !defined(MBEDTLS_X509_REMOVE_INFO)
     char vrfy_buf[512];
@@ -261,7 +262,7 @@ send_request:
 
   do
   {
-    ret = mbedtls_ssl_write ( &ssl, ( unsigned char* ) MESSAGE, len );
+    ret = mbedtls_ssl_write (&ssl, ( unsigned char* ) MESSAGE, len );
   }
   while ( ret == MBEDTLS_ERR_SSL_WANT_READ ||
           ret == MBEDTLS_ERR_SSL_WANT_WRITE );
@@ -286,7 +287,7 @@ send_request:
 
   do
   {
-    ret = mbedtls_ssl_read ( &ssl, buf, len );
+    ret = mbedtls_ssl_read (&ssl, buf, len );
   }
   while ( ret == MBEDTLS_ERR_SSL_WANT_READ ||
           ret == MBEDTLS_ERR_SSL_WANT_WRITE );
@@ -327,7 +328,7 @@ close_notify:
   /* No error checking, the connection might be closed already */
   do
   {
-    ret = mbedtls_ssl_close_notify ( &ssl );
+    ret = mbedtls_ssl_close_notify (&ssl );
   }
   while ( ret == MBEDTLS_ERR_SSL_WANT_WRITE );
 
@@ -351,12 +352,12 @@ exit:
 
 #endif
 
-  mbedtls_net_free ( &server_fd );
-  mbedtls_x509_crt_free ( &cacert );
-  mbedtls_ssl_free ( &ssl );
-  mbedtls_ssl_config_free ( &conf );
-  mbedtls_ctr_drbg_free ( &ctr_drbg );
-  mbedtls_entropy_free ( &entropy );
+  mbedtls_net_free (&server_fd );
+  mbedtls_x509_crt_free (&cacert );
+  mbedtls_ssl_free (&ssl );
+  mbedtls_ssl_config_free (&conf );
+  mbedtls_ctr_drbg_free (&ctr_drbg );
+  mbedtls_entropy_free (&entropy );
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
   mbedtls_psa_crypto_free();
 #endif /* MBEDTLS_USE_PSA_CRYPTO */

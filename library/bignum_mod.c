@@ -105,22 +105,22 @@ static int set_mont_const_square ( const mbedtls_mpi_uint** X,
   mbedtls_mpi RR;
   *X = NULL;
 
-  mbedtls_mpi_init ( &N );
-  mbedtls_mpi_init ( &RR );
+  mbedtls_mpi_init (&N );
+  mbedtls_mpi_init (&RR );
 
   if ( A == NULL || limbs == 0 || limbs >= ( MBEDTLS_MPI_MAX_LIMBS / 2 ) - 2 )
   {
     goto cleanup;
   }
 
-  if ( mbedtls_mpi_grow ( &N, limbs ) )
+  if ( mbedtls_mpi_grow (&N, limbs ) )
   {
     goto cleanup;
   }
 
   memcpy ( N.p, A, sizeof ( mbedtls_mpi_uint ) * limbs );
 
-  ret = mbedtls_mpi_core_get_mont_r2_unsafe ( &RR, &N );
+  ret = mbedtls_mpi_core_get_mont_r2_unsafe (&RR, &N );
 
   if ( ret == 0 )
   {
@@ -129,8 +129,8 @@ static int set_mont_const_square ( const mbedtls_mpi_uint** X,
   }
 
 cleanup:
-  mbedtls_mpi_free ( &N );
-  mbedtls_mpi_free ( &RR );
+  mbedtls_mpi_free (&N );
+  mbedtls_mpi_free (&RR );
   ret = ( ret != 0 ) ? MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED : 0;
   return ret;
 }
@@ -153,7 +153,7 @@ int mbedtls_mpi_mod_modulus_setup ( mbedtls_mpi_mod_modulus* N,
   int ret = 0;
   standard_modulus_setup ( N, p, p_limbs, MBEDTLS_MPI_MOD_REP_MONTGOMERY );
   N->rep.mont.mm = mbedtls_mpi_core_montmul_init ( N->p );
-  ret = set_mont_const_square ( &N->rep.mont.rr, N->p, N->limbs );
+  ret = set_mont_const_square (&N->rep.mont.rr, N->p, N->limbs );
 
   if ( ret != 0 )
   {
@@ -240,9 +240,9 @@ static int mbedtls_mpi_mod_inv_non_mont ( mbedtls_mpi_mod_residue* X,
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
 
   mbedtls_mpi_mod_modulus Nmont;
-  mbedtls_mpi_mod_modulus_init ( &Nmont );
+  mbedtls_mpi_mod_modulus_init (&Nmont );
 
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_mod_modulus_setup ( &Nmont, N->p, N->limbs ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_mod_modulus_setup (&Nmont, N->p, N->limbs ) );
 
   /* We'll use X->p to hold the Montgomery form of the input A->p */
   mbedtls_mpi_core_to_mont_rep ( X->p, A->p, Nmont.p, Nmont.limbs,
@@ -260,7 +260,7 @@ static int mbedtls_mpi_mod_inv_non_mont ( mbedtls_mpi_mod_residue* X,
                                    Nmont.rep.mont.mm, working_memory );
 
 cleanup:
-  mbedtls_mpi_mod_modulus_free ( &Nmont );
+  mbedtls_mpi_mod_modulus_free (&Nmont );
   return ret;
 }
 
@@ -331,7 +331,7 @@ int mbedtls_mpi_mod_add ( mbedtls_mpi_mod_residue* X,
 int mbedtls_mpi_mod_random ( mbedtls_mpi_mod_residue* X,
                              mbedtls_mpi_uint min,
                              const mbedtls_mpi_mod_modulus* N,
-                             int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                             int (*f_rng ) ( void*, unsigned char*, size_t ),
                              void* p_rng )
 {
   if ( X->limbs != N->limbs )

@@ -104,6 +104,7 @@ int mbedtls_padlock_xcryptcbc ( mbedtls_aes_context* ctx,
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* HAVE_X86  */

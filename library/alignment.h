@@ -87,14 +87,17 @@ typedef struct
 {
   uint16_t x;
 } __attribute__ ( ( packed ) ) mbedtls_uint16_unaligned_t;
+
 typedef struct
 {
   uint32_t x;
 } __attribute__ ( ( packed ) ) mbedtls_uint32_unaligned_t;
+
 typedef struct
 {
   uint64_t x;
 } __attribute__ ( ( packed ) ) mbedtls_uint64_unaligned_t;
+
 #endif
 
 /*
@@ -125,7 +128,7 @@ static inline uint16_t mbedtls_get_unaligned_uint16 ( const void* p )
   mbedtls_uint16_unaligned_t* p16 = ( mbedtls_uint16_unaligned_t* ) p;
   r = p16->x;
 #else
-  memcpy ( &r, p, sizeof ( r ) );
+  memcpy (&r, p, sizeof ( r ) );
 #endif
   return r;
 }
@@ -177,7 +180,7 @@ static inline uint32_t mbedtls_get_unaligned_uint32 ( const void* p )
   mbedtls_uint32_unaligned_t* p32 = ( mbedtls_uint32_unaligned_t* ) p;
   r = p32->x;
 #else
-  memcpy ( &r, p, sizeof ( r ) );
+  memcpy (&r, p, sizeof ( r ) );
 #endif
   return r;
 }
@@ -229,7 +232,7 @@ static inline uint64_t mbedtls_get_unaligned_uint64 ( const void* p )
   mbedtls_uint64_unaligned_t* p64 = ( mbedtls_uint64_unaligned_t* ) p;
   r = p64->x;
 #else
-  memcpy ( &r, p, sizeof ( r ) );
+  memcpy (&r, p, sizeof ( r ) );
 #endif
   return r;
 }
@@ -350,6 +353,7 @@ static inline uint16_t mbedtls_bswap16 ( uint16_t x )
     ( x & 0x00ff ) << 8 |
     ( x & 0xff00 ) >> 8;
 }
+
 #define MBEDTLS_BSWAP16 mbedtls_bswap16
 #endif /* !defined(MBEDTLS_BSWAP16) */
 
@@ -362,6 +366,7 @@ static inline uint32_t mbedtls_bswap32 ( uint32_t x )
     ( x & 0x00ff0000 ) >>  8 |
     ( x & 0xff000000 ) >> 24;
 }
+
 #define MBEDTLS_BSWAP32 mbedtls_bswap32
 #endif /* !defined(MBEDTLS_BSWAP32) */
 
@@ -378,6 +383,7 @@ static inline uint64_t mbedtls_bswap64 ( uint64_t x )
     ( x & 0x00ff000000000000ULL ) >> 40 |
     ( x & 0xff00000000000000ULL ) >> 56;
 }
+
 #define MBEDTLS_BSWAP64 mbedtls_bswap64
 #endif /* !defined(MBEDTLS_BSWAP64) */
 

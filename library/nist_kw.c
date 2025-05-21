@@ -85,16 +85,16 @@ int mbedtls_nist_kw_setkey ( mbedtls_nist_kw_context* ctx,
     return MBEDTLS_ERR_CIPHER_FEATURE_UNAVAILABLE;
   }
 
-  mbedtls_cipher_free ( &ctx->cipher_ctx );
+  mbedtls_cipher_free (&ctx->cipher_ctx );
 
-  if ( ( ret = mbedtls_cipher_setup ( &ctx->cipher_ctx, cipher_info ) ) != 0 )
+  if ( ( ret = mbedtls_cipher_setup (&ctx->cipher_ctx, cipher_info ) ) != 0 )
   {
     return ret;
   }
 
-  if ( ( ret = mbedtls_cipher_setkey ( &ctx->cipher_ctx, key, keybits,
-                                       is_wrap ? MBEDTLS_ENCRYPT :
-                                       MBEDTLS_DECRYPT )
+  if ( ( ret = mbedtls_cipher_setkey (&ctx->cipher_ctx, key, keybits,
+                                      is_wrap ? MBEDTLS_ENCRYPT :
+                                      MBEDTLS_DECRYPT )
        ) != 0 )
   {
     return ret;
@@ -113,7 +113,7 @@ void mbedtls_nist_kw_free ( mbedtls_nist_kw_context* ctx )
     return;
   }
 
-  mbedtls_cipher_free ( &ctx->cipher_ctx );
+  mbedtls_cipher_free (&ctx->cipher_ctx );
   mbedtls_platform_zeroize ( ctx, sizeof ( mbedtls_nist_kw_context ) );
 }
 
@@ -217,8 +217,8 @@ int mbedtls_nist_kw_wrap ( mbedtls_nist_kw_context* ctx,
        && in_len <= KW_SEMIBLOCK_LENGTH )
   {
     memcpy ( inbuff, output, 16 );
-    ret = mbedtls_cipher_update ( &ctx->cipher_ctx,
-                                  inbuff, 16, output, &olen );
+    ret = mbedtls_cipher_update (&ctx->cipher_ctx,
+                                 inbuff, 16, output, &olen );
 
     if ( ret != 0 )
     {
@@ -245,8 +245,8 @@ int mbedtls_nist_kw_wrap ( mbedtls_nist_kw_context* ctx,
       memcpy ( inbuff, A, KW_SEMIBLOCK_LENGTH );
       memcpy ( inbuff + KW_SEMIBLOCK_LENGTH, R2, KW_SEMIBLOCK_LENGTH );
 
-      ret = mbedtls_cipher_update ( &ctx->cipher_ctx,
-                                    inbuff, 16, outbuff, &olen );
+      ret = mbedtls_cipher_update (&ctx->cipher_ctx,
+                                   inbuff, 16, outbuff, &olen );
 
       if ( ret != 0 )
       {
@@ -320,8 +320,8 @@ static int unwrap ( mbedtls_nist_kw_context* ctx,
     memcpy ( inbuff, A, KW_SEMIBLOCK_LENGTH );
     memcpy ( inbuff + KW_SEMIBLOCK_LENGTH, R, KW_SEMIBLOCK_LENGTH );
 
-    ret = mbedtls_cipher_update ( &ctx->cipher_ctx,
-                                  inbuff, 16, outbuff, &olen );
+    ret = mbedtls_cipher_update (&ctx->cipher_ctx,
+                                 inbuff, 16, outbuff, &olen );
 
     if ( ret != 0 )
     {
@@ -433,8 +433,8 @@ int mbedtls_nist_kw_unwrap ( mbedtls_nist_kw_context* ctx,
     if ( in_len == KW_SEMIBLOCK_LENGTH * 2 )
     {
       unsigned char outbuff[KW_SEMIBLOCK_LENGTH * 2];
-      ret = mbedtls_cipher_update ( &ctx->cipher_ctx,
-                                    input, 16, outbuff, &olen );
+      ret = mbedtls_cipher_update (&ctx->cipher_ctx,
+                                   input, 16, outbuff, &olen );
 
       if ( ret != 0 )
       {
@@ -511,7 +511,7 @@ cleanup:
     *out_len = 0;
   }
 
-  mbedtls_platform_zeroize ( &diff, sizeof ( diff ) );
+  mbedtls_platform_zeroize (&diff, sizeof ( diff ) );
   mbedtls_platform_zeroize ( A, sizeof ( A ) );
 
   return ret;
@@ -701,13 +701,13 @@ int mbedtls_nist_kw_self_test ( int verbose )
   size_t olen;
   int i;
   int ret = 0;
-  mbedtls_nist_kw_init ( &ctx );
+  mbedtls_nist_kw_init (&ctx );
 
   /*
    * KW mode
    */
   {
-    static const int num_tests = sizeof ( kw_key ) / sizeof ( *kw_key );
+    static const int num_tests = sizeof ( kw_key ) / sizeof (*kw_key );
 
     for ( i = 0; i < num_tests; i++ )
     {
@@ -716,8 +716,8 @@ int mbedtls_nist_kw_self_test ( int verbose )
         mbedtls_printf ( "  KW-AES-%u ", ( unsigned int ) key_len[i] * 8 );
       }
 
-      ret = mbedtls_nist_kw_setkey ( &ctx, MBEDTLS_CIPHER_ID_AES,
-                                     kw_key[i], key_len[i] * 8, 1 );
+      ret = mbedtls_nist_kw_setkey (&ctx, MBEDTLS_CIPHER_ID_AES,
+                                    kw_key[i], key_len[i] * 8, 1 );
 
       if ( ret != 0 )
       {
@@ -729,8 +729,8 @@ int mbedtls_nist_kw_self_test ( int verbose )
         goto end;
       }
 
-      ret = mbedtls_nist_kw_wrap ( &ctx, MBEDTLS_KW_MODE_KW, kw_msg[i],
-                                   kw_msg_len[i], out, &olen, sizeof ( out ) );
+      ret = mbedtls_nist_kw_wrap (&ctx, MBEDTLS_KW_MODE_KW, kw_msg[i],
+                                  kw_msg_len[i], out, &olen, sizeof ( out ) );
 
       if ( ret != 0 || kw_out_len[i] != olen ||
            memcmp ( out, kw_res[i], kw_out_len[i] ) != 0 )
@@ -744,8 +744,8 @@ int mbedtls_nist_kw_self_test ( int verbose )
         goto end;
       }
 
-      if ( ( ret = mbedtls_nist_kw_setkey ( &ctx, MBEDTLS_CIPHER_ID_AES,
-                                            kw_key[i], key_len[i] * 8, 0 ) )
+      if ( ( ret = mbedtls_nist_kw_setkey (&ctx, MBEDTLS_CIPHER_ID_AES,
+                                           kw_key[i], key_len[i] * 8, 0 ) )
            != 0 )
       {
         if ( verbose != 0 )
@@ -756,8 +756,8 @@ int mbedtls_nist_kw_self_test ( int verbose )
         goto end;
       }
 
-      ret = mbedtls_nist_kw_unwrap ( &ctx, MBEDTLS_KW_MODE_KW,
-                                     out, olen, out, &olen, sizeof ( out ) );
+      ret = mbedtls_nist_kw_unwrap (&ctx, MBEDTLS_KW_MODE_KW,
+                                    out, olen, out, &olen, sizeof ( out ) );
 
       if ( ret != 0 || olen != kw_msg_len[i] ||
            memcmp ( out, kw_msg[i], kw_msg_len[i] ) != 0 )
@@ -782,7 +782,7 @@ int mbedtls_nist_kw_self_test ( int verbose )
    * KWP mode
    */
   {
-    static const int num_tests = sizeof ( kwp_key ) / sizeof ( *kwp_key );
+    static const int num_tests = sizeof ( kwp_key ) / sizeof (*kwp_key );
 
     for ( i = 0; i < num_tests; i++ )
     {
@@ -793,8 +793,8 @@ int mbedtls_nist_kw_self_test ( int verbose )
         mbedtls_printf ( "  KWP-AES-%u ", ( unsigned int ) key_len[i] * 8 );
       }
 
-      ret = mbedtls_nist_kw_setkey ( &ctx, MBEDTLS_CIPHER_ID_AES, kwp_key[i],
-                                     key_len[i] * 8, 1 );
+      ret = mbedtls_nist_kw_setkey (&ctx, MBEDTLS_CIPHER_ID_AES, kwp_key[i],
+                                    key_len[i] * 8, 1 );
 
       if ( ret  != 0 )
       {
@@ -806,8 +806,8 @@ int mbedtls_nist_kw_self_test ( int verbose )
         goto end;
       }
 
-      ret = mbedtls_nist_kw_wrap ( &ctx, MBEDTLS_KW_MODE_KWP, kwp_msg[i],
-                                   kwp_msg_len[i], out, &olen, sizeof ( out ) );
+      ret = mbedtls_nist_kw_wrap (&ctx, MBEDTLS_KW_MODE_KWP, kwp_msg[i],
+                                  kwp_msg_len[i], out, &olen, sizeof ( out ) );
 
       if ( ret != 0 || kwp_out_len[i] != olen ||
            memcmp ( out, kwp_res[i], kwp_out_len[i] ) != 0 )
@@ -821,8 +821,8 @@ int mbedtls_nist_kw_self_test ( int verbose )
         goto end;
       }
 
-      if ( ( ret = mbedtls_nist_kw_setkey ( &ctx, MBEDTLS_CIPHER_ID_AES,
-                                            kwp_key[i], key_len[i] * 8, 0 ) )
+      if ( ( ret = mbedtls_nist_kw_setkey (&ctx, MBEDTLS_CIPHER_ID_AES,
+                                           kwp_key[i], key_len[i] * 8, 0 ) )
            != 0 )
       {
         if ( verbose != 0 )
@@ -833,8 +833,8 @@ int mbedtls_nist_kw_self_test ( int verbose )
         goto end;
       }
 
-      ret = mbedtls_nist_kw_unwrap ( &ctx, MBEDTLS_KW_MODE_KWP, out,
-                                     olen, out, &olen, sizeof ( out ) );
+      ret = mbedtls_nist_kw_unwrap (&ctx, MBEDTLS_KW_MODE_KWP, out,
+                                    olen, out, &olen, sizeof ( out ) );
 
       if ( ret != 0 || olen != kwp_msg_len[i] ||
            memcmp ( out, kwp_msg[i], kwp_msg_len[i] ) != 0 )
@@ -854,8 +854,9 @@ int mbedtls_nist_kw_self_test ( int verbose )
       }
     }
   }
+
 end:
-  mbedtls_nist_kw_free ( &ctx );
+  mbedtls_nist_kw_free (&ctx );
 
   if ( verbose != 0 )
   {

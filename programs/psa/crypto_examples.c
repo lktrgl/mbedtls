@@ -44,6 +44,7 @@ int main ( void )
            " defined.\r\n" );
   return 0;
 }
+
 #else
 
 static psa_status_t cipher_operation ( psa_cipher_operation_t* operation,
@@ -98,19 +99,19 @@ static psa_status_t cipher_encrypt ( psa_key_id_t key,
   psa_cipher_operation_t operation = PSA_CIPHER_OPERATION_INIT;
   size_t iv_len = 0;
 
-  memset ( &operation, 0, sizeof ( operation ) );
-  status = psa_cipher_encrypt_setup ( &operation, key, alg );
+  memset (&operation, 0, sizeof ( operation ) );
+  status = psa_cipher_encrypt_setup (&operation, key, alg );
   ASSERT_STATUS ( status, PSA_SUCCESS );
 
-  status = psa_cipher_generate_iv ( &operation, iv, iv_size, &iv_len );
+  status = psa_cipher_generate_iv (&operation, iv, iv_size, &iv_len );
   ASSERT_STATUS ( status, PSA_SUCCESS );
 
-  status = cipher_operation ( &operation, input, input_size, part_size,
-                              output, output_size, output_len );
+  status = cipher_operation (&operation, input, input_size, part_size,
+                             output, output_size, output_len );
   ASSERT_STATUS ( status, PSA_SUCCESS );
 
 exit:
-  psa_cipher_abort ( &operation );
+  psa_cipher_abort (&operation );
   return status;
 }
 
@@ -128,19 +129,19 @@ static psa_status_t cipher_decrypt ( psa_key_id_t key,
   psa_status_t status;
   psa_cipher_operation_t operation = PSA_CIPHER_OPERATION_INIT;
 
-  memset ( &operation, 0, sizeof ( operation ) );
-  status = psa_cipher_decrypt_setup ( &operation, key, alg );
+  memset (&operation, 0, sizeof ( operation ) );
+  status = psa_cipher_decrypt_setup (&operation, key, alg );
   ASSERT_STATUS ( status, PSA_SUCCESS );
 
-  status = psa_cipher_set_iv ( &operation, iv, iv_size );
+  status = psa_cipher_set_iv (&operation, iv, iv_size );
   ASSERT_STATUS ( status, PSA_SUCCESS );
 
-  status = cipher_operation ( &operation, input, input_size, part_size,
-                              output, output_size, output_len );
+  status = cipher_operation (&operation, input, input_size, part_size,
+                             output, output_size, output_len );
   ASSERT_STATUS ( status, PSA_SUCCESS );
 
 exit:
-  psa_cipher_abort ( &operation );
+  psa_cipher_abort (&operation );
   return status;
 }
 
@@ -167,13 +168,13 @@ cipher_example_encrypt_decrypt_aes_cbc_nopad_1_block ( void )
   status = psa_generate_random ( input, sizeof ( input ) );
   ASSERT_STATUS ( status, PSA_SUCCESS );
 
-  psa_set_key_usage_flags ( &attributes,
-                            PSA_KEY_USAGE_ENCRYPT | PSA_KEY_USAGE_DECRYPT );
-  psa_set_key_algorithm ( &attributes, alg );
-  psa_set_key_type ( &attributes, PSA_KEY_TYPE_AES );
-  psa_set_key_bits ( &attributes, key_bits );
+  psa_set_key_usage_flags (&attributes,
+                           PSA_KEY_USAGE_ENCRYPT | PSA_KEY_USAGE_DECRYPT );
+  psa_set_key_algorithm (&attributes, alg );
+  psa_set_key_type (&attributes, PSA_KEY_TYPE_AES );
+  psa_set_key_bits (&attributes, key_bits );
 
-  status = psa_generate_key ( &attributes, &key );
+  status = psa_generate_key (&attributes, &key );
   ASSERT_STATUS ( status, PSA_SUCCESS );
 
   status = cipher_encrypt ( key, alg, iv, sizeof ( iv ),
@@ -216,13 +217,13 @@ static psa_status_t cipher_example_encrypt_decrypt_aes_cbc_pkcs7_multi ( void )
   status = psa_generate_random ( input, sizeof ( input ) );
   ASSERT_STATUS ( status, PSA_SUCCESS );
 
-  psa_set_key_usage_flags ( &attributes,
-                            PSA_KEY_USAGE_ENCRYPT | PSA_KEY_USAGE_DECRYPT );
-  psa_set_key_algorithm ( &attributes, alg );
-  psa_set_key_type ( &attributes, PSA_KEY_TYPE_AES );
-  psa_set_key_bits ( &attributes, key_bits );
+  psa_set_key_usage_flags (&attributes,
+                           PSA_KEY_USAGE_ENCRYPT | PSA_KEY_USAGE_DECRYPT );
+  psa_set_key_algorithm (&attributes, alg );
+  psa_set_key_type (&attributes, PSA_KEY_TYPE_AES );
+  psa_set_key_bits (&attributes, key_bits );
 
-  status = psa_generate_key ( &attributes, &key );
+  status = psa_generate_key (&attributes, &key );
   ASSERT_STATUS ( status, PSA_SUCCESS );
 
   status = cipher_encrypt ( key, alg, iv, sizeof ( iv ),
@@ -264,13 +265,13 @@ static psa_status_t cipher_example_encrypt_decrypt_aes_ctr_multi ( void )
   status = psa_generate_random ( input, sizeof ( input ) );
   ASSERT_STATUS ( status, PSA_SUCCESS );
 
-  psa_set_key_usage_flags ( &attributes,
-                            PSA_KEY_USAGE_ENCRYPT | PSA_KEY_USAGE_DECRYPT );
-  psa_set_key_algorithm ( &attributes, alg );
-  psa_set_key_type ( &attributes, PSA_KEY_TYPE_AES );
-  psa_set_key_bits ( &attributes, key_bits );
+  psa_set_key_usage_flags (&attributes,
+                           PSA_KEY_USAGE_ENCRYPT | PSA_KEY_USAGE_DECRYPT );
+  psa_set_key_algorithm (&attributes, alg );
+  psa_set_key_type (&attributes, PSA_KEY_TYPE_AES );
+  psa_set_key_bits (&attributes, key_bits );
 
-  status = psa_generate_key ( &attributes, &key );
+  status = psa_generate_key (&attributes, &key );
   ASSERT_STATUS ( status, PSA_SUCCESS );
 
   status = cipher_encrypt ( key, alg, iv, sizeof ( iv ),
@@ -328,5 +329,6 @@ exit:
   mbedtls_psa_crypto_free();
   return 0;
 }
+
 #endif /* MBEDTLS_PSA_CRYPTO_C && MBEDTLS_AES_C && MBEDTLS_CIPHER_MODE_CBC &&
           MBEDTLS_CIPHER_MODE_CTR && MBEDTLS_CIPHER_MODE_WITH_PADDING */

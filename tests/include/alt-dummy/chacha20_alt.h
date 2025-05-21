@@ -11,6 +11,7 @@ typedef struct mbedtls_chacha20_context
 {
   int dummy;
 }
+
 mbedtls_chacha20_context;
 
 

@@ -84,15 +84,15 @@ static psa_status_t psa_its_read_file ( psa_storage_uid_t uid,
   psa_its_fill_filename ( uid, filename );
   *p_stream = fopen ( filename, "rb" );
 
-  if ( *p_stream == NULL )
+  if (*p_stream == NULL )
   {
     return PSA_ERROR_DOES_NOT_EXIST;
   }
 
   /* Ensure no stdio buffering of secrets, as such buffers cannot be wiped. */
-  mbedtls_setbuf ( *p_stream, NULL );
+  mbedtls_setbuf (*p_stream, NULL );
 
-  n = fread ( &header, 1, sizeof ( header ), *p_stream );
+  n = fread (&header, 1, sizeof ( header ), *p_stream );
 
   if ( n != sizeof ( header ) )
   {
@@ -241,7 +241,7 @@ psa_status_t psa_its_set ( psa_storage_uid_t uid,
   mbedtls_setbuf ( stream, NULL );
 
   status = PSA_ERROR_INSUFFICIENT_STORAGE;
-  n = fwrite ( &header, 1, sizeof ( header ), stream );
+  n = fwrite (&header, 1, sizeof ( header ), stream );
 
   if ( n != sizeof ( header ) )
   {

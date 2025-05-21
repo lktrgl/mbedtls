@@ -175,16 +175,16 @@ static const signed char indexes[2][4][20] =
     }, /* KL -> RK */
     {
       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
-      }, /* KR -> RK */
+      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
+    }, /* KR -> RK */
     {
       4,  5,  6,  7, 12, 13, 14, 15, 16, 17,
       18, 19, -1, 24, 25, -1, 31, 28, 29, 30
     }, /* KA -> RK */
     {
       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
-      }  /* KB -> RK */
+      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
+    }  /* KB -> RK */
   },
   {
     {
@@ -193,12 +193,12 @@ static const signed char indexes[2][4][20] =
     }, /* KL -> RK */
     {
       -1, -1, -1, -1,  8,  9, 10, 11, 16, 17,
-        18, 19, -1, -1, -1, -1, 39, 36, 37, 38
-      }, /* KR -> RK */
+      18, 19, -1, -1, -1, -1, 39, 36, 37, 38
+    }, /* KR -> RK */
     {
       -1, -1, -1, -1, 12, 13, 14, 15, 58, 59,
-        56, 57, 31, 28, 29, 30, -1, -1, -1, -1
-      }, /* KA -> RK */
+      56, 57, 31, 28, 29, 30, -1, -1, -1, -1
+    }, /* KA -> RK */
     {
       4,  5,  6,  7, 65, 66, 67, 64, 20, 21,
       22, 23, -1, -1, -1, -1, 43, 40, 41, 42
@@ -450,10 +450,10 @@ int mbedtls_camellia_setkey_dec ( mbedtls_camellia_context* ctx,
   uint32_t* RK;
   uint32_t* SK;
 
-  mbedtls_camellia_init ( &cty );
+  mbedtls_camellia_init (&cty );
 
   /* Also checks keybits */
-  if ( ( ret = mbedtls_camellia_setkey_enc ( &cty, key, keybits ) ) != 0 )
+  if ( ( ret = mbedtls_camellia_setkey_enc (&cty, key, keybits ) ) != 0 )
   {
     goto exit;
   }
@@ -483,10 +483,11 @@ int mbedtls_camellia_setkey_dec ( mbedtls_camellia_context* ctx,
   *RK++ = *SK++;
 
 exit:
-  mbedtls_camellia_free ( &cty );
+  mbedtls_camellia_free (&cty );
 
   return ret;
 }
+
 #endif /* !MBEDTLS_BLOCK_CIPHER_NO_DECRYPT */
 
 /*
@@ -614,6 +615,7 @@ int mbedtls_camellia_crypt_cbc ( mbedtls_camellia_context* ctx,
 
   return 0;
 }
+
 #endif /* MBEDTLS_CIPHER_MODE_CBC */
 
 #if defined(MBEDTLS_CIPHER_MODE_CFB)
@@ -678,6 +680,7 @@ int mbedtls_camellia_crypt_cfb128 ( mbedtls_camellia_context* ctx,
 
   return 0;
 }
+
 #endif /* MBEDTLS_CIPHER_MODE_CFB */
 
 #if defined(MBEDTLS_CIPHER_MODE_CTR)
@@ -711,7 +714,7 @@ int mbedtls_camellia_crypt_ctr ( mbedtls_camellia_context* ctx,
 
       for ( i = 16; i > 0; i-- )
       {
-        if ( ++nonce_counter[i - 1] != 0 )
+        if (++nonce_counter[i - 1] != 0 )
         {
           break;
         }
@@ -728,6 +731,7 @@ int mbedtls_camellia_crypt_ctr ( mbedtls_camellia_context* ctx,
 
   return 0;
 }
+
 #endif /* MBEDTLS_CIPHER_MODE_CTR */
 #endif /* !MBEDTLS_CAMELLIA_ALT */
 
@@ -1034,7 +1038,7 @@ int mbedtls_camellia_self_test ( int verbose )
 
   mbedtls_camellia_context ctx;
 
-  mbedtls_camellia_init ( &ctx );
+  mbedtls_camellia_init (&ctx );
   memset ( key, 0, 32 );
 
   for ( j = 0; j < 6; j++ )
@@ -1070,7 +1074,7 @@ int mbedtls_camellia_self_test ( int verbose )
 
       if ( v == MBEDTLS_CAMELLIA_DECRYPT )
       {
-        mbedtls_camellia_setkey_dec ( &ctx, key, 128 + u * 64 );
+        mbedtls_camellia_setkey_dec (&ctx, key, 128 + u * 64 );
         memcpy ( src, camellia_test_ecb_cipher[u][i], 16 );
         memcpy ( dst, camellia_test_ecb_plain[i], 16 );
       }
@@ -1078,12 +1082,12 @@ int mbedtls_camellia_self_test ( int verbose )
 #endif
       {
         /* MBEDTLS_CAMELLIA_ENCRYPT */
-        mbedtls_camellia_setkey_enc ( &ctx, key, 128 + u * 64 );
+        mbedtls_camellia_setkey_enc (&ctx, key, 128 + u * 64 );
         memcpy ( src, camellia_test_ecb_plain[i], 16 );
         memcpy ( dst, camellia_test_ecb_cipher[u][i], 16 );
       }
 
-      mbedtls_camellia_crypt_ecb ( &ctx, v, src, buf );
+      mbedtls_camellia_crypt_ecb (&ctx, v, src, buf );
 
       if ( memcmp ( buf, dst, 16 ) != 0 )
       {
@@ -1129,11 +1133,11 @@ int mbedtls_camellia_self_test ( int verbose )
 
     if ( v == MBEDTLS_CAMELLIA_DECRYPT )
     {
-      mbedtls_camellia_setkey_dec ( &ctx, key, 128 + u * 64 );
+      mbedtls_camellia_setkey_dec (&ctx, key, 128 + u * 64 );
     }
     else
     {
-      mbedtls_camellia_setkey_enc ( &ctx, key, 128 + u * 64 );
+      mbedtls_camellia_setkey_enc (&ctx, key, 128 + u * 64 );
     }
 
     for ( i = 0; i < CAMELLIA_TESTS_CBC; i++ )
@@ -1152,7 +1156,7 @@ int mbedtls_camellia_self_test ( int verbose )
         memcpy ( dst, camellia_test_cbc_cipher[u][i], 16 );
       }
 
-      mbedtls_camellia_crypt_cbc ( &ctx, v, 16, iv, src, buf );
+      mbedtls_camellia_crypt_cbc (&ctx, v, 16, iv, src, buf );
 
       if ( memcmp ( buf, dst, 16 ) != 0 )
       {
@@ -1198,15 +1202,15 @@ int mbedtls_camellia_self_test ( int verbose )
     memcpy ( key, camellia_test_ctr_key[u], 16 );
 
     offset = 0;
-    mbedtls_camellia_setkey_enc ( &ctx, key, 128 );
+    mbedtls_camellia_setkey_enc (&ctx, key, 128 );
 
     if ( v == MBEDTLS_CAMELLIA_DECRYPT )
     {
       len = camellia_test_ctr_len[u];
       memcpy ( buf, camellia_test_ctr_ct[u], len );
 
-      mbedtls_camellia_crypt_ctr ( &ctx, len, &offset, nonce_counter, stream_block,
-                                   buf, buf );
+      mbedtls_camellia_crypt_ctr (&ctx, len, &offset, nonce_counter, stream_block,
+                                  buf, buf );
 
       if ( memcmp ( buf, camellia_test_ctr_pt[u], len ) != 0 )
       {
@@ -1223,8 +1227,8 @@ int mbedtls_camellia_self_test ( int verbose )
       len = camellia_test_ctr_len[u];
       memcpy ( buf, camellia_test_ctr_pt[u], len );
 
-      mbedtls_camellia_crypt_ctr ( &ctx, len, &offset, nonce_counter, stream_block,
-                                   buf, buf );
+      mbedtls_camellia_crypt_ctr (&ctx, len, &offset, nonce_counter, stream_block,
+                                  buf, buf );
 
       if ( memcmp ( buf, camellia_test_ctr_ct[u], len ) != 0 )
       {
@@ -1253,7 +1257,7 @@ int mbedtls_camellia_self_test ( int verbose )
   ret = 0;
 
 exit:
-  mbedtls_camellia_free ( &ctx );
+  mbedtls_camellia_free (&ctx );
   return ret;
 }
 

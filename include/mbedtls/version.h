@@ -71,6 +71,7 @@ int mbedtls_version_check_feature ( const char* feature );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* MBEDTLS_VERSION_C */

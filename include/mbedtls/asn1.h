@@ -144,6 +144,7 @@ typedef struct mbedtls_asn1_buf
   size_t len;             /**< ASN1 length, in octets. */
   unsigned char* p;       /**< ASN1 data, e.g. in ASCII. */
 }
+
 mbedtls_asn1_buf;
 
 /**
@@ -155,6 +156,7 @@ typedef struct mbedtls_asn1_bitstring
   unsigned char unused_bits;  /**< Number of unused bits at the end of the string */
   unsigned char* p;           /**< Raw ASN1 data for the bit string */
 }
+
 mbedtls_asn1_bitstring;
 
 /**
@@ -173,6 +175,7 @@ typedef struct mbedtls_asn1_sequence
    */
   struct mbedtls_asn1_sequence* next;
 }
+
 mbedtls_asn1_sequence;
 
 /**
@@ -199,6 +202,7 @@ typedef struct mbedtls_asn1_named_data
    */
   unsigned char MBEDTLS_PRIVATE ( next_merged );
 }
+
 mbedtls_asn1_named_data;
 
 #if defined(MBEDTLS_ASN1_PARSE_C) || defined(MBEDTLS_X509_CREATE_C) || \
@@ -519,8 +523,8 @@ int mbedtls_asn1_traverse_sequence_of (
   const unsigned char* end,
   unsigned char tag_must_mask, unsigned char tag_must_val,
   unsigned char tag_may_mask, unsigned char tag_may_val,
-  int ( *cb ) ( void* ctx, int tag,
-                unsigned char* start, size_t len ),
+  int (*cb ) ( void* ctx, int tag,
+               unsigned char* start, size_t len ),
   void* ctx );
 
 #if defined(MBEDTLS_BIGNUM_C)
@@ -641,6 +645,7 @@ void mbedtls_asn1_free_named_data_list_shallow ( mbedtls_asn1_named_data* name )
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* asn1.h */

@@ -186,7 +186,7 @@ int mbedtls_base64_decode ( unsigned char* dst, size_t dlen, size_t* olen,
 
     if ( src[i] == '=' )
     {
-      if ( ++equals > 2 )
+      if (++equals > 2 )
       {
         return MBEDTLS_ERR_BASE64_INVALID_CHARACTER;
       }
@@ -230,23 +230,23 @@ int mbedtls_base64_decode ( unsigned char* dst, size_t dlen, size_t* olen,
 
   for ( x = 0, p = dst; i > 0; i--, src++ )
   {
-    if ( *src == '\r' || *src == '\n' || *src == ' ' )
+    if (*src == '\r' || *src == '\n' || *src == ' ' )
     {
       continue;
     }
 
     x = x << 6;
 
-    if ( *src == '=' )
+    if (*src == '=' )
     {
       ++equals;
     }
     else
     {
-      x |= mbedtls_ct_base64_dec_value ( *src );
+      x |= mbedtls_ct_base64_dec_value (*src );
     }
 
-    if ( ++accumulated_digits == 4 )
+    if (++accumulated_digits == 4 )
     {
       accumulated_digits = 0;
       *p++ = MBEDTLS_BYTE_2 ( x );

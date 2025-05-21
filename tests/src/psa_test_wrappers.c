@@ -23,6 +23,7 @@ psa_status_t mbedtls_test_wrap_mbedtls_psa_inject_entropy (
   psa_status_t status = ( mbedtls_psa_inject_entropy ) ( arg0_seed, arg1_seed_size );
   return status;
 }
+
 #endif /* defined(MBEDTLS_PSA_INJECT_ENTROPY) */
 
 /* Wrapper for mbedtls_psa_platform_get_builtin_key */
@@ -35,6 +36,7 @@ psa_status_t mbedtls_test_wrap_mbedtls_psa_platform_get_builtin_key (
   psa_status_t status = ( mbedtls_psa_platform_get_builtin_key ) ( arg0_key_id, arg1_lifetime, arg2_slot_number );
   return status;
 }
+
 #endif /* defined(MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS) */
 
 /* Wrapper for mbedtls_psa_register_se_key */
@@ -45,6 +47,7 @@ psa_status_t mbedtls_test_wrap_mbedtls_psa_register_se_key (
   psa_status_t status = ( mbedtls_psa_register_se_key ) ( arg0_attributes );
   return status;
 }
+
 #endif /* defined(MBEDTLS_PSA_CRYPTO_SE_C) */
 
 /* Wrapper for psa_aead_abort */
@@ -484,6 +487,7 @@ psa_status_t mbedtls_test_wrap_psa_crypto_driver_pake_get_cipher_suite (
   psa_status_t status = ( psa_crypto_driver_pake_get_cipher_suite ) ( arg0_inputs, arg1_cipher_suite );
   return status;
 }
+
 #endif /* defined(PSA_WANT_ALG_SOME_PAKE) */
 
 /* Wrapper for psa_crypto_driver_pake_get_password */
@@ -498,6 +502,7 @@ psa_status_t mbedtls_test_wrap_psa_crypto_driver_pake_get_password (
                         arg3_buffer_length );
   return status;
 }
+
 #endif /* defined(PSA_WANT_ALG_SOME_PAKE) */
 
 /* Wrapper for psa_crypto_driver_pake_get_password_len */
@@ -509,6 +514,7 @@ psa_status_t mbedtls_test_wrap_psa_crypto_driver_pake_get_password_len (
   psa_status_t status = ( psa_crypto_driver_pake_get_password_len ) ( arg0_inputs, arg1_password_len );
   return status;
 }
+
 #endif /* defined(PSA_WANT_ALG_SOME_PAKE) */
 
 /* Wrapper for psa_crypto_driver_pake_get_peer */
@@ -523,6 +529,7 @@ psa_status_t mbedtls_test_wrap_psa_crypto_driver_pake_get_peer (
                         arg3_peer_id_length );
   return status;
 }
+
 #endif /* defined(PSA_WANT_ALG_SOME_PAKE) */
 
 /* Wrapper for psa_crypto_driver_pake_get_peer_len */
@@ -534,6 +541,7 @@ psa_status_t mbedtls_test_wrap_psa_crypto_driver_pake_get_peer_len (
   psa_status_t status = ( psa_crypto_driver_pake_get_peer_len ) ( arg0_inputs, arg1_peer_len );
   return status;
 }
+
 #endif /* defined(PSA_WANT_ALG_SOME_PAKE) */
 
 /* Wrapper for psa_crypto_driver_pake_get_user */
@@ -548,6 +556,7 @@ psa_status_t mbedtls_test_wrap_psa_crypto_driver_pake_get_user (
                         arg3_user_id_len );
   return status;
 }
+
 #endif /* defined(PSA_WANT_ALG_SOME_PAKE) */
 
 /* Wrapper for psa_crypto_driver_pake_get_user_len */
@@ -559,6 +568,7 @@ psa_status_t mbedtls_test_wrap_psa_crypto_driver_pake_get_user_len (
   psa_status_t status = ( psa_crypto_driver_pake_get_user_len ) ( arg0_inputs, arg1_user_len );
   return status;
 }
+
 #endif /* defined(PSA_WANT_ALG_SOME_PAKE) */
 
 /* Wrapper for psa_crypto_init */
@@ -1087,6 +1097,7 @@ psa_status_t mbedtls_test_wrap_psa_pake_abort (
   psa_status_t status = ( psa_pake_abort ) ( arg0_operation );
   return status;
 }
+
 #endif /* defined(PSA_WANT_ALG_SOME_PAKE) */
 
 /* Wrapper for psa_pake_get_implicit_key */
@@ -1098,6 +1109,7 @@ psa_status_t mbedtls_test_wrap_psa_pake_get_implicit_key (
   psa_status_t status = ( psa_pake_get_implicit_key ) ( arg0_operation, arg1_output );
   return status;
 }
+
 #endif /* defined(PSA_WANT_ALG_SOME_PAKE) */
 
 /* Wrapper for psa_pake_input */
@@ -1117,6 +1129,7 @@ psa_status_t mbedtls_test_wrap_psa_pake_input (
 #endif /* !defined(MBEDTLS_PSA_ASSUME_EXCLUSIVE_BUFFERS) */
   return status;
 }
+
 #endif /* defined(PSA_WANT_ALG_SOME_PAKE) */
 
 /* Wrapper for psa_pake_output */
@@ -1138,6 +1151,7 @@ psa_status_t mbedtls_test_wrap_psa_pake_output (
 #endif /* !defined(MBEDTLS_PSA_ASSUME_EXCLUSIVE_BUFFERS) */
   return status;
 }
+
 #endif /* defined(PSA_WANT_ALG_SOME_PAKE) */
 
 /* Wrapper for psa_pake_set_password_key */
@@ -1149,6 +1163,7 @@ psa_status_t mbedtls_test_wrap_psa_pake_set_password_key (
   psa_status_t status = ( psa_pake_set_password_key ) ( arg0_operation, arg1_password );
   return status;
 }
+
 #endif /* defined(PSA_WANT_ALG_SOME_PAKE) */
 
 /* Wrapper for psa_pake_set_peer */
@@ -1167,6 +1182,7 @@ psa_status_t mbedtls_test_wrap_psa_pake_set_peer (
 #endif /* !defined(MBEDTLS_PSA_ASSUME_EXCLUSIVE_BUFFERS) */
   return status;
 }
+
 #endif /* defined(PSA_WANT_ALG_SOME_PAKE) */
 
 /* Wrapper for psa_pake_set_role */
@@ -1178,6 +1194,7 @@ psa_status_t mbedtls_test_wrap_psa_pake_set_role (
   psa_status_t status = ( psa_pake_set_role ) ( arg0_operation, arg1_role );
   return status;
 }
+
 #endif /* defined(PSA_WANT_ALG_SOME_PAKE) */
 
 /* Wrapper for psa_pake_set_user */
@@ -1196,6 +1213,7 @@ psa_status_t mbedtls_test_wrap_psa_pake_set_user (
 #endif /* !defined(MBEDTLS_PSA_ASSUME_EXCLUSIVE_BUFFERS) */
   return status;
 }
+
 #endif /* defined(PSA_WANT_ALG_SOME_PAKE) */
 
 /* Wrapper for psa_pake_setup */
@@ -1207,6 +1225,7 @@ psa_status_t mbedtls_test_wrap_psa_pake_setup (
   psa_status_t status = ( psa_pake_setup ) ( arg0_operation, arg1_cipher_suite );
   return status;
 }
+
 #endif /* defined(PSA_WANT_ALG_SOME_PAKE) */
 
 /* Wrapper for psa_purge_key */

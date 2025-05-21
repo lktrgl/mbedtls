@@ -164,7 +164,7 @@ int mbedtls_ecjpake_check ( const mbedtls_ecjpake_context* ctx );
  */
 int mbedtls_ecjpake_write_round_one ( mbedtls_ecjpake_context* ctx,
                                       unsigned char* buf, size_t len, size_t* olen,
-                                      int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                      int (*f_rng ) ( void*, unsigned char*, size_t ),
                                       void* p_rng );
 
 /**
@@ -205,7 +205,7 @@ int mbedtls_ecjpake_read_round_one ( mbedtls_ecjpake_context* ctx,
  */
 int mbedtls_ecjpake_write_round_two ( mbedtls_ecjpake_context* ctx,
                                       unsigned char* buf, size_t len, size_t* olen,
-                                      int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                      int (*f_rng ) ( void*, unsigned char*, size_t ),
                                       void* p_rng );
 
 /**
@@ -245,7 +245,7 @@ int mbedtls_ecjpake_read_round_two ( mbedtls_ecjpake_context* ctx,
  */
 int mbedtls_ecjpake_derive_secret ( mbedtls_ecjpake_context* ctx,
                                     unsigned char* buf, size_t len, size_t* olen,
-                                    int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                    int (*f_rng ) ( void*, unsigned char*, size_t ),
                                     void* p_rng );
 
 /**
@@ -268,7 +268,7 @@ int mbedtls_ecjpake_derive_secret ( mbedtls_ecjpake_context* ctx,
  */
 int mbedtls_ecjpake_write_shared_key ( mbedtls_ecjpake_context* ctx,
                                        unsigned char* buf, size_t len, size_t* olen,
-                                       int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                       int (*f_rng ) ( void*, unsigned char*, size_t ),
                                        void* p_rng );
 
 /**
@@ -294,6 +294,7 @@ int mbedtls_ecjpake_self_test ( int verbose );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 

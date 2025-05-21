@@ -42,6 +42,7 @@ struct mbedtls_md_info_t
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* MBEDTLS_MD_WRAP_H */

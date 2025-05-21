@@ -49,7 +49,7 @@ void mbedtls_test_memory_poison ( const unsigned char* ptr, size_t size )
     return;
   }
 
-  align_for_asan ( &ptr, &size );
+  align_for_asan (&ptr, &size );
   __asan_poison_memory_region ( ptr, size );
 }
 
@@ -60,7 +60,8 @@ void mbedtls_test_memory_unpoison ( const unsigned char* ptr, size_t size )
     return;
   }
 
-  align_for_asan ( &ptr, &size );
+  align_for_asan (&ptr, &size );
   __asan_unpoison_memory_region ( ptr, size );
 }
+
 #endif /* Memory poisoning */

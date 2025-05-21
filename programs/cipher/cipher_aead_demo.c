@@ -50,6 +50,7 @@ int main ( void )
            "MBEDTLS_CHACHAPOLY_C not defined\r\n" );
   return 0;
 }
+
 #else
 
 /* The real program starts here. */
@@ -227,23 +228,23 @@ static int aead_demo ( const char* info )
   mbedtls_cipher_context_t ctx;
   size_t tag_len;
 
-  mbedtls_cipher_init ( &ctx );
+  mbedtls_cipher_init (&ctx );
 
   CHK ( aead_prepare ( info, &ctx, &tag_len ) );
 
-  aead_info ( &ctx, tag_len );
+  aead_info (&ctx, tag_len );
 
-  CHK ( aead_encrypt ( &ctx, tag_len,
-                       iv1, sizeof ( iv1 ), add_data1, sizeof ( add_data1 ),
-                       msg1_part1, sizeof ( msg1_part1 ),
-                       msg1_part2, sizeof ( msg1_part2 ) ) );
-  CHK ( aead_encrypt ( &ctx, tag_len,
-                       iv2, sizeof ( iv2 ), add_data2, sizeof ( add_data2 ),
-                       msg2_part1, sizeof ( msg2_part1 ),
-                       msg2_part2, sizeof ( msg2_part2 ) ) );
+  CHK ( aead_encrypt (&ctx, tag_len,
+                      iv1, sizeof ( iv1 ), add_data1, sizeof ( add_data1 ),
+                      msg1_part1, sizeof ( msg1_part1 ),
+                      msg1_part2, sizeof ( msg1_part2 ) ) );
+  CHK ( aead_encrypt (&ctx, tag_len,
+                      iv2, sizeof ( iv2 ), add_data2, sizeof ( add_data2 ),
+                      msg2_part1, sizeof ( msg2_part1 ),
+                      msg2_part2, sizeof ( msg2_part2 ) ) );
 
 exit:
-  mbedtls_cipher_free ( &ctx );
+  mbedtls_cipher_free (&ctx );
 
   return ret;
 }

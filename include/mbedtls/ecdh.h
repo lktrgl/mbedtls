@@ -96,6 +96,7 @@ typedef struct mbedtls_ecdh_context_mbed
   mbedtls_ecp_restart_ctx MBEDTLS_PRIVATE ( rs ); /*!< The restart context for EC computations. */
 #endif
 } mbedtls_ecdh_context_mbed;
+
 #endif
 
 /**
@@ -133,6 +134,7 @@ typedef struct mbedtls_ecdh_context
     mbedtls_ecdh_context_everest MBEDTLS_PRIVATE ( everest_ecdh );
 #endif
   } MBEDTLS_PRIVATE ( ctx );                      /*!< Implementation-specific context. The
+
                                                     context in use is specified by the \c var
                                                     field. */
 #if defined(MBEDTLS_ECP_RESTARTABLE)
@@ -144,6 +146,7 @@ typedef struct mbedtls_ecdh_context
 #endif /* MBEDTLS_ECP_RESTARTABLE */
 #endif /* MBEDTLS_ECDH_LEGACY_CONTEXT */
 }
+
 mbedtls_ecdh_context;
 
 /**
@@ -194,7 +197,7 @@ int mbedtls_ecdh_can_do ( mbedtls_ecp_group_id gid );
  *                  \c MBEDTLS_MPI_XXX error code on failure.
  */
 int mbedtls_ecdh_gen_public ( mbedtls_ecp_group* grp, mbedtls_mpi* d, mbedtls_ecp_point* Q,
-                              int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                              int (*f_rng ) ( void*, unsigned char*, size_t ),
                               void* p_rng );
 
 /**
@@ -230,7 +233,7 @@ int mbedtls_ecdh_gen_public ( mbedtls_ecp_group* grp, mbedtls_mpi* d, mbedtls_ec
  */
 int mbedtls_ecdh_compute_shared ( mbedtls_ecp_group* grp, mbedtls_mpi* z,
                                   const mbedtls_ecp_point* Q, const mbedtls_mpi* d,
-                                  int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                  int (*f_rng ) ( void*, unsigned char*, size_t ),
                                   void* p_rng );
 
 /**
@@ -295,7 +298,7 @@ void mbedtls_ecdh_free ( mbedtls_ecdh_context* ctx );
  */
 int mbedtls_ecdh_make_params ( mbedtls_ecdh_context* ctx, size_t* olen,
                                unsigned char* buf, size_t blen,
-                               int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                               int (*f_rng ) ( void*, unsigned char*, size_t ),
                                void* p_rng );
 
 /**
@@ -377,7 +380,7 @@ int mbedtls_ecdh_get_params ( mbedtls_ecdh_context* ctx,
  */
 int mbedtls_ecdh_make_public ( mbedtls_ecdh_context* ctx, size_t* olen,
                                unsigned char* buf, size_t blen,
-                               int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                               int (*f_rng ) ( void*, unsigned char*, size_t ),
                                void* p_rng );
 
 /**
@@ -433,7 +436,7 @@ int mbedtls_ecdh_read_public ( mbedtls_ecdh_context* ctx,
  */
 int mbedtls_ecdh_calc_secret ( mbedtls_ecdh_context* ctx, size_t* olen,
                                unsigned char* buf, size_t blen,
-                               int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                               int (*f_rng ) ( void*, unsigned char*, size_t ),
                                void* p_rng );
 
 #if defined(MBEDTLS_ECP_RESTARTABLE)
@@ -454,6 +457,7 @@ void mbedtls_ecdh_enable_restart ( mbedtls_ecdh_context* ctx );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* ecdh.h */

@@ -164,6 +164,7 @@ static inline int mbedtls_ssl_cache_get_timeout ( mbedtls_ssl_cache_context* cac
 {
   return cache->MBEDTLS_PRIVATE ( timeout );
 }
+
 #endif /* MBEDTLS_HAVE_TIME */
 
 /**
@@ -184,6 +185,7 @@ void mbedtls_ssl_cache_free ( mbedtls_ssl_cache_context* cache );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* ssl_cache.h */

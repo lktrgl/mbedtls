@@ -236,10 +236,10 @@ psa_status_t psa_find_se_slot_for_key (
       return PSA_ERROR_NOT_SUPPORTED;
     }
 
-    status = p_validate_slot_number ( &driver->u.context,
-                                      driver->u.internal.persistent_data,
-                                      attributes, method,
-                                      *slot_number );
+    status = p_validate_slot_number (&driver->u.context,
+                                     driver->u.internal.persistent_data,
+                                     attributes, method,
+                                     *slot_number );
   }
   else if ( method == PSA_KEY_CREATION_REGISTER )
   {
@@ -259,10 +259,10 @@ psa_status_t psa_find_se_slot_for_key (
       return PSA_ERROR_NOT_SUPPORTED;
     }
 
-    status = p_allocate ( &driver->u.context,
-                          driver->u.internal.persistent_data,
-                          attributes, method,
-                          slot_number );
+    status = p_allocate (&driver->u.context,
+                         driver->u.internal.persistent_data,
+                         attributes, method,
+                         slot_number );
   }
 
   return status;
@@ -408,7 +408,7 @@ psa_status_t psa_register_se_driver (
     /* Load the driver's persistent data. On first use, the persistent
      * data does not exist in storage, and is initialized to
      * all-bits-zero by the calloc call just above. */
-    status = psa_load_se_persistent_data ( &driver_table[i] );
+    status = psa_load_se_persistent_data (&driver_table[i] );
 
     if ( status != PSA_SUCCESS && status != PSA_ERROR_DOES_NOT_EXIST )
     {
@@ -419,7 +419,7 @@ psa_status_t psa_register_se_driver (
   return PSA_SUCCESS;
 
 error:
-  memset ( &driver_table[i], 0, sizeof ( driver_table[i] ) );
+  memset (&driver_table[i], 0, sizeof ( driver_table[i] ) );
   return status;
 }
 

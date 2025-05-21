@@ -255,7 +255,7 @@ int mbedtls_internal_ripemd160_process ( mbedtls_ripemd160_context* ctx,
   ctx->state[0] = local.C;
 
   /* Zeroise variables to clear sensitive data from memory. */
-  mbedtls_platform_zeroize ( &local, sizeof ( local ) );
+  mbedtls_platform_zeroize (&local, sizeof ( local ) );
 
   return 0;
 }
@@ -390,25 +390,25 @@ int mbedtls_ripemd160 ( const unsigned char* input,
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
   mbedtls_ripemd160_context ctx;
 
-  mbedtls_ripemd160_init ( &ctx );
+  mbedtls_ripemd160_init (&ctx );
 
-  if ( ( ret = mbedtls_ripemd160_starts ( &ctx ) ) != 0 )
+  if ( ( ret = mbedtls_ripemd160_starts (&ctx ) ) != 0 )
   {
     goto exit;
   }
 
-  if ( ( ret = mbedtls_ripemd160_update ( &ctx, input, ilen ) ) != 0 )
+  if ( ( ret = mbedtls_ripemd160_update (&ctx, input, ilen ) ) != 0 )
   {
     goto exit;
   }
 
-  if ( ( ret = mbedtls_ripemd160_finish ( &ctx, output ) ) != 0 )
+  if ( ( ret = mbedtls_ripemd160_finish (&ctx, output ) ) != 0 )
   {
     goto exit;
   }
 
 exit:
-  mbedtls_ripemd160_free ( &ctx );
+  mbedtls_ripemd160_free (&ctx );
 
   return ret;
 }

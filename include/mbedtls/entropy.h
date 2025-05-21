@@ -85,7 +85,7 @@ extern "C" {
  * \return          0 if no critical failures occurred,
  *                  MBEDTLS_ERR_ENTROPY_SOURCE_FAILED otherwise
  */
-typedef int ( *mbedtls_entropy_f_source_ptr ) ( void* data, unsigned char* output, size_t len,
+typedef int (*mbedtls_entropy_f_source_ptr ) ( void* data, unsigned char* output, size_t len,
     size_t* olen );
 
 /**
@@ -99,6 +99,7 @@ typedef struct mbedtls_entropy_source_state
   size_t          MBEDTLS_PRIVATE ( threshold ); /**< Minimum bytes required before release */
   int             MBEDTLS_PRIVATE ( strong );  /**< Is the source strong? */
 }
+
 mbedtls_entropy_source_state;
 
 /**
@@ -119,6 +120,7 @@ typedef struct mbedtls_entropy_context
   int MBEDTLS_PRIVATE ( initial_entropy_run );
 #endif
 }
+
 mbedtls_entropy_context;
 
 #if !defined(MBEDTLS_NO_PLATFORM_ENTROPY)
@@ -271,6 +273,7 @@ int mbedtls_entropy_source_self_test ( int verbose );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* entropy.h */

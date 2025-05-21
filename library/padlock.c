@@ -153,6 +153,7 @@ int mbedtls_padlock_xcryptcbc ( mbedtls_aes_context* ctx,
 
   return 0;
 }
+
 #endif /* MBEDTLS_CIPHER_MODE_CBC */
 
 #endif /* MBEDTLS_VIA_PADLOCK_HAVE_CODE */

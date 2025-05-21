@@ -121,7 +121,7 @@ static psa_status_t process_response ( int rx_qid, vectors_t* vecs, int type,
     switch ( response.message_type )
     {
     case PSA_REPLY:
-      memcpy ( &ret, response.message_text.buf, sizeof ( psa_status_t ) );
+      memcpy (&ret, response.message_text.buf, sizeof ( psa_status_t ) );
       printf ( "   Message received from server: %d\n", ret );
 
       if ( type == PSA_IPC_CONNECT && ret > 0 )
@@ -140,8 +140,8 @@ static psa_status_t process_response ( int rx_qid, vectors_t* vecs, int type,
 
       assert ( vecs != 0 );
 
-      memcpy ( &invec, response.message_text.buf, sizeof ( psa_status_t ) );
-      memcpy ( &data_size, response.message_text.buf + sizeof ( size_t ), sizeof ( size_t ) );
+      memcpy (&invec, response.message_text.buf, sizeof ( psa_status_t ) );
+      memcpy (&data_size, response.message_text.buf + sizeof ( size_t ), sizeof ( size_t ) );
       INFO ( "   Partition asked for %lu bytes from invec %d", data_size, invec );
 
       /* need to add more checks here */
@@ -165,8 +165,8 @@ static psa_status_t process_response ( int rx_qid, vectors_t* vecs, int type,
       INFO ( "   Sending message of type %li", request.message_type );
       INFO ( "       with content %s\n", request.message_text.buf );
 
-      if ( msgsnd ( *internal_server_qid, &request,
-                    sizeof ( int ) + sizeof ( uint32_t ) + data_size, 0 ) == -1 )
+      if ( msgsnd (*internal_server_qid, &request,
+                   sizeof ( int ) + sizeof ( uint32_t ) + data_size, 0 ) == -1 )
       {
         INFO ( "Internal error: failed to respond to read request" );
       }
@@ -178,8 +178,8 @@ static psa_status_t process_response ( int rx_qid, vectors_t* vecs, int type,
 
       request.message_type = WRITE_RESPONSE;
 
-      memcpy ( &outvec, response.message_text.buf, sizeof ( psa_status_t ) );
-      memcpy ( &data_size, response.message_text.buf + sizeof ( size_t ), sizeof ( size_t ) );
+      memcpy (&outvec, response.message_text.buf, sizeof ( psa_status_t ) );
+      memcpy (&data_size, response.message_text.buf + sizeof ( size_t ), sizeof ( size_t ) );
       INFO ( "   Partition wants to write %lu bytes to outvec %d", data_size, outvec );
 
       assert ( outvec >= 0 && outvec < PSA_MAX_IOVEC );
@@ -194,7 +194,7 @@ static psa_status_t process_response ( int rx_qid, vectors_t* vecs, int type,
       INFO ( "   Sending message of type %li\n", request.message_type );
 
       /* send response */
-      if ( msgsnd ( *internal_server_qid, &request, sizeof ( int ) + data_size, 0 ) == -1 )
+      if ( msgsnd (*internal_server_qid, &request, sizeof ( int ) + data_size, 0 ) == -1 )
       {
         INFO ( "Internal error: failed to respond to write request" );
       }
@@ -202,8 +202,8 @@ static psa_status_t process_response ( int rx_qid, vectors_t* vecs, int type,
       break;
 
     case SKIP_REQUEST:
-      memcpy ( &invec, response.message_text.buf, sizeof ( psa_status_t ) );
-      memcpy ( &data_size, response.message_text.buf + sizeof ( size_t ), sizeof ( size_t ) );
+      memcpy (&invec, response.message_text.buf, sizeof ( psa_status_t ) );
+      memcpy (&data_size, response.message_text.buf + sizeof ( size_t ), sizeof ( size_t ) );
       INFO ( "   Partition asked to skip %lu bytes in invec %d", data_size, invec );
       assert ( invec >= 0 && invec < PSA_MAX_IOVEC );
       /* update invec base TODO: check me */
@@ -256,7 +256,7 @@ static psa_status_t send ( int rx_qid, int server_qid, int* internal_server_qid,
     if ( vecs != NULL && type >= PSA_IPC_CALL )
     {
 
-      bzero ( &vec_sizes, sizeof ( vec_sizes ) );
+      bzero (&vec_sizes, sizeof ( vec_sizes ) );
 
       /* Copy invec sizes */
       for ( size_t i = 0; i < ( vecs->in_len ); i++ )

@@ -31,6 +31,7 @@ typedef struct
     unsigned long implicit_key;
     unsigned long abort;
   } hits;
+
   /* Status returned by the last PAKE driver function call. */
   psa_status_t driver_status;
   /* Output returned by pake_output */

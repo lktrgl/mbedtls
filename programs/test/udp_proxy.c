@@ -38,6 +38,7 @@ int main ( void )
   mbedtls_printf ( "MBEDTLS_NET_C not defined.\n" );
   mbedtls_exit ( 0 );
 }
+
 #else
 
 #include "mbedtls/net_sockets.h"
@@ -180,7 +181,7 @@ static void exit_usage ( const char* name, const char* value )
 static void get_options ( int argc, char* argv[] )
 {
   int i;
-  char* p, *q;
+  char* p, * q;
 
   opt.server_addr    = DFL_SERVER_ADDR;
   opt.server_port    = DFL_SERVER_PORT;
@@ -267,7 +268,7 @@ static void get_options ( int argc, char* argv[] )
         delay_list = opt.delay_srv;
       }
 
-      if ( *delay_cnt == MAX_DELAYED_HS )
+      if (*delay_cnt == MAX_DELAYED_HS )
       {
         mbedtls_printf ( " too many uses of %s: only %d allowed\n",
                          p, MAX_DELAYED_HS );
@@ -285,7 +286,7 @@ static void get_options ( int argc, char* argv[] )
 
       memcpy ( buf, q, len + 1 );
 
-      delay_list[ ( *delay_cnt )++] = buf;
+      delay_list[ (*delay_cnt )++] = buf;
     }
     else if ( strcmp ( p, "drop" ) == 0 )
     {
@@ -469,12 +470,12 @@ static unsigned elapsed_time ( void )
 
   if ( initialized == 0 )
   {
-    ( void ) mbedtls_timing_get_timer ( &hires, 1 );
+    ( void ) mbedtls_timing_get_timer (&hires, 1 );
     initialized = 1;
     return 0;
   }
 
-  return mbedtls_timing_get_timer ( &hires, 0 );
+  return mbedtls_timing_get_timer (&hires, 0 );
 }
 
 typedef struct
@@ -558,13 +559,14 @@ static int ctx_buffer_append ( ctx_buffer* buf,
 
   buf->len += len;
 
-  if ( ++buf->num_datagrams == 1 )
+  if (++buf->num_datagrams == 1 )
   {
     buf->packet_lifetime = elapsed_time();
   }
 
   return ( int ) len;
 }
+
 #endif /* MBEDTLS_TIMING_C */
 
 static int dispatch_data ( mbedtls_net_context* ctx,
@@ -681,7 +683,7 @@ static int send_packet ( const packet* p, const char* why )
        inject_clihlo_state == ICH_INIT &&
        strcmp ( p->type, "ClientHello" ) == 0 )
   {
-    memcpy ( &initial_clihlo, p, sizeof ( packet ) );
+    memcpy (&initial_clihlo, p, sizeof ( packet ) );
     inject_clihlo_state = ICH_CACHED;
   }
 
@@ -755,7 +757,7 @@ static int send_packet ( const packet* p, const char* why )
        inject_clihlo_state == ICH_CACHED &&
        strcmp ( p->type, "ApplicationData" ) == 0 )
   {
-    print_packet ( &initial_clihlo, "injected" );
+    print_packet (&initial_clihlo, "injected" );
 
     if ( ( ret = dispatch_data ( dst, initial_clihlo.buf,
                                  initial_clihlo.len ) ) <= 0 )
@@ -776,7 +778,7 @@ static packet prev[MAX_DELAYED_MSG];
 
 static void clear_pending ( void )
 {
-  memset ( &prev, 0, sizeof ( prev ) );
+  memset (&prev, 0, sizeof ( prev ) );
   prev_len = 0;
 }
 
@@ -787,7 +789,7 @@ static void delay_packet ( packet* delay )
     return;
   }
 
-  memcpy ( &prev[prev_len++], delay, sizeof ( packet ) );
+  memcpy (&prev[prev_len++], delay, sizeof ( packet ) );
 }
 
 static int send_delayed ( void )
@@ -797,7 +799,7 @@ static int send_delayed ( void )
 
   for ( offset = 0; offset < prev_len; offset++ )
   {
-    ret = send_packet ( &prev[offset], "delayed" );
+    ret = send_packet (&prev[offset], "delayed" );
 
     if ( ret != 0 )
     {
@@ -849,7 +851,7 @@ static int handle_message ( const char* way,
   cur.type = msg_type ( cur.buf, cur.len );
   cur.way  = way;
   cur.dst  = dst;
-  print_packet ( &cur, NULL );
+  print_packet (&cur, NULL );
 
   id = cur.len % sizeof ( held );
 
@@ -876,7 +878,7 @@ static int handle_message ( const char* way,
     if ( strcmp ( delay_list[delay_idx], cur.type ) == 0 )
     {
       /* Delay message */
-      delay_packet ( &cur );
+      delay_packet (&cur );
 
       /* Remove entry from list */
       mbedtls_free ( delay_list[delay_idx] );
@@ -912,12 +914,12 @@ static int handle_message ( const char* way,
               rand() % opt.delay == 0 ) )
   {
     ++held[id];
-    delay_packet ( &cur );
+    delay_packet (&cur );
   }
   else
   {
     /* forward and possibly duplicate */
-    if ( ( ret = send_packet ( &cur, "forwarded" ) ) != 0 )
+    if ( ( ret = send_packet (&cur, "forwarded" ) ) != 0 )
     {
       return ret;
     }
@@ -951,9 +953,9 @@ int main ( int argc, char* argv[] )
   int nb_fds;
   fd_set read_fds;
 
-  mbedtls_net_init ( &listen_fd );
-  mbedtls_net_init ( &client_fd );
-  mbedtls_net_init ( &server_fd );
+  mbedtls_net_init (&listen_fd );
+  mbedtls_net_init (&client_fd );
+  mbedtls_net_init (&server_fd );
 
   get_options ( argc, argv );
 
@@ -984,8 +986,8 @@ int main ( int argc, char* argv[] )
                    opt.server_addr, opt.server_port );
   fflush ( stdout );
 
-  if ( ( ret = mbedtls_net_connect ( &server_fd, opt.server_addr, opt.server_port,
-                                     MBEDTLS_NET_PROTO_UDP ) ) != 0 )
+  if ( ( ret = mbedtls_net_connect (&server_fd, opt.server_addr, opt.server_port,
+                                    MBEDTLS_NET_PROTO_UDP ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_net_connect returned %d\n\n", ret );
     goto exit;
@@ -1000,8 +1002,8 @@ int main ( int argc, char* argv[] )
                    opt.listen_addr, opt.listen_port );
   fflush ( stdout );
 
-  if ( ( ret = mbedtls_net_bind ( &listen_fd, opt.listen_addr, opt.listen_port,
-                                  MBEDTLS_NET_PROTO_UDP ) ) != 0 )
+  if ( ( ret = mbedtls_net_bind (&listen_fd, opt.listen_addr, opt.listen_port,
+                                 MBEDTLS_NET_PROTO_UDP ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_net_bind returned %d\n\n", ret );
     goto exit;
@@ -1013,13 +1015,13 @@ int main ( int argc, char* argv[] )
    * 2. Wait until a client connects
    */
 accept:
-  mbedtls_net_free ( &client_fd );
+  mbedtls_net_free (&client_fd );
 
   mbedtls_printf ( "  . Waiting for a remote connection ..." );
   fflush ( stdout );
 
-  if ( ( ret = mbedtls_net_accept ( &listen_fd, &client_fd,
-                                    NULL, 0, NULL ) ) != 0 )
+  if ( ( ret = mbedtls_net_accept (&listen_fd, &client_fd,
+                                   NULL, 0, NULL ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_net_accept returned %d\n\n", ret );
     goto exit;
@@ -1071,14 +1073,14 @@ accept:
     if ( opt.pack > 0 )
     {
       unsigned max_wait_server, max_wait_client, max_wait;
-      max_wait_server = ctx_buffer_time_remaining ( &outbuf[0] );
-      max_wait_client = ctx_buffer_time_remaining ( &outbuf[1] );
+      max_wait_server = ctx_buffer_time_remaining (&outbuf[0] );
+      max_wait_client = ctx_buffer_time_remaining (&outbuf[1] );
 
       max_wait = ( unsigned ) - 1;
 
       if ( max_wait_server == 0 )
       {
-        ctx_buffer_flush ( &outbuf[0] );
+        ctx_buffer_flush (&outbuf[0] );
       }
       else
       {
@@ -1087,7 +1089,7 @@ accept:
 
       if ( max_wait_client == 0 )
       {
-        ctx_buffer_flush ( &outbuf[1] );
+        ctx_buffer_flush (&outbuf[1] );
       }
       else
       {
@@ -1112,7 +1114,7 @@ accept:
 
 #endif /* MBEDTLS_TIMING_C */
 
-    FD_ZERO ( &read_fds );
+    FD_ZERO (&read_fds );
     FD_SET ( server_fd.fd, &read_fds );
     FD_SET ( client_fd.fd, &read_fds );
     FD_SET ( listen_fd.fd, &read_fds );
@@ -1168,9 +1170,9 @@ exit:
     mbedtls_free ( opt.delay_srv[delay_idx] );
   }
 
-  mbedtls_net_free ( &client_fd );
-  mbedtls_net_free ( &server_fd );
-  mbedtls_net_free ( &listen_fd );
+  mbedtls_net_free (&client_fd );
+  mbedtls_net_free (&server_fd );
+  mbedtls_net_free (&listen_fd );
 
   mbedtls_exit ( exit_code );
 }

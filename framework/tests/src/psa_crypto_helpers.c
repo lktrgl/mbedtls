@@ -85,7 +85,7 @@ const char* mbedtls_test_helper_is_psa_leaking ( void )
 {
   mbedtls_psa_stats_t stats;
 
-  mbedtls_psa_get_stats ( &stats );
+  mbedtls_psa_get_stats (&stats );
 
   /* Some volatile slots may be used for internal purposes. Generally
    * we'll have exactly MBEDTLS_TEST_PSA_INTERNAL_KEYS at this point,
@@ -143,6 +143,7 @@ psa_status_t mbedtls_test_record_status ( psa_status_t status,
   fprintf ( log, "%d:%s:%s:%d:%s\n", ( int ) status, func, file, line, expr );
   return status;
 }
+
 #endif /* defined(RECORD_PSA_STATUS_COVERAGE_LOG) */
 
 psa_key_usage_t mbedtls_test_update_key_usage_flags ( psa_key_usage_t usage_flags )

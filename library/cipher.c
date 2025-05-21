@@ -66,14 +66,14 @@ const int* mbedtls_cipher_list ( void )
   const mbedtls_cipher_definition_t* def;
   int* type;
 
-  if ( !supported_init )
+  if (!supported_init )
   {
     def = mbedtls_cipher_definitions;
     type = mbedtls_cipher_supported;
 
     while ( def->type != 0 )
     {
-      *type++ = ( *def++ ).type;
+      *type++ = (*def++ ).type;
     }
 
     *type = 0;
@@ -112,7 +112,7 @@ const mbedtls_cipher_info_t* mbedtls_cipher_info_from_string (
 
   for ( def = mbedtls_cipher_definitions; def->info != NULL; def++ )
   {
-    if ( !strcmp ( def->info->name, cipher_name ) )
+    if (!strcmp ( def->info->name, cipher_name ) )
     {
       return def->info;
     }
@@ -215,6 +215,7 @@ static inline psa_algorithm_t mbedtls_psa_translate_cipher_mode (
     return 0;
   }
 }
+
 #endif /* MBEDTLS_USE_PSA_CRYPTO && !MBEDTLS_DEPRECATED_REMOVED */
 
 void mbedtls_cipher_init ( mbedtls_cipher_context_t* ctx )
@@ -244,7 +245,7 @@ void mbedtls_cipher_free ( mbedtls_cipher_context_t* ctx )
         ( void ) psa_destroy_key ( cipher_psa->slot );
       }
 
-      mbedtls_zeroize_and_free ( cipher_psa, sizeof ( *cipher_psa ) );
+      mbedtls_zeroize_and_free ( cipher_psa, sizeof (*cipher_psa ) );
     }
 
     mbedtls_platform_zeroize ( ctx, sizeof ( mbedtls_cipher_context_t ) );
@@ -338,6 +339,7 @@ int mbedtls_cipher_setup_psa ( mbedtls_cipher_context_t* ctx,
   ctx->psa_enabled = 1;
   return 0;
 }
+
 #endif /* MBEDTLS_USE_PSA_CRYPTO && !MBEDTLS_DEPRECATED_REMOVED */
 
 int mbedtls_cipher_setkey ( mbedtls_cipher_context_t* ctx,
@@ -398,18 +400,18 @@ int mbedtls_cipher_setkey ( mbedtls_cipher_context_t* ctx,
       return MBEDTLS_ERR_CIPHER_FEATURE_UNAVAILABLE;
     }
 
-    psa_set_key_type ( &attributes, key_type );
+    psa_set_key_type (&attributes, key_type );
 
     /* Mbed TLS' cipher layer doesn't enforce the mode of operation
      * (encrypt vs. decrypt): it is possible to setup a key for encryption
      * and use it for AEAD decryption. Until tests relying on this
      * are changed, allow any usage in PSA. */
-    psa_set_key_usage_flags ( &attributes,
-                              PSA_KEY_USAGE_ENCRYPT | PSA_KEY_USAGE_DECRYPT );
-    psa_set_key_algorithm ( &attributes, cipher_psa->alg );
+    psa_set_key_usage_flags (&attributes,
+                             PSA_KEY_USAGE_ENCRYPT | PSA_KEY_USAGE_DECRYPT );
+    psa_set_key_algorithm (&attributes, cipher_psa->alg );
 
-    status = psa_import_key ( &attributes, key, key_bytelen,
-                              &cipher_psa->slot );
+    status = psa_import_key (&attributes, key, key_bytelen,
+                             &cipher_psa->slot );
 
     switch ( status )
     {
@@ -692,6 +694,7 @@ int mbedtls_cipher_update_ad ( mbedtls_cipher_context_t* ctx,
 
   return MBEDTLS_ERR_CIPHER_FEATURE_UNAVAILABLE;
 }
+
 #endif /* MBEDTLS_GCM_C || MBEDTLS_CHACHAPOLY_C */
 
 int mbedtls_cipher_update ( mbedtls_cipher_context_t* ctx, const unsigned char* input,
@@ -799,8 +802,8 @@ int mbedtls_cipher_update ( mbedtls_cipher_context_t* ctx, const unsigned char* 
          ( ctx->operation == MBEDTLS_ENCRYPT &&
            ilen < block_size - ctx->unprocessed_len ) )
     {
-      memcpy ( & ( ctx->unprocessed_data[ctx->unprocessed_len] ), input,
-               ilen );
+      memcpy (& ( ctx->unprocessed_data[ctx->unprocessed_len] ), input,
+              ilen );
 
       ctx->unprocessed_len += ilen;
       return 0;
@@ -813,8 +816,8 @@ int mbedtls_cipher_update ( mbedtls_cipher_context_t* ctx, const unsigned char* 
     {
       copy_len = block_size - ctx->unprocessed_len;
 
-      memcpy ( & ( ctx->unprocessed_data[ctx->unprocessed_len] ), input,
-               copy_len );
+      memcpy (& ( ctx->unprocessed_data[ctx->unprocessed_len] ), input,
+              copy_len );
 
       if ( 0 != ( ret = mbedtls_cipher_get_base ( ctx->cipher_info )->cbc_func ( ctx->cipher_ctx,
                         ctx->operation,
@@ -1045,6 +1048,7 @@ static int get_pkcs_padding ( unsigned char* input, size_t input_len,
 
   return mbedtls_ct_error_if_else_0 ( bad, MBEDTLS_ERR_CIPHER_INVALID_PADDING );
 }
+
 #endif /* MBEDTLS_CIPHER_PADDING_PKCS7 */
 
 #if defined(MBEDTLS_CIPHER_PADDING_ONE_AND_ZEROS)
@@ -1093,6 +1097,7 @@ static int get_one_and_zeros_padding ( unsigned char* input, size_t input_len,
 
   return mbedtls_ct_error_if_else_0 ( bad, MBEDTLS_ERR_CIPHER_INVALID_PADDING );
 }
+
 #endif /* MBEDTLS_CIPHER_PADDING_ONE_AND_ZEROS */
 
 #if defined(MBEDTLS_CIPHER_PADDING_ZEROS_AND_LEN)
@@ -1145,6 +1150,7 @@ static int get_zeros_and_len_padding ( unsigned char* input, size_t input_len,
 
   return mbedtls_ct_error_if_else_0 ( bad, MBEDTLS_ERR_CIPHER_INVALID_PADDING );
 }
+
 #endif /* MBEDTLS_CIPHER_PADDING_ZEROS_AND_LEN */
 
 #if defined(MBEDTLS_CIPHER_PADDING_ZEROS)
@@ -1179,6 +1185,7 @@ static int get_zeros_padding ( unsigned char* input, size_t input_len,
 
   return 0;
 }
+
 #endif /* MBEDTLS_CIPHER_PADDING_ZEROS */
 
 /*
@@ -1199,6 +1206,7 @@ static int get_no_padding ( unsigned char* input, size_t input_len,
 
   return 0;
 }
+
 #endif /* MBEDTLS_CIPHER_MODE_WITH_PADDING */
 
 int mbedtls_cipher_finish ( mbedtls_cipher_context_t* ctx,
@@ -1400,6 +1408,7 @@ int mbedtls_cipher_set_padding_mode ( mbedtls_cipher_context_t* ctx,
 
   return 0;
 }
+
 #endif /* MBEDTLS_CIPHER_MODE_WITH_PADDING */
 
 #if defined(MBEDTLS_GCM_C) || defined(MBEDTLS_CHACHAPOLY_C)
@@ -1555,6 +1564,7 @@ exit:
   mbedtls_platform_zeroize ( check_tag, tag_len );
   return ret;
 }
+
 #endif /* MBEDTLS_GCM_C || MBEDTLS_CHACHAPOLY_C */
 
 /*
@@ -1586,15 +1596,15 @@ int mbedtls_cipher_crypt ( mbedtls_cipher_context_t* ctx,
 
     if ( ctx->operation == MBEDTLS_DECRYPT )
     {
-      status = psa_cipher_decrypt_setup ( &cipher_op,
-                                          cipher_psa->slot,
-                                          cipher_psa->alg );
+      status = psa_cipher_decrypt_setup (&cipher_op,
+                                         cipher_psa->slot,
+                                         cipher_psa->alg );
     }
     else if ( ctx->operation == MBEDTLS_ENCRYPT )
     {
-      status = psa_cipher_encrypt_setup ( &cipher_op,
-                                          cipher_psa->slot,
-                                          cipher_psa->alg );
+      status = psa_cipher_encrypt_setup (&cipher_op,
+                                         cipher_psa->slot,
+                                         cipher_psa->alg );
     }
     else
     {
@@ -1612,7 +1622,7 @@ int mbedtls_cipher_crypt ( mbedtls_cipher_context_t* ctx,
 
     if ( ( ( mbedtls_cipher_mode_t ) ctx->cipher_info->mode ) != MBEDTLS_MODE_ECB )
     {
-      status = psa_cipher_set_iv ( &cipher_op, iv, iv_len );
+      status = psa_cipher_set_iv (&cipher_op, iv, iv_len );
 
       if ( status != PSA_SUCCESS )
       {
@@ -1620,18 +1630,18 @@ int mbedtls_cipher_crypt ( mbedtls_cipher_context_t* ctx,
       }
     }
 
-    status = psa_cipher_update ( &cipher_op,
-                                 input, ilen,
-                                 output, ilen, olen );
+    status = psa_cipher_update (&cipher_op,
+                                input, ilen,
+                                output, ilen, olen );
 
     if ( status != PSA_SUCCESS )
     {
       return MBEDTLS_ERR_PLATFORM_HW_ACCEL_FAILED;
     }
 
-    status = psa_cipher_finish ( &cipher_op,
-                                 output + *olen, ilen - *olen,
-                                 &part_len );
+    status = psa_cipher_finish (&cipher_op,
+                                output + *olen, ilen - *olen,
+                                &part_len );
 
     if ( status != PSA_SUCCESS )
     {
@@ -1887,6 +1897,7 @@ static int mbedtls_cipher_aead_decrypt ( mbedtls_cipher_context_t* ctx,
 
   return MBEDTLS_ERR_CIPHER_FEATURE_UNAVAILABLE;
 }
+
 #endif /* MBEDTLS_CIPHER_MODE_AEAD */
 
 #if defined(MBEDTLS_CIPHER_MODE_AEAD) || defined(MBEDTLS_NIST_KW_C)
@@ -2001,6 +2012,7 @@ int mbedtls_cipher_auth_decrypt_ext ( mbedtls_cipher_context_t* ctx,
   return MBEDTLS_ERR_CIPHER_FEATURE_UNAVAILABLE;
 #endif /* MBEDTLS_CIPHER_MODE_AEAD */
 }
+
 #endif /* MBEDTLS_CIPHER_MODE_AEAD || MBEDTLS_NIST_KW_C */
 
 #endif /* MBEDTLS_CIPHER_C */

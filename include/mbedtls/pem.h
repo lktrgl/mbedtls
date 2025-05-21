@@ -55,6 +55,7 @@ typedef struct mbedtls_pem_context
   size_t MBEDTLS_PRIVATE ( buflen );       /*!< length of the buffer                */
   unsigned char* MBEDTLS_PRIVATE ( info ); /*!< buffer for extra header information */
 }
+
 mbedtls_pem_context;
 
 /**
@@ -156,6 +157,7 @@ int mbedtls_pem_write_buffer ( const char* header, const char* footer,
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* pem.h */

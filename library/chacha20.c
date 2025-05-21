@@ -258,26 +258,26 @@ int mbedtls_chacha20_crypt ( const unsigned char key[32],
   mbedtls_chacha20_context ctx;
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
 
-  mbedtls_chacha20_init ( &ctx );
+  mbedtls_chacha20_init (&ctx );
 
-  ret = mbedtls_chacha20_setkey ( &ctx, key );
-
-  if ( ret != 0 )
-  {
-    goto cleanup;
-  }
-
-  ret = mbedtls_chacha20_starts ( &ctx, nonce, counter );
+  ret = mbedtls_chacha20_setkey (&ctx, key );
 
   if ( ret != 0 )
   {
     goto cleanup;
   }
 
-  ret = mbedtls_chacha20_update ( &ctx, data_len, input, output );
+  ret = mbedtls_chacha20_starts (&ctx, nonce, counter );
+
+  if ( ret != 0 )
+  {
+    goto cleanup;
+  }
+
+  ret = mbedtls_chacha20_update (&ctx, data_len, input, output );
 
 cleanup:
-  mbedtls_chacha20_free ( &ctx );
+  mbedtls_chacha20_free (&ctx );
   return ret;
 }
 

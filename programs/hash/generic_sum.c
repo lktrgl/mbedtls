@@ -22,6 +22,7 @@ int main ( void )
   mbedtls_printf ( "MBEDTLS_MD_C and/or MBEDTLS_FS_IO not defined.\n" );
   mbedtls_exit ( 0 );
 }
+
 #else
 
 
@@ -175,7 +176,7 @@ int main ( int argc, char* argv[] )
   const mbedtls_md_info_t* md_info;
   mbedtls_md_context_t md_ctx;
 
-  mbedtls_md_init ( &md_ctx );
+  mbedtls_md_init (&md_ctx );
 
   if ( argc < 2 )
   {
@@ -187,9 +188,9 @@ int main ( int argc, char* argv[] )
     mbedtls_printf ( "\nAvailable message digests:\n" );
     list = mbedtls_md_list();
 
-    while ( *list )
+    while (*list )
     {
-      md_info = mbedtls_md_info_from_type ( *list );
+      md_info = mbedtls_md_info_from_type (*list );
       mbedtls_printf ( "  %s\n", mbedtls_md_get_name ( md_info ) );
       list++;
     }
@@ -208,7 +209,7 @@ int main ( int argc, char* argv[] )
     mbedtls_exit ( exit_code );
   }
 
-  if ( mbedtls_md_setup ( &md_ctx, md_info, 0 ) )
+  if ( mbedtls_md_setup (&md_ctx, md_info, 0 ) )
   {
     mbedtls_fprintf ( stderr, "Failed to initialize context.\n" );
     mbedtls_exit ( exit_code );
@@ -233,8 +234,9 @@ int main ( int argc, char* argv[] )
   }
 
 exit:
-  mbedtls_md_free ( &md_ctx );
+  mbedtls_md_free (&md_ctx );
 
   mbedtls_exit ( exit_code );
 }
+
 #endif /* MBEDTLS_MD_C && MBEDTLS_FS_IO */

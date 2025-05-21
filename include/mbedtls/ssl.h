@@ -708,14 +708,14 @@ union mbedtls_ssl_premaster_secret
 #endif
 #if defined(MBEDTLS_KEY_EXCHANGE_DHE_PSK_ENABLED)
   unsigned char _pms_dhe_psk[4 + MBEDTLS_MPI_MAX_SIZE
-                               + MBEDTLS_PSK_MAX_LEN];         /* RFC 4279 3 */
+                             + MBEDTLS_PSK_MAX_LEN];         /* RFC 4279 3 */
 #endif
 #if defined(MBEDTLS_KEY_EXCHANGE_RSA_PSK_ENABLED)
   unsigned char _pms_rsa_psk[52 + MBEDTLS_PSK_MAX_LEN];      /* RFC 4279 4 */
 #endif
 #if defined(MBEDTLS_KEY_EXCHANGE_ECDHE_PSK_ENABLED)
   unsigned char _pms_ecdhe_psk[4 + MBEDTLS_ECP_MAX_BYTES
-                                 + MBEDTLS_PSK_MAX_LEN];       /* RFC 5489 2 */
+                               + MBEDTLS_PSK_MAX_LEN];       /* RFC 5489 2 */
 #endif
 #if defined(MBEDTLS_KEY_EXCHANGE_ECJPAKE_ENABLED)
   unsigned char _pms_ecjpake[32];     /* Thread spec: SHA-256 output */
@@ -1247,6 +1247,7 @@ typedef struct mbedtls_dtls_srtp_info_t
   /*! The mki_value used, with max size of 256 bytes. */
   unsigned char MBEDTLS_PRIVATE ( mki_value ) [MBEDTLS_TLS_SRTP_MAX_MKI_LENGTH];
 }
+
 mbedtls_dtls_srtp_info;
 
 #endif /* MBEDTLS_SSL_DTLS_SRTP */
@@ -1436,7 +1437,7 @@ typedef void mbedtls_ssl_export_keys_t ( void* p_expkey,
  *                  or a specific MBEDTLS_ERR_XXX code, which will cause
  *                  the handshake to be aborted.
  */
-typedef int ( *mbedtls_ssl_hs_cb_t ) ( mbedtls_ssl_context* ssl );
+typedef int (*mbedtls_ssl_hs_cb_t ) ( mbedtls_ssl_context* ssl );
 #endif
 
 /* A type for storing user data in a library structure.
@@ -1538,11 +1539,11 @@ struct mbedtls_ssl_config
 #endif /* MBEDTLS_SSL_PROTO_TLS1_3 */
 
   /** Callback for printing debug output                                  */
-  void ( *MBEDTLS_PRIVATE ( f_dbg ) ) ( void*, int, const char*, int, const char* );
+  void (*MBEDTLS_PRIVATE ( f_dbg ) ) ( void*, int, const char*, int, const char* );
   void* MBEDTLS_PRIVATE ( p_dbg );                 /*!< context for the debug function     */
 
   /** Callback for getting (pseudo-)random numbers                        */
-  int ( *MBEDTLS_PRIVATE ( f_rng ) ) ( void*, unsigned char*, size_t );
+  int (*MBEDTLS_PRIVATE ( f_rng ) ) ( void*, unsigned char*, size_t );
   void* MBEDTLS_PRIVATE ( p_rng );                 /*!< context for the RNG function       */
 
   /** Callback to retrieve a session from the cache                       */
@@ -1553,41 +1554,41 @@ struct mbedtls_ssl_config
 
 #if defined(MBEDTLS_SSL_SERVER_NAME_INDICATION)
   /** Callback for setting cert according to SNI extension                */
-  int ( *MBEDTLS_PRIVATE ( f_sni ) ) ( void*, mbedtls_ssl_context*, const unsigned char*, size_t );
+  int (*MBEDTLS_PRIVATE ( f_sni ) ) ( void*, mbedtls_ssl_context*, const unsigned char*, size_t );
   void* MBEDTLS_PRIVATE ( p_sni );                 /*!< context for SNI callback           */
 #endif
 
 #if defined(MBEDTLS_X509_CRT_PARSE_C)
   /** Callback to customize X.509 certificate chain verification          */
-  int ( *MBEDTLS_PRIVATE ( f_vrfy ) ) ( void*, mbedtls_x509_crt*, int, uint32_t* );
+  int (*MBEDTLS_PRIVATE ( f_vrfy ) ) ( void*, mbedtls_x509_crt*, int, uint32_t* );
   void* MBEDTLS_PRIVATE ( p_vrfy );                /*!< context for X.509 verify calllback */
 #endif
 
 #if defined(MBEDTLS_SSL_HANDSHAKE_WITH_PSK_ENABLED)
 #if defined(MBEDTLS_SSL_SRV_C)
   /** Callback to retrieve PSK key from identity                          */
-  int ( *MBEDTLS_PRIVATE ( f_psk ) ) ( void*, mbedtls_ssl_context*, const unsigned char*, size_t );
+  int (*MBEDTLS_PRIVATE ( f_psk ) ) ( void*, mbedtls_ssl_context*, const unsigned char*, size_t );
   void* MBEDTLS_PRIVATE ( p_psk );                 /*!< context for PSK callback           */
 #endif
 #endif
 
 #if defined(MBEDTLS_SSL_DTLS_HELLO_VERIFY) && defined(MBEDTLS_SSL_SRV_C)
   /** Callback to create & write a cookie for ClientHello verification    */
-  int ( *MBEDTLS_PRIVATE ( f_cookie_write ) ) ( void*, unsigned char**, unsigned char*,
+  int (*MBEDTLS_PRIVATE ( f_cookie_write ) ) ( void*, unsigned char**, unsigned char*,
       const unsigned char*, size_t );
   /** Callback to verify validity of a ClientHello cookie                 */
-  int ( *MBEDTLS_PRIVATE ( f_cookie_check ) ) ( void*, const unsigned char*, size_t,
+  int (*MBEDTLS_PRIVATE ( f_cookie_check ) ) ( void*, const unsigned char*, size_t,
       const unsigned char*, size_t );
   void* MBEDTLS_PRIVATE ( p_cookie );              /*!< context for the cookie callbacks   */
 #endif
 
 #if defined(MBEDTLS_SSL_SESSION_TICKETS) && defined(MBEDTLS_SSL_SRV_C)
   /** Callback to create & write a session ticket                         */
-  int ( *MBEDTLS_PRIVATE ( f_ticket_write ) ) ( void*, const mbedtls_ssl_session*,
+  int (*MBEDTLS_PRIVATE ( f_ticket_write ) ) ( void*, const mbedtls_ssl_session*,
       unsigned char*, const unsigned char*, size_t*,
       uint32_t* );
   /** Callback to parse a session ticket into a session structure         */
-  int ( *MBEDTLS_PRIVATE ( f_ticket_parse ) ) ( void*, mbedtls_ssl_session*, unsigned char*, size_t );
+  int (*MBEDTLS_PRIVATE ( f_ticket_parse ) ) ( void*, mbedtls_ssl_session*, unsigned char*, size_t );
   void* MBEDTLS_PRIVATE ( p_ticket );              /*!< context for the ticket callbacks   */
 #endif /* MBEDTLS_SSL_SESSION_TICKETS && MBEDTLS_SSL_SRV_C */
 #if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
@@ -1785,7 +1786,7 @@ struct mbedtls_ssl_context
 
 #if defined(MBEDTLS_X509_CRT_PARSE_C)
   /** Callback to customize X.509 certificate chain verification          */
-  int ( *MBEDTLS_PRIVATE ( f_vrfy ) ) ( void*, mbedtls_x509_crt*, int, uint32_t* );
+  int (*MBEDTLS_PRIVATE ( f_vrfy ) ) ( void*, mbedtls_x509_crt*, int, uint32_t* );
   void* MBEDTLS_PRIVATE ( p_vrfy );                /*!< context for X.509 verify callback */
 #endif
 
@@ -2253,7 +2254,7 @@ void mbedtls_ssl_conf_max_early_data_size (
  * \param p_vrfy   The opaque context to be passed to the callback.
  */
 void mbedtls_ssl_conf_verify ( mbedtls_ssl_config* conf,
-                               int ( *f_vrfy ) ( void*, mbedtls_x509_crt*, int, uint32_t* ),
+                               int (*f_vrfy ) ( void*, mbedtls_x509_crt*, int, uint32_t* ),
                                void* p_vrfy );
 #endif /* MBEDTLS_X509_CRT_PARSE_C */
 
@@ -2265,7 +2266,7 @@ void mbedtls_ssl_conf_verify ( mbedtls_ssl_config* conf,
  * \param p_rng    RNG parameter
  */
 void mbedtls_ssl_conf_rng ( mbedtls_ssl_config* conf,
-                            int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                            int (*f_rng ) ( void*, unsigned char*, size_t ),
                             void* p_rng );
 
 /**
@@ -2283,7 +2284,7 @@ void mbedtls_ssl_conf_rng ( mbedtls_ssl_config* conf,
  * \param p_dbg    debug parameter
  */
 void mbedtls_ssl_conf_dbg ( mbedtls_ssl_config* conf,
-                            void ( *f_dbg ) ( void*, int, const char*, int, const char* ),
+                            void (*f_dbg ) ( void*, int, const char*, int, const char* ),
                             void*  p_dbg );
 
 /**
@@ -2572,7 +2573,7 @@ void mbedtls_ssl_set_mtu ( mbedtls_ssl_context* ssl, uint16_t mtu );
  * \param p_vrfy   The opaque context to be passed to the callback.
  */
 void mbedtls_ssl_set_verify ( mbedtls_ssl_context* ssl,
-                              int ( *f_vrfy ) ( void*, mbedtls_x509_crt*, int, uint32_t* ),
+                              int (*f_vrfy ) ( void*, mbedtls_x509_crt*, int, uint32_t* ),
                               void* p_vrfy );
 #endif /* MBEDTLS_X509_CRT_PARSE_C */
 
@@ -2683,6 +2684,7 @@ static inline void mbedtls_ssl_conf_cert_cb ( mbedtls_ssl_config* conf,
 {
   conf->MBEDTLS_PRIVATE ( f_cert_cb ) = f_cert_cb;
 }
+
 #endif /* MBEDTLS_SSL_SRV_C */
 
 /**
@@ -2786,6 +2788,7 @@ static inline int mbedtls_ssl_session_get_ticket_creation_time (
 
   return 0;
 }
+
 #endif /* MBEDTLS_HAVE_TIME */
 #endif /* MBEDTLS_SSL_SESSION_TICKETS && MBEDTLS_SSL_SRV_C */
 
@@ -2796,8 +2799,8 @@ static inline int mbedtls_ssl_session_get_ticket_creation_time (
  *
  * \return         The address of the session-id buffer.
  */
-static inline unsigned const char ( *mbedtls_ssl_session_get_id ( const mbedtls_ssl_session*
-                                    session ) ) [32]
+static inline unsigned const char (*mbedtls_ssl_session_get_id ( const mbedtls_ssl_session*
+                                   session ) ) [32]
 {
   return &session->MBEDTLS_PRIVATE ( id );
 }
@@ -3603,6 +3606,7 @@ void mbedtls_ssl_conf_dn_hints ( mbedtls_ssl_config* conf,
 {
   conf->MBEDTLS_PRIVATE ( dn_hints ) = crt;
 }
+
 #endif /* MBEDTLS_KEY_EXCHANGE_CERT_REQ_ALLOWED_ENABLED */
 
 #if defined(MBEDTLS_X509_TRUSTED_CERTIFICATE_CALLBACK)
@@ -3868,7 +3872,7 @@ int mbedtls_ssl_set_hs_psk_opaque ( mbedtls_ssl_context* ssl,
  *                 the callback, for example a PSK store.
  */
 void mbedtls_ssl_conf_psk_cb ( mbedtls_ssl_config* conf,
-                               int ( *f_psk ) ( void*, mbedtls_ssl_context*, const unsigned char*,
+                               int (*f_psk ) ( void*, mbedtls_ssl_context*, const unsigned char*,
                                    size_t ),
                                void* p_psk );
 #endif /* MBEDTLS_SSL_SRV_C */
@@ -4106,6 +4110,7 @@ static inline const char* mbedtls_ssl_get_hostname ( mbedtls_ssl_context* ssl )
 {
   return ssl->MBEDTLS_PRIVATE ( hostname );
 }
+
 #endif /* MBEDTLS_X509_CRT_PARSE_C */
 
 #if defined(MBEDTLS_SSL_SERVER_NAME_INDICATION)
@@ -4215,7 +4220,7 @@ void mbedtls_ssl_set_hs_authmode ( mbedtls_ssl_context* ssl,
  * \param p_sni    verification parameter
  */
 void mbedtls_ssl_conf_sni ( mbedtls_ssl_config* conf,
-                            int ( *f_sni ) ( void*, mbedtls_ssl_context*, const unsigned char*,
+                            int (*f_sni ) ( void*, mbedtls_ssl_context*, const unsigned char*,
                                 size_t ),
                             void* p_sni );
 #endif /* MBEDTLS_SSL_SERVER_NAME_INDICATION */
@@ -4312,6 +4317,7 @@ static inline const char* mbedtls_ssl_get_srtp_profile_as_string ( mbedtls_ssl_s
 
   return "";
 }
+
 #endif /* MBEDTLS_DEBUG_C */
 /**
  * \brief                   Manage support for mki(master key id) value
@@ -5790,6 +5796,7 @@ int  mbedtls_ssl_tls_prf ( const mbedtls_tls_prf_types prf,
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* ssl.h */

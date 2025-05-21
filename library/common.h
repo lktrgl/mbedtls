@@ -49,7 +49,7 @@
 #endif
 
 #if defined(MBEDTLS_TEST_HOOKS)
-extern void ( *mbedtls_test_hook_test_fail ) ( const char* test, int line, const char* file );
+extern void (*mbedtls_test_hook_test_fail ) ( const char* test, int line, const char* file );
 #define MBEDTLS_TEST_HOOK_TEST_ASSERT(TEST) \
   do { \
     if ((!(TEST)) && ((*mbedtls_test_hook_test_fail) != NULL)) \
@@ -194,7 +194,7 @@ static inline void mbedtls_xor ( unsigned char* r,
     (!(defined(MBEDTLS_COMPILER_IS_GCC) && MBEDTLS_GCC_VERSION < 70300))
 
   /* Old GCC versions generate a warning here, so disable the NEON path for these compilers */
-  for ( ; ( i + 16 ) <= n; i += 16 )
+  for (; ( i + 16 ) <= n; i += 16 )
   {
     uint8x16_t v1 = vld1q_u8 ( a + i );
     uint8x16_t v2 = vld1q_u8 ( b + i );
@@ -217,7 +217,7 @@ static inline void mbedtls_xor ( unsigned char* r,
 #elif defined(MBEDTLS_ARCH_IS_X64) || defined(MBEDTLS_ARCH_IS_ARM64)
 
   /* This codepath probably only makes sense on architectures with 64-bit registers */
-  for ( ; ( i + 8 ) <= n; i += 8 )
+  for (; ( i + 8 ) <= n; i += 8 )
   {
     uint64_t x = mbedtls_get_unaligned_uint64 ( a + i ) ^ mbedtls_get_unaligned_uint64 ( b + i );
     mbedtls_put_unaligned_uint64 ( r + i, x );
@@ -233,7 +233,7 @@ static inline void mbedtls_xor ( unsigned char* r,
 #endif
 #else
 
-  for ( ; ( i + 4 ) <= n; i += 4 )
+  for (; ( i + 4 ) <= n; i += 4 )
   {
     uint32_t x = mbedtls_get_unaligned_uint32 ( a + i ) ^ mbedtls_get_unaligned_uint32 ( b + i );
     mbedtls_put_unaligned_uint32 ( r + i, x );
@@ -250,7 +250,7 @@ static inline void mbedtls_xor ( unsigned char* r,
 #endif
 #endif
 
-  for ( ; i < n; i++ )
+  for (; i < n; i++ )
   {
     r[i] = a[i] ^ b[i];
   }
@@ -295,7 +295,7 @@ static inline void mbedtls_xor_no_simd ( unsigned char* r,
 #if defined(MBEDTLS_ARCH_IS_X64) || defined(MBEDTLS_ARCH_IS_ARM64)
 
   /* This codepath probably only makes sense on architectures with 64-bit registers */
-  for ( ; ( i + 8 ) <= n; i += 8 )
+  for (; ( i + 8 ) <= n; i += 8 )
   {
     uint64_t x = mbedtls_get_unaligned_uint64 ( a + i ) ^ mbedtls_get_unaligned_uint64 ( b + i );
     mbedtls_put_unaligned_uint64 ( r + i, x );
@@ -315,7 +315,7 @@ static inline void mbedtls_xor_no_simd ( unsigned char* r,
 #endif
 #else
 
-  for ( ; ( i + 4 ) <= n; i += 4 )
+  for (; ( i + 4 ) <= n; i += 4 )
   {
     uint32_t x = mbedtls_get_unaligned_uint32 ( a + i ) ^ mbedtls_get_unaligned_uint32 ( b + i );
     mbedtls_put_unaligned_uint32 ( r + i, x );
@@ -332,7 +332,7 @@ static inline void mbedtls_xor_no_simd ( unsigned char* r,
 #endif
 #endif
 
-  for ( ; i < n; i++ )
+  for (; i < n; i++ )
   {
     r[i] = a[i] ^ b[i];
   }

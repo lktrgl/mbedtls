@@ -161,7 +161,7 @@ int mbedtls_ecdsa_can_do ( mbedtls_ecp_group_id gid );
  */
 int mbedtls_ecdsa_sign ( mbedtls_ecp_group* grp, mbedtls_mpi* r, mbedtls_mpi* s,
                          const mbedtls_mpi* d, const unsigned char* buf, size_t blen,
-                         int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng );
+                         int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng );
 
 #if defined(MBEDTLS_ECDSA_DETERMINISTIC)
 /**
@@ -208,7 +208,7 @@ int mbedtls_ecdsa_sign_det_ext ( mbedtls_ecp_group* grp, mbedtls_mpi* r,
                                  mbedtls_mpi* s, const mbedtls_mpi* d,
                                  const unsigned char* buf, size_t blen,
                                  mbedtls_md_type_t md_alg,
-                                 int ( *f_rng_blind ) ( void*, unsigned char*, size_t ),
+                                 int (*f_rng_blind ) ( void*, unsigned char*, size_t ),
                                  void* p_rng_blind );
 #endif /* MBEDTLS_ECDSA_DETERMINISTIC */
 
@@ -272,9 +272,9 @@ int mbedtls_ecdsa_sign_restartable (
   mbedtls_mpi* r, mbedtls_mpi* s,
   const mbedtls_mpi* d,
   const unsigned char* buf, size_t blen,
-  int ( *f_rng ) ( void*, unsigned char*, size_t ),
+  int (*f_rng ) ( void*, unsigned char*, size_t ),
   void* p_rng,
-  int ( *f_rng_blind ) ( void*, unsigned char*, size_t ),
+  int (*f_rng_blind ) ( void*, unsigned char*, size_t ),
   void* p_rng_blind,
   mbedtls_ecdsa_restart_ctx* rs_ctx );
 
@@ -335,7 +335,7 @@ int mbedtls_ecdsa_sign_det_restartable (
   mbedtls_mpi* r, mbedtls_mpi* s,
   const mbedtls_mpi* d, const unsigned char* buf, size_t blen,
   mbedtls_md_type_t md_alg,
-  int ( *f_rng_blind ) ( void*, unsigned char*, size_t ),
+  int (*f_rng_blind ) ( void*, unsigned char*, size_t ),
   void* p_rng_blind,
   mbedtls_ecdsa_restart_ctx* rs_ctx );
 
@@ -474,7 +474,7 @@ int mbedtls_ecdsa_write_signature ( mbedtls_ecdsa_context* ctx,
                                     mbedtls_md_type_t md_alg,
                                     const unsigned char* hash, size_t hlen,
                                     unsigned char* sig, size_t sig_size, size_t* slen,
-                                    int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                    int (*f_rng ) ( void*, unsigned char*, size_t ),
                                     void* p_rng );
 
 /**
@@ -521,7 +521,7 @@ int mbedtls_ecdsa_write_signature_restartable ( mbedtls_ecdsa_context* ctx,
     mbedtls_md_type_t md_alg,
     const unsigned char* hash, size_t hlen,
     unsigned char* sig, size_t sig_size, size_t* slen,
-    int ( *f_rng ) ( void*, unsigned char*, size_t ),
+    int (*f_rng ) ( void*, unsigned char*, size_t ),
     void* p_rng,
     mbedtls_ecdsa_restart_ctx* rs_ctx );
 
@@ -609,7 +609,7 @@ int mbedtls_ecdsa_read_signature_restartable ( mbedtls_ecdsa_context* ctx,
  * \return         An \c MBEDTLS_ERR_ECP_XXX code on failure.
  */
 int mbedtls_ecdsa_genkey ( mbedtls_ecdsa_context* ctx, mbedtls_ecp_group_id gid,
-                           int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng );
+                           int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng );
 
 /**
  * \brief           This function sets up an ECDSA context from an EC key pair.
@@ -667,6 +667,7 @@ void mbedtls_ecdsa_restart_free ( mbedtls_ecdsa_restart_ctx* ctx );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* ecdsa.h */

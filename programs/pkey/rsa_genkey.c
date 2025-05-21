@@ -34,6 +34,7 @@ int main ( void )
                    "MBEDTLS_FS_IO and/or MBEDTLS_CTR_DRBG_C not defined.\n" );
   mbedtls_exit ( 0 );
 }
+
 #else
 
 
@@ -49,25 +50,25 @@ int main ( void )
   FILE* fpriv = NULL;
   const char* pers = "rsa_genkey";
 
-  mbedtls_ctr_drbg_init ( &ctr_drbg );
-  mbedtls_rsa_init ( &rsa );
-  mbedtls_mpi_init ( &N );
-  mbedtls_mpi_init ( &P );
-  mbedtls_mpi_init ( &Q );
-  mbedtls_mpi_init ( &D );
-  mbedtls_mpi_init ( &E );
-  mbedtls_mpi_init ( &DP );
-  mbedtls_mpi_init ( &DQ );
-  mbedtls_mpi_init ( &QP );
+  mbedtls_ctr_drbg_init (&ctr_drbg );
+  mbedtls_rsa_init (&rsa );
+  mbedtls_mpi_init (&N );
+  mbedtls_mpi_init (&P );
+  mbedtls_mpi_init (&Q );
+  mbedtls_mpi_init (&D );
+  mbedtls_mpi_init (&E );
+  mbedtls_mpi_init (&DP );
+  mbedtls_mpi_init (&DQ );
+  mbedtls_mpi_init (&QP );
 
   mbedtls_printf ( "\n  . Seeding the random number generator..." );
   fflush ( stdout );
 
-  mbedtls_entropy_init ( &entropy );
+  mbedtls_entropy_init (&entropy );
 
-  if ( ( ret = mbedtls_ctr_drbg_seed ( &ctr_drbg, mbedtls_entropy_func, &entropy,
-                                       ( const unsigned char* ) pers,
-                                       strlen ( pers ) ) ) != 0 )
+  if ( ( ret = mbedtls_ctr_drbg_seed (&ctr_drbg, mbedtls_entropy_func, &entropy,
+                                      ( const unsigned char* ) pers,
+                                      strlen ( pers ) ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_ctr_drbg_seed returned %d\n", ret );
     goto exit;
@@ -76,8 +77,8 @@ int main ( void )
   mbedtls_printf ( " ok\n  . Generating the RSA key [ %d-bit ]...", KEY_SIZE );
   fflush ( stdout );
 
-  if ( ( ret = mbedtls_rsa_gen_key ( &rsa, mbedtls_ctr_drbg_random, &ctr_drbg, KEY_SIZE,
-                                     EXPONENT ) ) != 0 )
+  if ( ( ret = mbedtls_rsa_gen_key (&rsa, mbedtls_ctr_drbg_random, &ctr_drbg, KEY_SIZE,
+                                    EXPONENT ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_rsa_gen_key returned %d\n\n", ret );
     goto exit;
@@ -86,8 +87,8 @@ int main ( void )
   mbedtls_printf ( " ok\n  . Exporting the public  key in rsa_pub.txt...." );
   fflush ( stdout );
 
-  if ( ( ret = mbedtls_rsa_export ( &rsa, &N, &P, &Q, &D, &E ) ) != 0 ||
-       ( ret = mbedtls_rsa_export_crt ( &rsa, &DP, &DQ, &QP ) )      != 0 )
+  if ( ( ret = mbedtls_rsa_export (&rsa, &N, &P, &Q, &D, &E ) ) != 0 ||
+       ( ret = mbedtls_rsa_export_crt (&rsa, &DP, &DQ, &QP ) )      != 0 )
   {
     mbedtls_printf ( " failed\n  ! could not export RSA parameters\n\n" );
     goto exit;
@@ -144,19 +145,20 @@ exit:
     fclose ( fpriv );
   }
 
-  mbedtls_mpi_free ( &N );
-  mbedtls_mpi_free ( &P );
-  mbedtls_mpi_free ( &Q );
-  mbedtls_mpi_free ( &D );
-  mbedtls_mpi_free ( &E );
-  mbedtls_mpi_free ( &DP );
-  mbedtls_mpi_free ( &DQ );
-  mbedtls_mpi_free ( &QP );
-  mbedtls_rsa_free ( &rsa );
-  mbedtls_ctr_drbg_free ( &ctr_drbg );
-  mbedtls_entropy_free ( &entropy );
+  mbedtls_mpi_free (&N );
+  mbedtls_mpi_free (&P );
+  mbedtls_mpi_free (&Q );
+  mbedtls_mpi_free (&D );
+  mbedtls_mpi_free (&E );
+  mbedtls_mpi_free (&DP );
+  mbedtls_mpi_free (&DQ );
+  mbedtls_mpi_free (&QP );
+  mbedtls_rsa_free (&rsa );
+  mbedtls_ctr_drbg_free (&ctr_drbg );
+  mbedtls_entropy_free (&entropy );
 
   mbedtls_exit ( exit_code );
 }
+
 #endif /* MBEDTLS_BIGNUM_C && MBEDTLS_ENTROPY_C && MBEDTLS_RSA_C &&
           MBEDTLS_GENPRIME && MBEDTLS_FS_IO && MBEDTLS_CTR_DRBG_C */

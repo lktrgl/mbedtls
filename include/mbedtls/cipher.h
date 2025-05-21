@@ -337,8 +337,8 @@ typedef struct mbedtls_cipher_context_t
   /** Padding functions to use, if relevant for
    * the specific cipher mode.
    */
-  void ( *MBEDTLS_PRIVATE ( add_padding ) ) ( unsigned char* output, size_t olen, size_t data_len );
-  int ( *MBEDTLS_PRIVATE ( get_padding ) ) ( unsigned char* input, size_t ilen, size_t* data_len );
+  void (*MBEDTLS_PRIVATE ( add_padding ) ) ( unsigned char* output, size_t olen, size_t data_len );
+  int (*MBEDTLS_PRIVATE ( get_padding ) ) ( unsigned char* input, size_t ilen, size_t* data_len );
 #endif
 
   /** Buffer for input that has not been processed yet. */
@@ -1200,6 +1200,7 @@ int mbedtls_cipher_auth_decrypt_ext ( mbedtls_cipher_context_t* ctx,
 #endif /* MBEDTLS_CIPHER_MODE_AEAD || MBEDTLS_NIST_KW_C */
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* MBEDTLS_CIPHER_H */

@@ -248,7 +248,7 @@ psa_status_t mbedtls_cipher_values_from_psa (
 
     /* key_bits is 64 for Single-DES, 128 for two-key Triple-DES,
      * and 192 for three-key Triple-DES. */
-    if ( *key_bits == 64 )
+    if (*key_bits == 64 )
     {
       cipher_id_tmp = MBEDTLS_CIPHER_ID_DES;
     }
@@ -260,7 +260,7 @@ psa_status_t mbedtls_cipher_values_from_psa (
     /* mbedtls doesn't recognize two-key Triple-DES as an algorithm,
      * but two-key Triple-DES is functionally three-key Triple-DES
      * with K1=K3, so that's how we present it to mbedtls. */
-    if ( *key_bits == 128 )
+    if (*key_bits == 128 )
     {
       *key_bits = 192;
     }
@@ -317,6 +317,7 @@ const mbedtls_cipher_info_t* mbedtls_cipher_info_from_psa (
 
   return mbedtls_cipher_info_from_values ( cipher_id_tmp, ( int ) key_bits, mode );
 }
+
 #endif /* MBEDTLS_CIPHER_C */
 
 #if defined(MBEDTLS_PSA_BUILTIN_CIPHER)
@@ -335,7 +336,7 @@ static psa_status_t psa_cipher_setup (
 
   ( void ) key_buffer_size;
 
-  mbedtls_cipher_init ( &operation->ctx.cipher );
+  mbedtls_cipher_init (&operation->ctx.cipher );
 
   operation->alg = alg;
   key_bits = attributes->bits;
@@ -347,7 +348,7 @@ static psa_status_t psa_cipher_setup (
     return PSA_ERROR_NOT_SUPPORTED;
   }
 
-  ret = mbedtls_cipher_setup ( &operation->ctx.cipher, cipher_info );
+  ret = mbedtls_cipher_setup (&operation->ctx.cipher, cipher_info );
 
   if ( ret != 0 )
   {
@@ -362,15 +363,15 @@ static psa_status_t psa_cipher_setup (
     uint8_t keys[24];
     memcpy ( keys, key_buffer, 16 );
     memcpy ( keys + 16, key_buffer, 8 );
-    ret = mbedtls_cipher_setkey ( &operation->ctx.cipher,
-                                  keys,
-                                  192, cipher_operation );
+    ret = mbedtls_cipher_setkey (&operation->ctx.cipher,
+                                 keys,
+                                 192, cipher_operation );
   }
   else
 #endif
   {
-    ret = mbedtls_cipher_setkey ( &operation->ctx.cipher, key_buffer,
-                                  ( int ) key_bits, cipher_operation );
+    ret = mbedtls_cipher_setkey (&operation->ctx.cipher, key_buffer,
+                                 ( int ) key_bits, cipher_operation );
   }
 
   if ( ret != 0 )
@@ -384,13 +385,13 @@ static psa_status_t psa_cipher_setup (
   switch ( alg )
   {
   case PSA_ALG_CBC_NO_PADDING:
-    ret = mbedtls_cipher_set_padding_mode ( &operation->ctx.cipher,
-                                            MBEDTLS_PADDING_NONE );
+    ret = mbedtls_cipher_set_padding_mode (&operation->ctx.cipher,
+                                           MBEDTLS_PADDING_NONE );
     break;
 
   case PSA_ALG_CBC_PKCS7:
-    ret = mbedtls_cipher_set_padding_mode ( &operation->ctx.cipher,
-                                            MBEDTLS_PADDING_PKCS7 );
+    ret = mbedtls_cipher_set_padding_mode (&operation->ctx.cipher,
+                                           MBEDTLS_PADDING_PKCS7 );
     break;
 
   default:
@@ -447,8 +448,8 @@ psa_status_t mbedtls_psa_cipher_set_iv (
   }
 
   return mbedtls_to_psa_error (
-           mbedtls_cipher_set_iv ( &operation->ctx.cipher,
-                                   iv, iv_length ) );
+           mbedtls_cipher_set_iv (&operation->ctx.cipher,
+                                  iv, iv_length ) );
 }
 
 #if defined(MBEDTLS_PSA_BUILTIN_ALG_ECB_NO_PADDING)
@@ -503,8 +504,8 @@ static psa_status_t psa_cipher_update_ecb (
       bytes_to_copy = input_length;
     }
 
-    memcpy ( & ( ctx->unprocessed_data[ctx->unprocessed_len] ),
-             input, bytes_to_copy );
+    memcpy (& ( ctx->unprocessed_data[ctx->unprocessed_len] ),
+            input, bytes_to_copy );
     input_length -= bytes_to_copy;
     input += bytes_to_copy;
     ctx->unprocessed_len += bytes_to_copy;
@@ -551,8 +552,8 @@ static psa_status_t psa_cipher_update_ecb (
   if ( input_length > 0 )
   {
     /* Save unprocessed bytes for later processing */
-    memcpy ( & ( ctx->unprocessed_data[ctx->unprocessed_len] ),
-             input, input_length );
+    memcpy (& ( ctx->unprocessed_data[ctx->unprocessed_len] ),
+            input, input_length );
     ctx->unprocessed_len += input_length;
   }
 
@@ -561,6 +562,7 @@ static psa_status_t psa_cipher_update_ecb (
 exit:
   return status;
 }
+
 #endif /* MBEDTLS_PSA_BUILTIN_ALG_ECB_NO_PADDING */
 
 psa_status_t mbedtls_psa_cipher_update (
@@ -571,7 +573,7 @@ psa_status_t mbedtls_psa_cipher_update (
   psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
   size_t expected_output_size;
 
-  if ( !PSA_ALG_IS_STREAM_CIPHER ( operation->alg ) )
+  if (!PSA_ALG_IS_STREAM_CIPHER ( operation->alg ) )
   {
     /* Take the unprocessed partial block left over from previous
      * update calls, if any, plus the input to this call. Remove
@@ -598,11 +600,11 @@ psa_status_t mbedtls_psa_cipher_update (
     /* mbedtls_cipher_update has an API inconsistency: it will only
      * process a single block at a time in ECB mode. Abstract away that
      * inconsistency here to match the PSA API behaviour. */
-    status = psa_cipher_update_ecb ( &operation->ctx.cipher,
-                                     input,
-                                     input_length,
-                                     output,
-                                     output_length );
+    status = psa_cipher_update_ecb (&operation->ctx.cipher,
+                                    input,
+                                    input_length,
+                                    output,
+                                    output_length );
   }
   else
 #endif /* MBEDTLS_PSA_BUILTIN_ALG_ECB_NO_PADDING */
@@ -615,10 +617,10 @@ psa_status_t mbedtls_psa_cipher_update (
     else
     {
       status = mbedtls_to_psa_error (
-                 mbedtls_cipher_update ( &operation->ctx.cipher, input,
-                                         input_length, output, output_length ) );
+                 mbedtls_cipher_update (&operation->ctx.cipher, input,
+                                        input_length, output, output_length ) );
 
-      if ( *output_length > output_size )
+      if (*output_length > output_size )
       {
         return PSA_ERROR_CORRUPTION_DETECTED;
       }
@@ -645,16 +647,16 @@ psa_status_t mbedtls_psa_cipher_finish (
   }
 
   status = mbedtls_to_psa_error (
-             mbedtls_cipher_finish ( &operation->ctx.cipher,
-                                     temp_output_buffer,
-                                     output_length ) );
+             mbedtls_cipher_finish (&operation->ctx.cipher,
+                                    temp_output_buffer,
+                                    output_length ) );
 
   if ( status != PSA_SUCCESS )
   {
     goto exit;
   }
 
-  if ( *output_length == 0 )
+  if (*output_length == 0 )
   {
     ; /* Nothing to copy. Note that output may be NULL in this case. */
   }
@@ -679,12 +681,12 @@ psa_status_t mbedtls_psa_cipher_abort (
 {
   /* Sanity check (shouldn't happen: operation->alg should
    * always have been initialized to a valid value). */
-  if ( !PSA_ALG_IS_CIPHER ( operation->alg ) )
+  if (!PSA_ALG_IS_CIPHER ( operation->alg ) )
   {
     return PSA_ERROR_BAD_STATE;
   }
 
-  mbedtls_cipher_free ( &operation->ctx.cipher );
+  mbedtls_cipher_free (&operation->ctx.cipher );
 
   return PSA_SUCCESS;
 }
@@ -706,7 +708,7 @@ psa_status_t mbedtls_psa_cipher_encrypt (
   mbedtls_psa_cipher_operation_t operation = MBEDTLS_PSA_CIPHER_OPERATION_INIT;
   size_t update_output_length, finish_output_length;
 
-  status = mbedtls_psa_cipher_encrypt_setup ( &operation, attributes,
+  status = mbedtls_psa_cipher_encrypt_setup (&operation, attributes,
            key_buffer, key_buffer_size,
            alg );
 
@@ -717,7 +719,7 @@ psa_status_t mbedtls_psa_cipher_encrypt (
 
   if ( iv_length > 0 )
   {
-    status = mbedtls_psa_cipher_set_iv ( &operation, iv, iv_length );
+    status = mbedtls_psa_cipher_set_iv (&operation, iv, iv_length );
 
     if ( status != PSA_SUCCESS )
     {
@@ -725,9 +727,9 @@ psa_status_t mbedtls_psa_cipher_encrypt (
     }
   }
 
-  status = mbedtls_psa_cipher_update ( &operation, input, input_length,
-                                       output, output_size,
-                                       &update_output_length );
+  status = mbedtls_psa_cipher_update (&operation, input, input_length,
+                                      output, output_size,
+                                      &update_output_length );
 
   if ( status != PSA_SUCCESS )
   {
@@ -750,11 +752,11 @@ exit:
 
   if ( status == PSA_SUCCESS )
   {
-    status = mbedtls_psa_cipher_abort ( &operation );
+    status = mbedtls_psa_cipher_abort (&operation );
   }
   else
   {
-    mbedtls_psa_cipher_abort ( &operation );
+    mbedtls_psa_cipher_abort (&operation );
   }
 
   return status;
@@ -775,7 +777,7 @@ psa_status_t mbedtls_psa_cipher_decrypt (
   mbedtls_psa_cipher_operation_t operation = MBEDTLS_PSA_CIPHER_OPERATION_INIT;
   size_t olength, accumulated_length;
 
-  status = mbedtls_psa_cipher_decrypt_setup ( &operation, attributes,
+  status = mbedtls_psa_cipher_decrypt_setup (&operation, attributes,
            key_buffer, key_buffer_size,
            alg );
 
@@ -786,8 +788,8 @@ psa_status_t mbedtls_psa_cipher_decrypt (
 
   if ( operation.iv_length > 0 )
   {
-    status = mbedtls_psa_cipher_set_iv ( &operation,
-                                         input, operation.iv_length );
+    status = mbedtls_psa_cipher_set_iv (&operation,
+                                        input, operation.iv_length );
 
     if ( status != PSA_SUCCESS )
     {
@@ -824,15 +826,16 @@ exit:
 
   if ( status == PSA_SUCCESS )
   {
-    status = mbedtls_psa_cipher_abort ( &operation );
+    status = mbedtls_psa_cipher_abort (&operation );
   }
   else
   {
-    mbedtls_psa_cipher_abort ( &operation );
+    mbedtls_psa_cipher_abort (&operation );
   }
 
   return status;
 }
+
 #endif /* MBEDTLS_PSA_BUILTIN_CIPHER */
 
 #endif /* MBEDTLS_PSA_CRYPTO_C */

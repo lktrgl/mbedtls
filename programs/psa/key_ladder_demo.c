@@ -63,6 +63,7 @@ int main ( void )
            "defined.\n" );
   return 0;
 }
+
 #else
 
 /* The real program starts here. */
@@ -193,13 +194,13 @@ static psa_status_t generate ( const char* key_file_name )
   psa_key_id_t key = 0;
   psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
 
-  psa_set_key_usage_flags ( &attributes,
-                            PSA_KEY_USAGE_DERIVE | PSA_KEY_USAGE_EXPORT );
-  psa_set_key_algorithm ( &attributes, KDF_ALG );
-  psa_set_key_type ( &attributes, PSA_KEY_TYPE_DERIVE );
-  psa_set_key_bits ( &attributes, PSA_BYTES_TO_BITS ( KEY_SIZE_BYTES ) );
+  psa_set_key_usage_flags (&attributes,
+                           PSA_KEY_USAGE_DERIVE | PSA_KEY_USAGE_EXPORT );
+  psa_set_key_algorithm (&attributes, KDF_ALG );
+  psa_set_key_type (&attributes, PSA_KEY_TYPE_DERIVE );
+  psa_set_key_bits (&attributes, PSA_BYTES_TO_BITS ( KEY_SIZE_BYTES ) );
 
-  PSA_CHECK ( psa_generate_key ( &attributes, &key ) );
+  PSA_CHECK ( psa_generate_key (&attributes, &key ) );
 
   PSA_CHECK ( save_key ( key, key_file_name ) );
 
@@ -231,7 +232,7 @@ static psa_status_t import_key_from_file ( psa_key_usage_t usage,
   SYS_CHECK ( ( key_size = fread ( key_data, 1, sizeof ( key_data ),
                                    key_file ) ) != 0 );
 
-  if ( fread ( &extra_byte, 1, 1, key_file ) != 0 )
+  if ( fread (&extra_byte, 1, 1, key_file ) != 0 )
   {
     printf ( "Key file too large (max: %u).\n",
              ( unsigned ) sizeof ( key_data ) );
@@ -242,10 +243,10 @@ static psa_status_t import_key_from_file ( psa_key_usage_t usage,
   SYS_CHECK ( fclose ( key_file ) == 0 );
   key_file = NULL;
 
-  psa_set_key_usage_flags ( &attributes, usage );
-  psa_set_key_algorithm ( &attributes, alg );
-  psa_set_key_type ( &attributes, PSA_KEY_TYPE_DERIVE );
-  PSA_CHECK ( psa_import_key ( &attributes, key_data, key_size, master_key ) );
+  psa_set_key_usage_flags (&attributes, usage );
+  psa_set_key_algorithm (&attributes, alg );
+  psa_set_key_type (&attributes, PSA_KEY_TYPE_DERIVE );
+  PSA_CHECK ( psa_import_key (&attributes, key_data, key_size, master_key ) );
 exit:
 
   if ( key_file != NULL )
@@ -260,7 +261,7 @@ exit:
     /* If the key creation hasn't happened yet or has failed,
      * *master_key is null. psa_destroy_key( 0 ) is
      * guaranteed to do nothing and return PSA_SUCCESS. */
-    ( void ) psa_destroy_key ( *master_key );
+    ( void ) psa_destroy_key (*master_key );
     *master_key = 0;
   }
 
@@ -281,18 +282,18 @@ static psa_status_t derive_key_ladder ( const char* ladder[],
   psa_key_derivation_operation_t operation = PSA_KEY_DERIVATION_OPERATION_INIT;
   size_t i;
 
-  psa_set_key_usage_flags ( &attributes,
-                            PSA_KEY_USAGE_DERIVE | PSA_KEY_USAGE_EXPORT );
-  psa_set_key_algorithm ( &attributes, KDF_ALG );
-  psa_set_key_type ( &attributes, PSA_KEY_TYPE_DERIVE );
-  psa_set_key_bits ( &attributes, PSA_BYTES_TO_BITS ( KEY_SIZE_BYTES ) );
+  psa_set_key_usage_flags (&attributes,
+                           PSA_KEY_USAGE_DERIVE | PSA_KEY_USAGE_EXPORT );
+  psa_set_key_algorithm (&attributes, KDF_ALG );
+  psa_set_key_type (&attributes, PSA_KEY_TYPE_DERIVE );
+  psa_set_key_bits (&attributes, PSA_BYTES_TO_BITS ( KEY_SIZE_BYTES ) );
 
   /* For each label in turn, ... */
   for ( i = 0; i < ladder_depth; i++ )
   {
     /* Start deriving material from the master key (if i=0) or from
      * the current intermediate key (if i>0). */
-    PSA_CHECK ( psa_key_derivation_setup ( &operation, KDF_ALG ) );
+    PSA_CHECK ( psa_key_derivation_setup (&operation, KDF_ALG ) );
     PSA_CHECK ( psa_key_derivation_input_bytes (
                   &operation, PSA_KEY_DERIVATION_INPUT_SALT,
                   DERIVE_KEY_SALT, DERIVE_KEY_SALT_LENGTH ) );
@@ -304,20 +305,20 @@ static psa_status_t derive_key_ladder ( const char* ladder[],
                   ( uint8_t* ) ladder[i], strlen ( ladder[i] ) ) );
     /* When the parent key is not the master key, destroy it,
      * since it is no longer needed. */
-    PSA_CHECK ( psa_destroy_key ( *key ) );
+    PSA_CHECK ( psa_destroy_key (*key ) );
     *key = 0;
     /* Derive the next intermediate key from the parent key. */
-    PSA_CHECK ( psa_key_derivation_output_key ( &attributes, &operation,
+    PSA_CHECK ( psa_key_derivation_output_key (&attributes, &operation,
                 key ) );
-    PSA_CHECK ( psa_key_derivation_abort ( &operation ) );
+    PSA_CHECK ( psa_key_derivation_abort (&operation ) );
   }
 
 exit:
-  psa_key_derivation_abort ( &operation );
+  psa_key_derivation_abort (&operation );
 
   if ( status != PSA_SUCCESS )
   {
-    psa_destroy_key ( *key );
+    psa_destroy_key (*key );
     *key = 0;
   }
 
@@ -337,7 +338,7 @@ static psa_status_t derive_wrapping_key ( psa_key_usage_t usage,
 
   /* Set up a key derivation operation from the key derived from
    * the master key. */
-  PSA_CHECK ( psa_key_derivation_setup ( &operation, KDF_ALG ) );
+  PSA_CHECK ( psa_key_derivation_setup (&operation, KDF_ALG ) );
   PSA_CHECK ( psa_key_derivation_input_bytes (
                 &operation, PSA_KEY_DERIVATION_INPUT_SALT,
                 WRAPPING_KEY_SALT, WRAPPING_KEY_SALT_LENGTH ) );
@@ -349,15 +350,15 @@ static psa_status_t derive_wrapping_key ( psa_key_usage_t usage,
                 NULL, 0 ) );
 
   /* Create the wrapping key. */
-  psa_set_key_usage_flags ( &attributes, usage );
-  psa_set_key_algorithm ( &attributes, WRAPPING_ALG );
-  psa_set_key_type ( &attributes, PSA_KEY_TYPE_AES );
-  psa_set_key_bits ( &attributes, WRAPPING_KEY_BITS );
-  PSA_CHECK ( psa_key_derivation_output_key ( &attributes, &operation,
+  psa_set_key_usage_flags (&attributes, usage );
+  psa_set_key_algorithm (&attributes, WRAPPING_ALG );
+  psa_set_key_type (&attributes, PSA_KEY_TYPE_AES );
+  psa_set_key_bits (&attributes, WRAPPING_KEY_BITS );
+  PSA_CHECK ( psa_key_derivation_output_key (&attributes, &operation,
               wrapping_key ) );
 
 exit:
-  psa_key_derivation_abort ( &operation );
+  psa_key_derivation_abort (&operation );
   return status;
 }
 
@@ -395,7 +396,7 @@ static psa_status_t wrap_data ( const char* input_file_name,
 #endif
   input_size = input_position;
   PSA_CHECK ( psa_get_key_attributes ( wrapping_key, &attributes ) );
-  key_type = psa_get_key_type ( &attributes );
+  key_type = psa_get_key_type (&attributes );
   buffer_size =
     PSA_AEAD_ENCRYPT_OUTPUT_SIZE ( key_type, WRAPPING_ALG, input_size );
 
@@ -415,7 +416,7 @@ static psa_status_t wrap_data ( const char* input_file_name,
   input_file = NULL;
 
   /* Construct a header. */
-  memcpy ( &header.magic, WRAPPED_DATA_MAGIC, WRAPPED_DATA_MAGIC_LENGTH );
+  memcpy (&header.magic, WRAPPED_DATA_MAGIC, WRAPPED_DATA_MAGIC_LENGTH );
   header.ad_size = sizeof ( header );
   header.payload_size = input_size;
 
@@ -432,8 +433,8 @@ static psa_status_t wrap_data ( const char* input_file_name,
   SYS_CHECK ( ( output_file = fopen ( output_file_name, "wb" ) ) != NULL );
   /* Ensure no stdio buffering of secrets, as such buffers cannot be wiped. */
   mbedtls_setbuf ( output_file, NULL );
-  SYS_CHECK ( fwrite ( &header, 1, sizeof ( header ),
-                       output_file ) == sizeof ( header ) );
+  SYS_CHECK ( fwrite (&header, 1, sizeof ( header ),
+                      output_file ) == sizeof ( header ) );
   SYS_CHECK ( fwrite ( buffer, 1, ciphertext_size,
                        output_file ) == ciphertext_size );
   SYS_CHECK ( fclose ( output_file ) == 0 );
@@ -479,11 +480,11 @@ static psa_status_t unwrap_data ( const char* input_file_name,
   SYS_CHECK ( ( input_file = fopen ( input_file_name, "rb" ) ) != NULL );
   /* Ensure no stdio buffering of secrets, as such buffers cannot be wiped. */
   mbedtls_setbuf ( input_file, NULL );
-  SYS_CHECK ( fread ( &header, 1, sizeof ( header ),
-                      input_file ) == sizeof ( header ) );
+  SYS_CHECK ( fread (&header, 1, sizeof ( header ),
+                     input_file ) == sizeof ( header ) );
 
-  if ( memcmp ( &header.magic, WRAPPED_DATA_MAGIC,
-                WRAPPED_DATA_MAGIC_LENGTH ) != 0 )
+  if ( memcmp (&header.magic, WRAPPED_DATA_MAGIC,
+               WRAPPED_DATA_MAGIC_LENGTH ) != 0 )
   {
     printf ( "The input does not start with a valid magic header.\n" );
     status = DEMO_ERROR;
@@ -498,7 +499,7 @@ static psa_status_t unwrap_data ( const char* input_file_name,
   }
 
   PSA_CHECK ( psa_get_key_attributes ( wrapping_key, &attributes ) );
-  key_type = psa_get_key_type ( &attributes );
+  key_type = psa_get_key_type (&attributes );
   ciphertext_size =
     PSA_AEAD_ENCRYPT_OUTPUT_SIZE ( key_type, WRAPPING_ALG, header.payload_size );
 
@@ -515,7 +516,7 @@ static psa_status_t unwrap_data ( const char* input_file_name,
   SYS_CHECK ( fread ( buffer, 1, ciphertext_size,
                       input_file ) == ciphertext_size );
 
-  if ( fread ( &extra_byte, 1, 1, input_file ) != 0 )
+  if ( fread (&extra_byte, 1, 1, input_file ) != 0 )
   {
     printf ( "Extra garbage after ciphertext\n" );
     status = DEMO_ERROR;
@@ -769,6 +770,7 @@ usage_failure:
   usage();
   return EXIT_FAILURE;
 }
+
 #endif /* PSA_WANT_ALG_SHA_256 && MBEDTLS_MD_C &&
           MBEDTLS_AES_C && MBEDTLS_CCM_C &&
           MBEDTLS_PSA_CRYPTO_C && MBEDTLS_FS_IO */

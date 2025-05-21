@@ -161,6 +161,7 @@ size_t psa_key_slot_volatile_slice_count ( void )
 {
   return KEY_SLOT_VOLATILE_SLICE_COUNT;
 }
+
 #endif
 
 #else /* MBEDTLS_PSA_KEY_STORE_DYNAMIC */
@@ -198,13 +199,13 @@ static uint8_t psa_get_key_slots_initialized ( void )
   uint8_t initialized;
 
 #if defined(MBEDTLS_THREADING_C)
-  mbedtls_mutex_lock ( &mbedtls_threading_psa_globaldata_mutex );
+  mbedtls_mutex_lock (&mbedtls_threading_psa_globaldata_mutex );
 #endif /* defined(MBEDTLS_THREADING_C) */
 
   initialized = global_data.key_slots_initialized;
 
 #if defined(MBEDTLS_THREADING_C)
-  mbedtls_mutex_unlock ( &mbedtls_threading_psa_globaldata_mutex );
+  mbedtls_mutex_unlock (&mbedtls_threading_psa_globaldata_mutex );
 #endif /* defined(MBEDTLS_THREADING_C) */
 
   return initialized;
@@ -254,7 +255,7 @@ static inline psa_key_slot_t* get_key_slot ( size_t slice_idx, size_t slot_idx )
 #if defined(MBEDTLS_PSA_KEY_STORE_DYNAMIC)
 
 #if defined(MBEDTLS_TEST_HOOKS)
-  size_t ( *mbedtls_test_hook_psa_volatile_key_slice_length ) ( size_t slice_idx ) = NULL;
+  size_t (*mbedtls_test_hook_psa_volatile_key_slice_length ) ( size_t slice_idx ) = NULL;
 #endif
 
 static inline size_t key_slice_length ( size_t slice_idx )
@@ -425,7 +426,7 @@ static psa_status_t psa_get_and_lock_key_slot_in_memory (
   }
   else
   {
-    if ( !psa_is_valid_key_id ( key, 1 ) )
+    if (!psa_is_valid_key_id ( key, 1 ) )
     {
       return PSA_ERROR_INVALID_HANDLE;
     }
@@ -464,7 +465,7 @@ psa_status_t psa_initialize_key_slots ( void )
 #if defined(MBEDTLS_PSA_KEY_STORE_DYNAMIC)
   global_data.key_slices[KEY_SLOT_CACHE_SLICE_INDEX] =
     mbedtls_calloc ( PERSISTENT_KEY_CACHE_COUNT,
-                     sizeof ( *global_data.key_slices[KEY_SLOT_CACHE_SLICE_INDEX] ) );
+                     sizeof (*global_data.key_slices[KEY_SLOT_CACHE_SLICE_INDEX] ) );
 
   if ( global_data.key_slices[KEY_SLOT_CACHE_SLICE_INDEX] == NULL )
   {
@@ -661,6 +662,7 @@ psa_status_t psa_free_key_slot ( size_t slice_idx,
 
   return PSA_SUCCESS;
 }
+
 #endif /* MBEDTLS_PSA_KEY_STORE_DYNAMIC */
 
 psa_status_t psa_reserve_free_key_slot ( psa_key_id_t* volatile_key_id,
@@ -668,9 +670,9 @@ psa_status_t psa_reserve_free_key_slot ( psa_key_id_t* volatile_key_id,
 {
   psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
   size_t slot_idx;
-  psa_key_slot_t* selected_slot, *unused_persistent_key_slot;
+  psa_key_slot_t* selected_slot, * unused_persistent_key_slot;
 
-  if ( !psa_get_key_slots_initialized() )
+  if (!psa_get_key_slots_initialized() )
   {
     status = PSA_ERROR_BAD_STATE;
     goto error;
@@ -703,8 +705,8 @@ psa_status_t psa_reserve_free_key_slot ( psa_key_id_t* volatile_key_id,
 
     if ( ( unused_persistent_key_slot == NULL ) &&
          ( slot->state == PSA_SLOT_FULL ) &&
-         ( !psa_key_slot_has_readers ( slot ) ) &&
-         ( !PSA_KEY_LIFETIME_IS_VOLATILE ( slot->attr.lifetime ) ) )
+         (!psa_key_slot_has_readers ( slot ) ) &&
+         (!PSA_KEY_LIFETIME_IS_VOLATILE ( slot->attr.lifetime ) ) )
     {
       unused_persistent_key_slot = slot;
     }
@@ -775,8 +777,8 @@ static psa_status_t psa_load_persistent_key_into_slot ( psa_key_slot_t* slot )
   uint8_t* key_data = NULL;
   size_t key_data_length = 0;
 
-  status = psa_load_persistent_key ( &slot->attr,
-                                     &key_data, &key_data_length );
+  status = psa_load_persistent_key (&slot->attr,
+                                    &key_data, &key_data_length );
 
   if ( status != PSA_SUCCESS )
   {
@@ -793,7 +795,7 @@ static psa_status_t psa_load_persistent_key_into_slot ( psa_key_slot_t* slot )
   {
     psa_se_key_data_storage_t* data;
 
-    if ( key_data_length != sizeof ( *data ) )
+    if ( key_data_length != sizeof (*data ) )
     {
       status = PSA_ERROR_DATA_INVALID;
       goto exit;
@@ -818,6 +820,7 @@ exit:
   psa_free_persistent_key_data ( key_data, key_data_length );
   return status;
 }
+
 #endif /* MBEDTLS_PSA_CRYPTO_STORAGE_C */
 
 #if defined(MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS)
@@ -831,8 +834,8 @@ static psa_status_t psa_load_builtin_key_into_slot ( psa_key_slot_t* slot )
   size_t key_buffer_size = 0;
   size_t key_buffer_length = 0;
 
-  if ( !psa_key_id_is_builtin (
-         MBEDTLS_SVC_KEY_ID_GET_KEY_ID ( slot->attr.id ) ) )
+  if (!psa_key_id_is_builtin (
+        MBEDTLS_SVC_KEY_ID_GET_KEY_ID ( slot->attr.id ) ) )
   {
     return PSA_ERROR_DOES_NOT_EXIST;
   }
@@ -848,8 +851,8 @@ static psa_status_t psa_load_builtin_key_into_slot ( psa_key_slot_t* slot )
 
   /* Set required key attributes to ensure get_builtin_key can retrieve the
    * full attributes. */
-  psa_set_key_id ( &attributes, slot->attr.id );
-  psa_set_key_lifetime ( &attributes, lifetime );
+  psa_set_key_id (&attributes, slot->attr.id );
+  psa_set_key_lifetime (&attributes, lifetime );
 
   /* Get the full key attributes from the driver in order to be able to
    * calculate the required buffer size. */
@@ -870,7 +873,7 @@ static psa_status_t psa_load_builtin_key_into_slot ( psa_key_slot_t* slot )
 
   /* If the key should exist according to the platform, then ask the driver
    * what its expected size is. */
-  status = psa_driver_wrapper_get_key_buffer_size ( &attributes,
+  status = psa_driver_wrapper_get_key_buffer_size (&attributes,
            &key_buffer_size );
 
   if ( status != PSA_SUCCESS )
@@ -908,6 +911,7 @@ exit:
 
   return status;
 }
+
 #endif /* MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS */
 
 psa_status_t psa_get_and_lock_key_slot ( mbedtls_svc_key_id_t key,
@@ -917,7 +921,7 @@ psa_status_t psa_get_and_lock_key_slot ( mbedtls_svc_key_id_t key,
 
   *p_slot = NULL;
 
-  if ( !psa_get_key_slots_initialized() )
+  if (!psa_get_key_slots_initialized() )
   {
     return PSA_ERROR_BAD_STATE;
   }
@@ -963,27 +967,27 @@ psa_status_t psa_get_and_lock_key_slot ( mbedtls_svc_key_id_t key,
     return status;
   }
 
-  ( *p_slot )->attr.id = key;
-  ( *p_slot )->attr.lifetime = PSA_KEY_LIFETIME_PERSISTENT;
+  (*p_slot )->attr.id = key;
+  (*p_slot )->attr.lifetime = PSA_KEY_LIFETIME_PERSISTENT;
 
   status = PSA_ERROR_DOES_NOT_EXIST;
 #if defined(MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS)
   /* Load keys in the 'builtin' range through their own interface */
-  status = psa_load_builtin_key_into_slot ( *p_slot );
+  status = psa_load_builtin_key_into_slot (*p_slot );
 #endif /* MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS */
 
 #if defined(MBEDTLS_PSA_CRYPTO_STORAGE_C)
 
   if ( status == PSA_ERROR_DOES_NOT_EXIST )
   {
-    status = psa_load_persistent_key_into_slot ( *p_slot );
+    status = psa_load_persistent_key_into_slot (*p_slot );
   }
 
 #endif /* defined(MBEDTLS_PSA_CRYPTO_STORAGE_C) */
 
   if ( status != PSA_SUCCESS )
   {
-    psa_wipe_key_slot ( *p_slot );
+    psa_wipe_key_slot (*p_slot );
 
     /* If the key does not exist, we need to return
      * PSA_ERROR_INVALID_HANDLE. */
@@ -995,11 +999,11 @@ psa_status_t psa_get_and_lock_key_slot ( mbedtls_svc_key_id_t key,
   else
   {
     /* Add implicit usage flags. */
-    psa_extend_key_usage_flags ( & ( *p_slot )->attr.policy.usage );
+    psa_extend_key_usage_flags (& (*p_slot )->attr.policy.usage );
 
-    psa_key_slot_state_transition ( ( *p_slot ), PSA_SLOT_FILLING,
+    psa_key_slot_state_transition ( (*p_slot ), PSA_SLOT_FILLING,
                                     PSA_SLOT_FULL );
-    status = psa_register_read ( *p_slot );
+    status = psa_register_read (*p_slot );
   }
 
 #else /* MBEDTLS_PSA_CRYPTO_STORAGE_C || MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS */
@@ -1239,7 +1243,7 @@ psa_status_t psa_purge_key ( mbedtls_svc_key_id_t key )
     return status;
   }
 
-  if ( ( !PSA_KEY_LIFETIME_IS_VOLATILE ( slot->attr.lifetime ) ) &&
+  if ( (!PSA_KEY_LIFETIME_IS_VOLATILE ( slot->attr.lifetime ) ) &&
        ( slot->var.occupied.registered_readers == 1 ) )
   {
     status = psa_wipe_key_slot ( slot );
@@ -1259,7 +1263,7 @@ psa_status_t psa_purge_key ( mbedtls_svc_key_id_t key )
 
 void mbedtls_psa_get_stats ( mbedtls_psa_stats_t* stats )
 {
-  memset ( stats, 0, sizeof ( *stats ) );
+  memset ( stats, 0, sizeof (*stats ) );
 
   for ( size_t slice_idx = 0; slice_idx < KEY_SLICE_COUNT; slice_idx++ )
   {

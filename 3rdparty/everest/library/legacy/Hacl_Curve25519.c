@@ -100,6 +100,7 @@ inline static void Hacl_Bignum_Fmul_shift_reduce ( uint64_t* output )
       output[ctr] = z;
     }
   }
+
   output[0U] = tmp;
   b0 = output[0U];
   output[0U] = ( uint64_t ) 19U * b0;
@@ -124,6 +125,7 @@ Hacl_Bignum_Fmul_mul_shift_reduce_ (
       Hacl_Bignum_Fmul_shift_reduce ( input );
     }
   }
+
   i = ( uint32_t ) 4U;
   input2i = input2[i];
   Hacl_Bignum_Fproduct_sum_scalar_multiplication_ ( output, input, input2i );
@@ -144,6 +146,7 @@ inline static void Hacl_Bignum_Fmul_fmul ( uint64_t* output, uint64_t* input, ui
         t[_i] = FStar_UInt128_uint64_to_uint128 ( ( uint64_t ) 0U );
       }
     }
+
     {
       FStar_UInt128_uint128 b4;
       FStar_UInt128_uint128 b0;
@@ -161,7 +164,7 @@ inline static void Hacl_Bignum_Fmul_fmul ( uint64_t* output, uint64_t* input, ui
       b0_ =
         FStar_UInt128_add ( b0,
                             FStar_UInt128_mul_wide ( ( uint64_t ) 19U,
-                                FStar_UInt128_uint128_to_uint64 ( FStar_UInt128_shift_right ( b4, ( uint32_t ) 51U ) ) ) );
+                              FStar_UInt128_uint128_to_uint64 ( FStar_UInt128_shift_right ( b4, ( uint32_t ) 51U ) ) ) );
       t[4U] = b4_;
       t[0U] = b0_;
       Hacl_Bignum_Fproduct_copy_from_wide_ ( output, t );
@@ -237,7 +240,7 @@ inline static void Hacl_Bignum_Fsquare_fsquare_ ( FStar_UInt128_uint128* tmp, ui
   b0_ =
     FStar_UInt128_add ( b0,
                         FStar_UInt128_mul_wide ( ( uint64_t ) 19U,
-                            FStar_UInt128_uint128_to_uint64 ( FStar_UInt128_shift_right ( b4, ( uint32_t ) 51U ) ) ) );
+                          FStar_UInt128_uint128_to_uint64 ( FStar_UInt128_shift_right ( b4, ( uint32_t ) 51U ) ) ) );
   tmp[4U] = b4_;
   tmp[0U] = b0_;
   Hacl_Bignum_Fproduct_copy_from_wide_ ( output, tmp );
@@ -279,6 +282,7 @@ Hacl_Bignum_Fsquare_fsquare_times ( uint64_t* output, uint64_t* input, uint32_t 
         t[_i] = FStar_UInt128_uint64_to_uint128 ( ( uint64_t ) 0U );
       }
     }
+
     memcpy ( output, input, ( uint32_t ) 5U * sizeof input[0U] );
     Hacl_Bignum_Fsquare_fsquare_times_ ( output, t, count1 );
   }
@@ -297,6 +301,7 @@ inline static void Hacl_Bignum_Fsquare_fsquare_times_inplace ( uint64_t* output,
         t[_i] = FStar_UInt128_uint64_to_uint128 ( ( uint64_t ) 0U );
       }
     }
+
     Hacl_Bignum_Fsquare_fsquare_times_ ( output, t, count1 );
   }
 }
@@ -401,6 +406,7 @@ inline static void Hacl_Bignum_fscalar ( uint64_t* output, uint64_t* b, uint64_t
         tmp[_i] = FStar_UInt128_uint64_to_uint128 ( ( uint64_t ) 0U );
       }
     }
+
     {
       FStar_UInt128_uint128 b4;
       FStar_UInt128_uint128 b0;
@@ -415,6 +421,7 @@ inline static void Hacl_Bignum_fscalar ( uint64_t* output, uint64_t* b, uint64_t
           tmp[i] = FStar_UInt128_mul_wide ( xi, s );
         }
       }
+
       Hacl_Bignum_Fproduct_carry_wide_ ( tmp );
       b4 = tmp[4U];
       b0 = tmp[0U];
@@ -422,7 +429,7 @@ inline static void Hacl_Bignum_fscalar ( uint64_t* output, uint64_t* b, uint64_t
       b0_ =
         FStar_UInt128_add ( b0,
                             FStar_UInt128_mul_wide ( ( uint64_t ) 19U,
-                                FStar_UInt128_uint128_to_uint64 ( FStar_UInt128_shift_right ( b4, ( uint32_t ) 51U ) ) ) );
+                              FStar_UInt128_uint128_to_uint64 ( FStar_UInt128_shift_right ( b4, ( uint32_t ) 51U ) ) ) );
       tmp[4U] = b4_;
       tmp[0U] = b0_;
       Hacl_Bignum_Fproduct_copy_from_wide_ ( output, tmp );
@@ -456,7 +463,7 @@ Hacl_EC_Point_swap_conditional_step ( uint64_t* a, uint64_t* b, uint64_t swap1, 
 static void
 Hacl_EC_Point_swap_conditional_ ( uint64_t* a, uint64_t* b, uint64_t swap1, uint32_t ctr )
 {
-  if ( ! ( ctr == ( uint32_t ) 0U ) )
+  if (! ( ctr == ( uint32_t ) 0U ) )
   {
     uint32_t i;
     Hacl_EC_Point_swap_conditional_step ( a, b, swap1, ctr );
@@ -746,7 +753,7 @@ Hacl_EC_Ladder_SmallLoop_cmult_small_loop (
   uint32_t i
 )
 {
-  if ( ! ( i == ( uint32_t ) 0U ) )
+  if (! ( i == ( uint32_t ) 0U ) )
   {
     uint32_t i_ = i - ( uint32_t ) 1U;
     uint8_t byt_;
@@ -767,7 +774,7 @@ Hacl_EC_Ladder_BigLoop_cmult_big_loop (
   uint32_t i
 )
 {
-  if ( ! ( i == ( uint32_t ) 0U ) )
+  if (! ( i == ( uint32_t ) 0U ) )
   {
     uint32_t i1 = i - ( uint32_t ) 1U;
     uint8_t byte = n1[i1];

@@ -20,6 +20,7 @@ int main ( void )
                    "not defined.\n" );
   mbedtls_exit ( 0 );
 }
+
 #else
 
 #include "mbedtls/net_sockets.h"
@@ -71,12 +72,12 @@ int main ( void )
   /*
    * 0. Initialize the RNG and the session data
    */
-  mbedtls_net_init ( &server_fd );
-  mbedtls_ssl_init ( &ssl );
-  mbedtls_ssl_config_init ( &conf );
-  mbedtls_x509_crt_init ( &cacert );
-  mbedtls_ctr_drbg_init ( &ctr_drbg );
-  mbedtls_entropy_init ( &entropy );
+  mbedtls_net_init (&server_fd );
+  mbedtls_ssl_init (&ssl );
+  mbedtls_ssl_config_init (&conf );
+  mbedtls_x509_crt_init (&cacert );
+  mbedtls_ctr_drbg_init (&ctr_drbg );
+  mbedtls_entropy_init (&entropy );
 
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
   psa_status_t status = psa_crypto_init();
@@ -94,9 +95,9 @@ int main ( void )
   fflush ( stdout );
 
 
-  if ( ( ret = mbedtls_ctr_drbg_seed ( &ctr_drbg, mbedtls_entropy_func, &entropy,
-                                       ( const unsigned char* ) pers,
-                                       strlen ( pers ) ) ) != 0 )
+  if ( ( ret = mbedtls_ctr_drbg_seed (&ctr_drbg, mbedtls_entropy_func, &entropy,
+                                      ( const unsigned char* ) pers,
+                                      strlen ( pers ) ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_ctr_drbg_seed returned %d\n", ret );
     goto exit;
@@ -110,8 +111,8 @@ int main ( void )
   mbedtls_printf ( "  . Loading the CA root certificate ..." );
   fflush ( stdout );
 
-  ret = mbedtls_x509_crt_parse ( &cacert, ( const unsigned char* ) mbedtls_test_cas_pem,
-                                 mbedtls_test_cas_pem_len );
+  ret = mbedtls_x509_crt_parse (&cacert, ( const unsigned char* ) mbedtls_test_cas_pem,
+                                mbedtls_test_cas_pem_len );
 
   if ( ret < 0 )
   {
@@ -128,8 +129,8 @@ int main ( void )
   mbedtls_printf ( "  . Connecting to tcp/%s/%s...", SERVER_NAME, SERVER_PORT );
   fflush ( stdout );
 
-  if ( ( ret = mbedtls_net_connect ( &server_fd, SERVER_NAME,
-                                     SERVER_PORT, MBEDTLS_NET_PROTO_TCP ) ) != 0 )
+  if ( ( ret = mbedtls_net_connect (&server_fd, SERVER_NAME,
+                                    SERVER_PORT, MBEDTLS_NET_PROTO_TCP ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_net_connect returned %d\n\n", ret );
     goto exit;
@@ -143,7 +144,7 @@ int main ( void )
   mbedtls_printf ( "  . Setting up the SSL/TLS structure..." );
   fflush ( stdout );
 
-  if ( ( ret = mbedtls_ssl_config_defaults ( &conf,
+  if ( ( ret = mbedtls_ssl_config_defaults (&conf,
                MBEDTLS_SSL_IS_CLIENT,
                MBEDTLS_SSL_TRANSPORT_STREAM,
                MBEDTLS_SSL_PRESET_DEFAULT ) ) != 0 )
@@ -156,24 +157,24 @@ int main ( void )
 
   /* OPTIONAL is not optimal for security,
    * but makes interop easier in this simplified example */
-  mbedtls_ssl_conf_authmode ( &conf, MBEDTLS_SSL_VERIFY_OPTIONAL );
-  mbedtls_ssl_conf_ca_chain ( &conf, &cacert, NULL );
-  mbedtls_ssl_conf_rng ( &conf, mbedtls_ctr_drbg_random, &ctr_drbg );
-  mbedtls_ssl_conf_dbg ( &conf, my_debug, stdout );
+  mbedtls_ssl_conf_authmode (&conf, MBEDTLS_SSL_VERIFY_OPTIONAL );
+  mbedtls_ssl_conf_ca_chain (&conf, &cacert, NULL );
+  mbedtls_ssl_conf_rng (&conf, mbedtls_ctr_drbg_random, &ctr_drbg );
+  mbedtls_ssl_conf_dbg (&conf, my_debug, stdout );
 
-  if ( ( ret = mbedtls_ssl_setup ( &ssl, &conf ) ) != 0 )
+  if ( ( ret = mbedtls_ssl_setup (&ssl, &conf ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_ssl_setup returned %d\n\n", ret );
     goto exit;
   }
 
-  if ( ( ret = mbedtls_ssl_set_hostname ( &ssl, SERVER_NAME ) ) != 0 )
+  if ( ( ret = mbedtls_ssl_set_hostname (&ssl, SERVER_NAME ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_ssl_set_hostname returned %d\n\n", ret );
     goto exit;
   }
 
-  mbedtls_ssl_set_bio ( &ssl, &server_fd, mbedtls_net_send, mbedtls_net_recv, NULL );
+  mbedtls_ssl_set_bio (&ssl, &server_fd, mbedtls_net_send, mbedtls_net_recv, NULL );
 
   /*
    * 4. Handshake
@@ -181,7 +182,7 @@ int main ( void )
   mbedtls_printf ( "  . Performing the SSL/TLS handshake..." );
   fflush ( stdout );
 
-  while ( ( ret = mbedtls_ssl_handshake ( &ssl ) ) != 0 )
+  while ( ( ret = mbedtls_ssl_handshake (&ssl ) ) != 0 )
   {
     if ( ret != MBEDTLS_ERR_SSL_WANT_READ && ret != MBEDTLS_ERR_SSL_WANT_WRITE )
     {
@@ -199,7 +200,7 @@ int main ( void )
   mbedtls_printf ( "  . Verifying peer X.509 certificate..." );
 
   /* In real life, we probably want to bail out when ret != 0 */
-  if ( ( flags = mbedtls_ssl_get_verify_result ( &ssl ) ) != 0 )
+  if ( ( flags = mbedtls_ssl_get_verify_result (&ssl ) ) != 0 )
   {
 #if !defined(MBEDTLS_X509_REMOVE_INFO)
     char vrfy_buf[512];
@@ -226,7 +227,7 @@ int main ( void )
 
   len = sprintf ( ( char* ) buf, GET_REQUEST );
 
-  while ( ( ret = mbedtls_ssl_write ( &ssl, buf, len ) ) <= 0 )
+  while ( ( ret = mbedtls_ssl_write (&ssl, buf, len ) ) <= 0 )
   {
     if ( ret != MBEDTLS_ERR_SSL_WANT_READ && ret != MBEDTLS_ERR_SSL_WANT_WRITE )
     {
@@ -248,7 +249,7 @@ int main ( void )
   {
     len = sizeof ( buf ) - 1;
     memset ( buf, 0, sizeof ( buf ) );
-    ret = mbedtls_ssl_read ( &ssl, buf, len );
+    ret = mbedtls_ssl_read (&ssl, buf, len );
 
     if ( ret == MBEDTLS_ERR_SSL_WANT_READ || ret == MBEDTLS_ERR_SSL_WANT_WRITE )
     {
@@ -280,7 +281,7 @@ int main ( void )
   }
   while ( 1 );
 
-  mbedtls_ssl_close_notify ( &ssl );
+  mbedtls_ssl_close_notify (&ssl );
 
   if ( ret == 0 || ret == MBEDTLS_ERR_SSL_PEER_CLOSE_NOTIFY )
   {
@@ -300,12 +301,12 @@ exit:
 
 #endif
 
-  mbedtls_net_free ( &server_fd );
-  mbedtls_x509_crt_free ( &cacert );
-  mbedtls_ssl_free ( &ssl );
-  mbedtls_ssl_config_free ( &conf );
-  mbedtls_ctr_drbg_free ( &ctr_drbg );
-  mbedtls_entropy_free ( &entropy );
+  mbedtls_net_free (&server_fd );
+  mbedtls_x509_crt_free (&cacert );
+  mbedtls_ssl_free (&ssl );
+  mbedtls_ssl_config_free (&conf );
+  mbedtls_ctr_drbg_free (&ctr_drbg );
+  mbedtls_entropy_free (&entropy );
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
   mbedtls_psa_crypto_free();
 #endif /* MBEDTLS_USE_PSA_CRYPTO */

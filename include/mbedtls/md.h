@@ -524,6 +524,7 @@ int mbedtls_md_hmac ( const mbedtls_md_info_t* md_info, const unsigned char* key
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* MBEDTLS_MD_H */

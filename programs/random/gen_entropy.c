@@ -21,6 +21,7 @@ int main ( void )
   mbedtls_printf ( "MBEDTLS_ENTROPY_C and/or MBEDTLS_FS_IO not defined.\n" );
   mbedtls_exit ( 0 );
 }
+
 #else
 
 
@@ -44,11 +45,11 @@ int main ( int argc, char* argv[] )
     mbedtls_exit ( exit_code );
   }
 
-  mbedtls_entropy_init ( &entropy );
+  mbedtls_entropy_init (&entropy );
 
   for ( i = 0, k = 768; i < k; i++ )
   {
-    ret = mbedtls_entropy_func ( &entropy, buf, sizeof ( buf ) );
+    ret = mbedtls_entropy_func (&entropy, buf, sizeof ( buf ) );
 
     if ( ret != 0 )
     {
@@ -73,8 +74,9 @@ cleanup:
   mbedtls_printf ( "\n" );
 
   fclose ( f );
-  mbedtls_entropy_free ( &entropy );
+  mbedtls_entropy_free (&entropy );
 
   mbedtls_exit ( exit_code );
 }
+
 #endif /* MBEDTLS_ENTROPY_C */

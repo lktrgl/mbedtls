@@ -69,7 +69,7 @@ mbedtls_ecp_variant mbedtls_ecp_get_variant ( void );
  */
 int mbedtls_ecp_gen_privkey_mx ( size_t high_bit,
                                  mbedtls_mpi* d,
-                                 int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                 int (*f_rng ) ( void*, unsigned char*, size_t ),
                                  void* p_rng );
 
 #endif /* MBEDTLS_ECP_MONTGOMERY_ENABLED */

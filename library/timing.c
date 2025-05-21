@@ -42,6 +42,7 @@ struct _hr_time
 {
   struct timeval start;
 };
+
 #endif /* _WIN32 && !EFIX64 && !EFI32 */
 
 /**
@@ -71,15 +72,15 @@ unsigned long mbedtls_timing_get_timer ( struct mbedtls_timing_hr_time* val, int
 
   if ( reset )
   {
-    QueryPerformanceCounter ( &t->start );
+    QueryPerformanceCounter (&t->start );
     return 0;
   }
   else
   {
     unsigned long delta;
     LARGE_INTEGER now, hfreq;
-    QueryPerformanceCounter ( &now );
-    QueryPerformanceFrequency ( &hfreq );
+    QueryPerformanceCounter (&now );
+    QueryPerformanceFrequency (&hfreq );
     delta = ( unsigned long ) ( ( now.QuadPart - t->start.QuadPart ) * 1000ul
                                 / hfreq.QuadPart );
     return delta;
@@ -94,14 +95,14 @@ unsigned long mbedtls_timing_get_timer ( struct mbedtls_timing_hr_time* val, int
 
   if ( reset )
   {
-    gettimeofday ( &t->start, NULL );
+    gettimeofday (&t->start, NULL );
     return 0;
   }
   else
   {
     unsigned long delta;
     struct timeval now;
-    gettimeofday ( &now, NULL );
+    gettimeofday (&now, NULL );
     delta = ( now.tv_sec  - t->start.tv_sec ) * 1000ul
             + ( now.tv_usec - t->start.tv_usec ) / 1000;
     return delta;
@@ -122,7 +123,7 @@ void mbedtls_timing_set_delay ( void* data, uint32_t int_ms, uint32_t fin_ms )
 
   if ( fin_ms != 0 )
   {
-    ( void ) mbedtls_timing_get_timer ( &ctx->timer, 1 );
+    ( void ) mbedtls_timing_get_timer (&ctx->timer, 1 );
   }
 }
 
@@ -139,7 +140,7 @@ int mbedtls_timing_get_delay ( void* data )
     return -1;
   }
 
-  elapsed_ms = mbedtls_timing_get_timer ( &ctx->timer, 0 );
+  elapsed_ms = mbedtls_timing_get_timer (&ctx->timer, 0 );
 
   if ( elapsed_ms >= ctx->fin_ms )
   {
@@ -162,5 +163,6 @@ uint32_t mbedtls_timing_get_final_delay (
 {
   return data->fin_ms;
 }
+
 #endif /* !MBEDTLS_TIMING_ALT */
 #endif /* MBEDTLS_TIMING_C */

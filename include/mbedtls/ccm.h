@@ -93,6 +93,7 @@ typedef struct mbedtls_ccm_context
   int MBEDTLS_PRIVATE ( state );              /*!< Working value holding context's
                                                   state. Used for chunked data input */
 }
+
 mbedtls_ccm_context;
 
 #else  /* MBEDTLS_CCM_ALT */
@@ -522,6 +523,7 @@ int mbedtls_ccm_self_test ( int verbose );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* MBEDTLS_CCM_H */

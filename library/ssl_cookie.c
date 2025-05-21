@@ -33,6 +33,7 @@ static int local_err_translation ( psa_status_t status )
                                  ARRAY_LENGTH ( psa_to_ssl_errors ),
                                  psa_generic_status_to_mbedtls );
 }
+
 #define PSA_TO_MBEDTLS_ERR(status) local_err_translation(status)
 #endif
 
@@ -63,7 +64,7 @@ void mbedtls_ssl_cookie_init ( mbedtls_ssl_cookie_ctx* ctx )
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
   ctx->psa_hmac_key = MBEDTLS_SVC_KEY_ID_INIT;
 #else
-  mbedtls_md_init ( &ctx->hmac_ctx );
+  mbedtls_md_init (&ctx->hmac_ctx );
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 #if !defined(MBEDTLS_HAVE_TIME)
   ctx->serial = 0;
@@ -72,7 +73,7 @@ void mbedtls_ssl_cookie_init ( mbedtls_ssl_cookie_ctx* ctx )
 
 #if !defined(MBEDTLS_USE_PSA_CRYPTO)
 #if defined(MBEDTLS_THREADING_C)
-  mbedtls_mutex_init ( &ctx->mutex );
+  mbedtls_mutex_init (&ctx->mutex );
 #endif
 #endif /* !MBEDTLS_USE_PSA_CRYPTO */
 }
@@ -92,10 +93,10 @@ void mbedtls_ssl_cookie_free ( mbedtls_ssl_cookie_ctx* ctx )
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
   psa_destroy_key ( ctx->psa_hmac_key );
 #else
-  mbedtls_md_free ( &ctx->hmac_ctx );
+  mbedtls_md_free (&ctx->hmac_ctx );
 
 #if defined(MBEDTLS_THREADING_C)
-  mbedtls_mutex_free ( &ctx->mutex );
+  mbedtls_mutex_free (&ctx->mutex );
 #endif
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 
@@ -103,7 +104,7 @@ void mbedtls_ssl_cookie_free ( mbedtls_ssl_cookie_ctx* ctx )
 }
 
 int mbedtls_ssl_cookie_setup ( mbedtls_ssl_cookie_ctx* ctx,
-                               int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                               int (*f_rng ) ( void*, unsigned char*, size_t ),
                                void* p_rng )
 {
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
@@ -124,14 +125,14 @@ int mbedtls_ssl_cookie_setup ( mbedtls_ssl_cookie_ctx* ctx,
   ctx->psa_hmac_alg = PSA_ALG_TRUNCATED_MAC ( PSA_ALG_HMAC ( alg ),
                       COOKIE_HMAC_LEN );
 
-  psa_set_key_usage_flags ( &attributes, PSA_KEY_USAGE_VERIFY_MESSAGE |
-                            PSA_KEY_USAGE_SIGN_MESSAGE );
-  psa_set_key_algorithm ( &attributes, ctx->psa_hmac_alg );
-  psa_set_key_type ( &attributes, PSA_KEY_TYPE_HMAC );
-  psa_set_key_bits ( &attributes, PSA_BYTES_TO_BITS ( COOKIE_MD_OUTLEN ) );
+  psa_set_key_usage_flags (&attributes, PSA_KEY_USAGE_VERIFY_MESSAGE |
+                           PSA_KEY_USAGE_SIGN_MESSAGE );
+  psa_set_key_algorithm (&attributes, ctx->psa_hmac_alg );
+  psa_set_key_type (&attributes, PSA_KEY_TYPE_HMAC );
+  psa_set_key_bits (&attributes, PSA_BYTES_TO_BITS ( COOKIE_MD_OUTLEN ) );
 
-  if ( ( status = psa_generate_key ( &attributes,
-                                     &ctx->psa_hmac_key ) ) != PSA_SUCCESS )
+  if ( ( status = psa_generate_key (&attributes,
+                                    &ctx->psa_hmac_key ) ) != PSA_SUCCESS )
   {
     return PSA_TO_MBEDTLS_ERR ( status );
   }
@@ -145,14 +146,14 @@ int mbedtls_ssl_cookie_setup ( mbedtls_ssl_cookie_ctx* ctx,
     return ret;
   }
 
-  ret = mbedtls_md_setup ( &ctx->hmac_ctx, mbedtls_md_info_from_type ( COOKIE_MD ), 1 );
+  ret = mbedtls_md_setup (&ctx->hmac_ctx, mbedtls_md_info_from_type ( COOKIE_MD ), 1 );
 
   if ( ret != 0 )
   {
     return ret;
   }
 
-  ret = mbedtls_md_hmac_starts ( &ctx->hmac_ctx, key, sizeof ( key ) );
+  ret = mbedtls_md_hmac_starts (&ctx->hmac_ctx, key, sizeof ( key ) );
 
   if ( ret != 0 )
   {
@@ -177,7 +178,7 @@ static int ssl_cookie_hmac ( mbedtls_md_context_t* hmac_ctx,
 {
   unsigned char hmac_out[COOKIE_MD_OUTLEN];
 
-  MBEDTLS_SSL_CHK_BUF_PTR ( *p, end, COOKIE_HMAC_LEN );
+  MBEDTLS_SSL_CHK_BUF_PTR (*p, end, COOKIE_HMAC_LEN );
 
   if ( mbedtls_md_hmac_reset ( hmac_ctx ) != 0 ||
        mbedtls_md_hmac_update ( hmac_ctx, time, 4 ) != 0 ||
@@ -187,11 +188,12 @@ static int ssl_cookie_hmac ( mbedtls_md_context_t* hmac_ctx,
     return MBEDTLS_ERR_SSL_INTERNAL_ERROR;
   }
 
-  memcpy ( *p, hmac_out, COOKIE_HMAC_LEN );
+  memcpy (*p, hmac_out, COOKIE_HMAC_LEN );
   *p += COOKIE_HMAC_LEN;
 
   return 0;
 }
+
 #endif /* !MBEDTLS_USE_PSA_CRYPTO */
 
 /*
@@ -215,7 +217,7 @@ int mbedtls_ssl_cookie_write ( void* p_ctx,
     return MBEDTLS_ERR_SSL_BAD_INPUT_DATA;
   }
 
-  MBEDTLS_SSL_CHK_BUF_PTR ( *p, end, COOKIE_LEN );
+  MBEDTLS_SSL_CHK_BUF_PTR (*p, end, COOKIE_LEN );
 
 #if defined(MBEDTLS_HAVE_TIME)
   t = ( unsigned long ) mbedtls_time ( NULL );
@@ -227,8 +229,8 @@ int mbedtls_ssl_cookie_write ( void* p_ctx,
   *p += 4;
 
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
-  status = psa_mac_sign_setup ( &operation, ctx->psa_hmac_key,
-                                ctx->psa_hmac_alg );
+  status = psa_mac_sign_setup (&operation, ctx->psa_hmac_key,
+                               ctx->psa_hmac_alg );
 
   if ( status != PSA_SUCCESS )
   {
@@ -236,7 +238,7 @@ int mbedtls_ssl_cookie_write ( void* p_ctx,
     goto exit;
   }
 
-  status = psa_mac_update ( &operation, *p - 4, 4 );
+  status = psa_mac_update (&operation, *p - 4, 4 );
 
   if ( status != PSA_SUCCESS )
   {
@@ -244,7 +246,7 @@ int mbedtls_ssl_cookie_write ( void* p_ctx,
     goto exit;
   }
 
-  status = psa_mac_update ( &operation, cli_id, cli_id_len );
+  status = psa_mac_update (&operation, cli_id, cli_id_len );
 
   if ( status != PSA_SUCCESS )
   {
@@ -252,8 +254,8 @@ int mbedtls_ssl_cookie_write ( void* p_ctx,
     goto exit;
   }
 
-  status = psa_mac_sign_finish ( &operation, *p, COOKIE_MD_OUTLEN,
-                                 &sign_mac_length );
+  status = psa_mac_sign_finish (&operation, *p, COOKIE_MD_OUTLEN,
+                                &sign_mac_length );
 
   if ( status != PSA_SUCCESS )
   {
@@ -267,19 +269,19 @@ int mbedtls_ssl_cookie_write ( void* p_ctx,
 #else
 #if defined(MBEDTLS_THREADING_C)
 
-  if ( ( ret = mbedtls_mutex_lock ( &ctx->mutex ) ) != 0 )
+  if ( ( ret = mbedtls_mutex_lock (&ctx->mutex ) ) != 0 )
   {
     return MBEDTLS_ERROR_ADD ( MBEDTLS_ERR_SSL_INTERNAL_ERROR, ret );
   }
 
 #endif
 
-  ret = ssl_cookie_hmac ( &ctx->hmac_ctx, *p - 4,
-                          p, end, cli_id, cli_id_len );
+  ret = ssl_cookie_hmac (&ctx->hmac_ctx, *p - 4,
+                         p, end, cli_id, cli_id_len );
 
 #if defined(MBEDTLS_THREADING_C)
 
-  if ( mbedtls_mutex_unlock ( &ctx->mutex ) != 0 )
+  if ( mbedtls_mutex_unlock (&ctx->mutex ) != 0 )
   {
     return MBEDTLS_ERROR_ADD ( MBEDTLS_ERR_SSL_INTERNAL_ERROR,
                                MBEDTLS_ERR_THREADING_MUTEX_ERROR );
@@ -290,7 +292,7 @@ int mbedtls_ssl_cookie_write ( void* p_ctx,
 
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
 exit:
-  status = psa_mac_abort ( &operation );
+  status = psa_mac_abort (&operation );
 
   if ( status != PSA_SUCCESS )
   {
@@ -330,8 +332,8 @@ int mbedtls_ssl_cookie_check ( void* p_ctx,
   }
 
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
-  status = psa_mac_verify_setup ( &operation, ctx->psa_hmac_key,
-                                  ctx->psa_hmac_alg );
+  status = psa_mac_verify_setup (&operation, ctx->psa_hmac_key,
+                                 ctx->psa_hmac_alg );
 
   if ( status != PSA_SUCCESS )
   {
@@ -339,7 +341,7 @@ int mbedtls_ssl_cookie_check ( void* p_ctx,
     goto exit;
   }
 
-  status = psa_mac_update ( &operation, cookie, 4 );
+  status = psa_mac_update (&operation, cookie, 4 );
 
   if ( status != PSA_SUCCESS )
   {
@@ -347,8 +349,8 @@ int mbedtls_ssl_cookie_check ( void* p_ctx,
     goto exit;
   }
 
-  status = psa_mac_update ( &operation, cli_id,
-                            cli_id_len );
+  status = psa_mac_update (&operation, cli_id,
+                           cli_id_len );
 
   if ( status != PSA_SUCCESS )
   {
@@ -356,8 +358,8 @@ int mbedtls_ssl_cookie_check ( void* p_ctx,
     goto exit;
   }
 
-  status = psa_mac_verify_finish ( &operation, cookie + 4,
-                                   COOKIE_HMAC_LEN );
+  status = psa_mac_verify_finish (&operation, cookie + 4,
+                                  COOKIE_HMAC_LEN );
 
   if ( status != PSA_SUCCESS )
   {
@@ -369,23 +371,23 @@ int mbedtls_ssl_cookie_check ( void* p_ctx,
 #else
 #if defined(MBEDTLS_THREADING_C)
 
-  if ( ( ret = mbedtls_mutex_lock ( &ctx->mutex ) ) != 0 )
+  if ( ( ret = mbedtls_mutex_lock (&ctx->mutex ) ) != 0 )
   {
     return MBEDTLS_ERROR_ADD ( MBEDTLS_ERR_SSL_INTERNAL_ERROR, ret );
   }
 
 #endif
 
-  if ( ssl_cookie_hmac ( &ctx->hmac_ctx, cookie,
-                         &p, p + sizeof ( ref_hmac ),
-                         cli_id, cli_id_len ) != 0 )
+  if ( ssl_cookie_hmac (&ctx->hmac_ctx, cookie,
+                        &p, p + sizeof ( ref_hmac ),
+                        cli_id, cli_id_len ) != 0 )
   {
     ret = -1;
   }
 
 #if defined(MBEDTLS_THREADING_C)
 
-  if ( mbedtls_mutex_unlock ( &ctx->mutex ) != 0 )
+  if ( mbedtls_mutex_unlock (&ctx->mutex ) != 0 )
   {
     ret = MBEDTLS_ERROR_ADD ( MBEDTLS_ERR_SSL_INTERNAL_ERROR,
                               MBEDTLS_ERR_THREADING_MUTEX_ERROR );
@@ -422,7 +424,7 @@ int mbedtls_ssl_cookie_check ( void* p_ctx,
 
 exit:
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
-  status = psa_mac_abort ( &operation );
+  status = psa_mac_abort (&operation );
 
   if ( status != PSA_SUCCESS )
   {
@@ -434,4 +436,5 @@ exit:
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
   return ret;
 }
+
 #endif /* MBEDTLS_SSL_COOKIE_C */

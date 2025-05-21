@@ -42,11 +42,13 @@ static uint64_t mul64 ( uint32_t a, uint32_t b )
 
   return lo + ( me << 16 ) + ( ( uint64_t ) hi << 32 );
 }
+
 #else
 static inline uint64_t mul64 ( uint32_t a, uint32_t b )
 {
   return ( uint64_t ) a * b;
 }
+
 #endif
 
 
@@ -287,9 +289,9 @@ int mbedtls_poly1305_update ( mbedtls_poly1305_context* ctx,
       /* Not enough data to complete the block.
        * Store this data with the other leftovers.
        */
-      memcpy ( &ctx->queue[ctx->queue_len],
-               input,
-               ilen );
+      memcpy (&ctx->queue[ctx->queue_len],
+              input,
+              ilen );
 
       ctx->queue_len += ilen;
 
@@ -298,9 +300,9 @@ int mbedtls_poly1305_update ( mbedtls_poly1305_context* ctx,
     else
     {
       /* Enough data to produce a complete block */
-      memcpy ( &ctx->queue[ctx->queue_len],
-               input,
-               queue_free_len );
+      memcpy (&ctx->queue[ctx->queue_len],
+              input,
+              queue_free_len );
 
       ctx->queue_len = 0U;
 
@@ -342,9 +344,9 @@ int mbedtls_poly1305_finish ( mbedtls_poly1305_context* ctx,
     ctx->queue_len++;
 
     /* Pad with zeroes */
-    memset ( &ctx->queue[ctx->queue_len],
-             0,
-             POLY1305_BLOCK_SIZE_BYTES - ctx->queue_len );
+    memset (&ctx->queue[ctx->queue_len],
+            0,
+            POLY1305_BLOCK_SIZE_BYTES - ctx->queue_len );
 
     poly1305_process ( ctx, 1U,         /* Process 1 block */
                        ctx->queue, 0U );  /* Already padded above */
@@ -363,26 +365,26 @@ int mbedtls_poly1305_mac ( const unsigned char key[32],
   mbedtls_poly1305_context ctx;
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
 
-  mbedtls_poly1305_init ( &ctx );
+  mbedtls_poly1305_init (&ctx );
 
-  ret = mbedtls_poly1305_starts ( &ctx, key );
-
-  if ( ret != 0 )
-  {
-    goto cleanup;
-  }
-
-  ret = mbedtls_poly1305_update ( &ctx, input, ilen );
+  ret = mbedtls_poly1305_starts (&ctx, key );
 
   if ( ret != 0 )
   {
     goto cleanup;
   }
 
-  ret = mbedtls_poly1305_finish ( &ctx, mac );
+  ret = mbedtls_poly1305_update (&ctx, input, ilen );
+
+  if ( ret != 0 )
+  {
+    goto cleanup;
+  }
+
+  ret = mbedtls_poly1305_finish (&ctx, mac );
 
 cleanup:
-  mbedtls_poly1305_free ( &ctx );
+  mbedtls_poly1305_free (&ctx );
   return ret;
 }
 

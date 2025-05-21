@@ -229,6 +229,7 @@ extern const size_t mbedtls_test_cli_pwd_len;
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* certs.h */

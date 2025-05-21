@@ -51,7 +51,7 @@ int mbedtls_aesni_has_support ( unsigned int what )
   static int done = 0;
   static unsigned int c = 0;
 
-  if ( !done )
+  if (!done )
   {
 #if MBEDTLS_AESNI_HAVE_CODE == 2
     static int info[4] = { 0, 0, 0, 0 };
@@ -73,6 +73,7 @@ int mbedtls_aesni_has_support ( unsigned int what )
 
   return ( c & what ) != 0;
 }
+
 #endif /* !MBEDTLS_AES_USE_HARDWARE_ONLY */
 
 #if MBEDTLS_AESNI_HAVE_CODE == 2
@@ -90,7 +91,7 @@ int mbedtls_aesni_crypt_ecb ( mbedtls_aes_context* ctx,
 
   // Load round key 0
   __m128i state;
-  memcpy ( &state, input, 16 );
+  memcpy (&state, input, 16 );
   state = _mm_xor_si128 ( state, rk[0] ); // state ^= *rk;
   ++rk;
   --nr;
@@ -148,8 +149,8 @@ static void gcm_clmul ( const __m128i aa, const __m128i bb,
   ee = ff;                                         // e1+f1:e0+f0
   ff = _mm_srli_si128 ( ff, 8 );                   // 0:e1+f1
   ee = _mm_slli_si128 ( ee, 8 );                   // e0+f0:0
-  *dd = _mm_xor_si128 ( *dd, ff );                 // d1:d0+e1+f1
-  *cc = _mm_xor_si128 ( *cc, ee );                 // c1+e0+f0:c0
+  *dd = _mm_xor_si128 (*dd, ff );              // d1:d0+e1+f1
+  *cc = _mm_xor_si128 (*cc, ee );              // c1+e0+f0:c0
 }
 
 static void gcm_shift ( __m128i* cc, __m128i* dd )
@@ -158,10 +159,10 @@ static void gcm_shift ( __m128i* cc, __m128i* dd )
    * taking advantage of [CLMUL-WP] eq 27 (p. 18). */
   //                                        // *cc = r1:r0
   //                                        // *dd = r3:r2
-  __m128i cc_lo = _mm_slli_epi64 ( *cc, 1 ); // r1<<1:r0<<1
-  __m128i dd_lo = _mm_slli_epi64 ( *dd, 1 ); // r3<<1:r2<<1
-  __m128i cc_hi = _mm_srli_epi64 ( *cc, 63 ); // r1>>63:r0>>63
-  __m128i dd_hi = _mm_srli_epi64 ( *dd, 63 ); // r3>>63:r2>>63
+  __m128i cc_lo = _mm_slli_epi64 (*cc, 1 ); // r1<<1:r0<<1
+  __m128i dd_lo = _mm_slli_epi64 (*dd, 1 ); // r3<<1:r2<<1
+  __m128i cc_hi = _mm_srli_epi64 (*cc, 63 ); // r1>>63:r0>>63
+  __m128i dd_hi = _mm_srli_epi64 (*dd, 63 ); // r3>>63:r2>>63
   __m128i xmm5 = _mm_srli_si128 ( cc_hi, 8 ); // 0:r1>>63
   cc_hi = _mm_slli_si128 ( cc_hi, 8 );      // r0>>63:0
   dd_hi = _mm_slli_si128 ( dd_hi, 8 );      // 0:r1>>63
@@ -212,7 +213,7 @@ void mbedtls_aesni_gcm_mult ( unsigned char c[16],
   }
 
   gcm_clmul ( aa, bb, &cc, &dd );
-  gcm_shift ( &cc, &dd );
+  gcm_shift (&cc, &dd );
   /*
    * Now reduce modulo the GCM polynomial x^128 + x^7 + x^2 + x + 1
    * using [CLMUL-WP] algorithm 5 (p. 18).
@@ -243,13 +244,14 @@ void mbedtls_aesni_inverse_key ( unsigned char* invkey,
 
   *ik = *fk;
 
-  for ( --fk, ++ik; fk > ( const __m128i* ) fwdkey; --fk, ++ik )
+  for (--fk, ++ik; fk > ( const __m128i* ) fwdkey; --fk, ++ik )
   {
-    *ik = _mm_aesimc_si128 ( *fk );
+    *ik = _mm_aesimc_si128 (*fk );
   }
 
   *ik = *fk;
 }
+
 #endif
 
 /*
@@ -283,7 +285,7 @@ static void aesni_setkey_enc_128 ( unsigned char* rk_bytes,
 {
   __m128i* rk = ( __m128i* ) rk_bytes;
 
-  memcpy ( &rk[0], key, 16 );
+  memcpy (&rk[0], key, 16 );
   rk[1] = aesni_set_rk_128 ( rk[0], _mm_aeskeygenassist_si128 ( rk[0], 0x01 ) );
   rk[2] = aesni_set_rk_128 ( rk[1], _mm_aeskeygenassist_si128 ( rk[1], 0x02 ) );
   rk[3] = aesni_set_rk_128 ( rk[2], _mm_aeskeygenassist_si128 ( rk[2], 0x04 ) );
@@ -315,17 +317,17 @@ static void aesni_set_rk_192 ( __m128i* state0, __m128i* state1, __m128i xword,
    */
   xword = _mm_shuffle_epi32 ( xword, 0x55 ); // X:X:X:X
   xword = _mm_xor_si128 ( xword, *state0 ); // X+r3:X+r2:X+r1:X+r0
-  *state0 = _mm_slli_si128 ( *state0, 4 );  // r2:r1:r0:0
+  *state0 = _mm_slli_si128 (*state0, 4 ); // r2:r1:r0:0
   xword = _mm_xor_si128 ( xword, *state0 ); // X+r3+r2:X+r2+r1:X+r1+r0:X+r0
-  *state0 = _mm_slli_si128 ( *state0, 4 );  // r1:r0:0:0
+  *state0 = _mm_slli_si128 (*state0, 4 ); // r1:r0:0:0
   xword = _mm_xor_si128 ( xword, *state0 ); // X+r3+r2+r1:X+r2+r1+r0:X+r1+r0:X+r0
-  *state0 = _mm_slli_si128 ( *state0, 4 );  // r0:0:0:0
+  *state0 = _mm_slli_si128 (*state0, 4 ); // r0:0:0:0
   xword = _mm_xor_si128 ( xword, *state0 ); // X+r3+r2+r1+r0:X+r2+r1+r0:X+r1+r0:X+r0
   *state0 = xword;                          // = r9:r8:r7:r6
 
   xword = _mm_shuffle_epi32 ( xword, 0xff ); // r9:r9:r9:r9
   xword = _mm_xor_si128 ( xword, *state1 ); // stuff:stuff:r9+r5:r9+r4
-  *state1 = _mm_slli_si128 ( *state1, 4 );  // stuff:stuff:r4:0
+  *state1 = _mm_slli_si128 (*state1, 4 ); // stuff:stuff:r4:0
   xword = _mm_xor_si128 ( xword, *state1 ); // stuff:stuff:r9+r5+r4:r9+r4
   *state1 = xword;                          // = stuff:stuff:r11:r10
 
@@ -345,15 +347,16 @@ static void aesni_setkey_enc_192 ( unsigned char* rk,
   __m128i state0 = ( ( __m128i* ) rk ) [0];
   __m128i state1 = _mm_loadl_epi64 ( ( ( __m128i* ) rk ) + 1 );
 
-  aesni_set_rk_192 ( &state0, &state1, _mm_aeskeygenassist_si128 ( state1, 0x01 ), rk + 24 * 1 );
-  aesni_set_rk_192 ( &state0, &state1, _mm_aeskeygenassist_si128 ( state1, 0x02 ), rk + 24 * 2 );
-  aesni_set_rk_192 ( &state0, &state1, _mm_aeskeygenassist_si128 ( state1, 0x04 ), rk + 24 * 3 );
-  aesni_set_rk_192 ( &state0, &state1, _mm_aeskeygenassist_si128 ( state1, 0x08 ), rk + 24 * 4 );
-  aesni_set_rk_192 ( &state0, &state1, _mm_aeskeygenassist_si128 ( state1, 0x10 ), rk + 24 * 5 );
-  aesni_set_rk_192 ( &state0, &state1, _mm_aeskeygenassist_si128 ( state1, 0x20 ), rk + 24 * 6 );
-  aesni_set_rk_192 ( &state0, &state1, _mm_aeskeygenassist_si128 ( state1, 0x40 ), rk + 24 * 7 );
-  aesni_set_rk_192 ( &state0, &state1, _mm_aeskeygenassist_si128 ( state1, 0x80 ), rk + 24 * 8 );
+  aesni_set_rk_192 (&state0, &state1, _mm_aeskeygenassist_si128 ( state1, 0x01 ), rk + 24 * 1 );
+  aesni_set_rk_192 (&state0, &state1, _mm_aeskeygenassist_si128 ( state1, 0x02 ), rk + 24 * 2 );
+  aesni_set_rk_192 (&state0, &state1, _mm_aeskeygenassist_si128 ( state1, 0x04 ), rk + 24 * 3 );
+  aesni_set_rk_192 (&state0, &state1, _mm_aeskeygenassist_si128 ( state1, 0x08 ), rk + 24 * 4 );
+  aesni_set_rk_192 (&state0, &state1, _mm_aeskeygenassist_si128 ( state1, 0x10 ), rk + 24 * 5 );
+  aesni_set_rk_192 (&state0, &state1, _mm_aeskeygenassist_si128 ( state1, 0x20 ), rk + 24 * 6 );
+  aesni_set_rk_192 (&state0, &state1, _mm_aeskeygenassist_si128 ( state1, 0x40 ), rk + 24 * 7 );
+  aesni_set_rk_192 (&state0, &state1, _mm_aeskeygenassist_si128 ( state1, 0x80 ), rk + 24 * 8 );
 }
+
 #endif /* !MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH */
 
 /*
@@ -401,8 +404,8 @@ static void aesni_setkey_enc_256 ( unsigned char* rk_bytes,
 {
   __m128i* rk = ( __m128i* ) rk_bytes;
 
-  memcpy ( &rk[0], key, 16 );
-  memcpy ( &rk[1], key + 16, 16 );
+  memcpy (&rk[0], key, 16 );
+  memcpy (&rk[1], key + 16, 16 );
 
   /*
    * Main "loop" - Generating one more key than necessary,
@@ -416,6 +419,7 @@ static void aesni_setkey_enc_256 ( unsigned char* rk_bytes,
   aesni_set_rk_256 ( rk[10], rk[11], _mm_aeskeygenassist_si128 ( rk[11], 0x20 ), &rk[12], &rk[13] );
   aesni_set_rk_256 ( rk[12], rk[13], _mm_aeskeygenassist_si128 ( rk[13], 0x40 ), &rk[14], &rk[15] );
 }
+
 #endif /* !MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH */
 
 #if defined(MBEDTLS_POP_TARGET_PRAGMA)
@@ -639,7 +643,7 @@ void mbedtls_aesni_inverse_key ( unsigned char* invkey,
   {
     asm ( "movdqu (%0), %%xmm0       \n\t"
           AESIMC ( xmm0_xmm0 )
-          "movdqu %%xmm0, (%1)       \n\t"
+    "movdqu %%xmm0, (%1)       \n\t"
           :
           : "r" ( fk ), "r" ( ik )
           : "memory", "xmm0" );
@@ -647,6 +651,7 @@ void mbedtls_aesni_inverse_key ( unsigned char* invkey,
 
   memcpy ( ik, fk, 16 );
 }
+
 #endif
 
 /*
@@ -756,6 +761,7 @@ static void aesni_setkey_enc_192 ( unsigned char* rk,
         : "r" ( rk ), "r" ( key )
         : "memory", "cc", "xmm0", "xmm1", "xmm2", "0" );
 }
+
 #endif /* !MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH */
 
 /*
@@ -796,23 +802,23 @@ static void aesni_setkey_enc_256 ( unsigned char* rk,
         /* Set xmm2 to stuff:Y:stuff:stuff with Y = subword( r11 )
          * and proceed to generate next round key from there */
         AESKEYGENA ( xmm0_xmm2, "0x00" )
-        "pshufd $0xaa, %%xmm2, %%xmm2      \n\t"
-        "pxor %%xmm1, %%xmm2               \n\t"
-        "pslldq $4, %%xmm1                 \n\t"
-        "pxor %%xmm1, %%xmm2               \n\t"
-        "pslldq $4, %%xmm1                 \n\t"
-        "pxor %%xmm1, %%xmm2               \n\t"
-        "pslldq $4, %%xmm1                 \n\t"
-        "pxor %%xmm2, %%xmm1               \n\t"
-        "add $16, %0                       \n\t"
-        "movdqu %%xmm1, (%0)               \n\t"
-        "ret                               \n\t"
+                          "pshufd $0xaa, %%xmm2, %%xmm2      \n\t"
+                          "pxor %%xmm1, %%xmm2               \n\t"
+                          "pslldq $4, %%xmm1                 \n\t"
+                          "pxor %%xmm1, %%xmm2               \n\t"
+                          "pslldq $4, %%xmm1                 \n\t"
+                          "pxor %%xmm1, %%xmm2               \n\t"
+                          "pslldq $4, %%xmm1                 \n\t"
+                          "pxor %%xmm2, %%xmm1               \n\t"
+                          "add $16, %0                       \n\t"
+                          "movdqu %%xmm1, (%0)               \n\t"
+                          "ret                               \n\t"
 
         /*
          * Main "loop" - Generating one more key than necessary,
          * see definition of mbedtls_aes_context.buf
          */
-        "2:                                \n\t"
+                          "2:                                \n\t"
         AESKEYGENA ( xmm1_xmm2, "0x01" )      "call 1b \n\t"
         AESKEYGENA ( xmm1_xmm2, "0x02" )      "call 1b \n\t"
         AESKEYGENA ( xmm1_xmm2, "0x04" )      "call 1b \n\t"
@@ -824,6 +830,7 @@ static void aesni_setkey_enc_256 ( unsigned char* rk,
         : "r" ( rk ), "r" ( key )
         : "memory", "cc", "xmm0", "xmm1", "xmm2", "0" );
 }
+
 #endif /* !MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH */
 
 #endif  /* MBEDTLS_AESNI_HAVE_CODE */

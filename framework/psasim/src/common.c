@@ -25,4 +25,5 @@ static void _printbits ( uint32_t num )
 
   INFO ( "\n" );
 }
+
 #endif

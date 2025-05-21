@@ -41,7 +41,7 @@ extern "C" {
 
 
 #if defined(MBEDTLS_TEST_HOOKS)
-extern int ( *mbedtls_lmots_sign_private_key_invalidated_hook ) ( unsigned char* );
+extern int (*mbedtls_lmots_sign_private_key_invalidated_hook ) ( unsigned char* );
 #endif /* defined(MBEDTLS_TEST_HOOKS) */
 
 #if !defined(MBEDTLS_DEPRECATED_REMOVED)
@@ -275,7 +275,7 @@ int mbedtls_lmots_calculate_public_key ( mbedtls_lmots_public_t* ctx,
  * \return         A non-zero error code on failure.
  */
 int mbedtls_lmots_sign ( mbedtls_lmots_private_t* ctx,
-                         int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                         int (*f_rng ) ( void*, unsigned char*, size_t ),
                          void* p_rng, const unsigned char* msg, size_t msg_size,
                          unsigned char* sig, size_t sig_size, size_t* sig_len );
 
@@ -283,6 +283,7 @@ int mbedtls_lmots_sign ( mbedtls_lmots_private_t* ctx,
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* MBEDTLS_LMOTS_H */

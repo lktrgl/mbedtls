@@ -16,7 +16,7 @@
 
 void psa_reset_key_attributes ( psa_key_attributes_t* attributes )
 {
-  memset ( attributes, 0, sizeof ( *attributes ) );
+  memset ( attributes, 0, sizeof (*attributes ) );
 }
 
 #endif /* MBEDTLS_PSA_CRYPTO_CLIENT */

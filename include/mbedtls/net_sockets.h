@@ -90,6 +90,7 @@ typedef struct mbedtls_net_context
    */
   int fd;
 }
+
 mbedtls_net_context;
 
 /**
@@ -295,6 +296,7 @@ void mbedtls_net_free ( mbedtls_net_context* ctx );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* net_sockets.h */

@@ -166,7 +166,7 @@ int mbedtls_net_connect ( mbedtls_net_context* ctx, const char* host,
                           const char* port, int proto )
 {
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
-  struct addrinfo hints, *addr_list, *cur;
+  struct addrinfo hints, * addr_list, * cur;
 
   if ( ( ret = net_prepare() ) != 0 )
   {
@@ -174,7 +174,7 @@ int mbedtls_net_connect ( mbedtls_net_context* ctx, const char* host,
   }
 
   /* Do name resolution with both IPv6 and IPv4 */
-  memset ( &hints, 0, sizeof ( hints ) );
+  memset (&hints, 0, sizeof ( hints ) );
   hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = proto == MBEDTLS_NET_PROTO_UDP ? SOCK_DGRAM : SOCK_STREAM;
   hints.ai_protocol = proto == MBEDTLS_NET_PROTO_UDP ? IPPROTO_UDP : IPPROTO_TCP;
@@ -219,7 +219,7 @@ int mbedtls_net_connect ( mbedtls_net_context* ctx, const char* host,
 int mbedtls_net_bind ( mbedtls_net_context* ctx, const char* bind_ip, const char* port, int proto )
 {
   int n, ret;
-  struct addrinfo hints, *addr_list, *cur;
+  struct addrinfo hints, * addr_list, * cur;
 
   if ( ( ret = net_prepare() ) != 0 )
   {
@@ -227,7 +227,7 @@ int mbedtls_net_bind ( mbedtls_net_context* ctx, const char* bind_ip, const char
   }
 
   /* Bind to IPv6 and/or IPv4, but only in the desired protocol */
-  memset ( &hints, 0, sizeof ( hints ) );
+  memset (&hints, 0, sizeof ( hints ) );
   hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = proto == MBEDTLS_NET_PROTO_UDP ? SOCK_DGRAM : SOCK_STREAM;
   hints.ai_protocol = proto == MBEDTLS_NET_PROTO_UDP ? IPPROTO_UDP : IPPROTO_TCP;
@@ -306,6 +306,7 @@ static int net_would_block ( const mbedtls_net_context* ctx )
   ( ( void ) ctx );
   return WSAGetLastError() == WSAEWOULDBLOCK;
 }
+
 #else
 /*
  * Check if the requested operation would be blocking on a non-blocking socket
@@ -340,6 +341,7 @@ static int net_would_block ( const mbedtls_net_context* ctx )
 
   return 0;
 }
+
 #endif /* ( _WIN32 || _WIN32_WCE ) && !EFIX64 && !EFI32 */
 
 /*
@@ -523,12 +525,12 @@ int mbedtls_net_poll ( mbedtls_net_context* ctx, uint32_t rw, uint32_t timeout )
   /* Ensure that memory sanitizers consider read_fds and write_fds as
    * initialized even on platforms such as Glibc/x86_64 where FD_ZERO
    * is implemented in assembly. */
-  memset ( &read_fds, 0, sizeof ( read_fds ) );
-  memset ( &write_fds, 0, sizeof ( write_fds ) );
+  memset (&read_fds, 0, sizeof ( read_fds ) );
+  memset (&write_fds, 0, sizeof ( write_fds ) );
 #endif
 #endif
 
-  FD_ZERO ( &read_fds );
+  FD_ZERO (&read_fds );
 
   if ( rw & MBEDTLS_NET_POLL_READ )
   {
@@ -536,7 +538,7 @@ int mbedtls_net_poll ( mbedtls_net_context* ctx, uint32_t rw, uint32_t timeout )
     FD_SET ( ( SOCKET ) fd, &read_fds );
   }
 
-  FD_ZERO ( &write_fds );
+  FD_ZERO (&write_fds );
 
   if ( rw & MBEDTLS_NET_POLL_WRITE )
   {
@@ -669,7 +671,7 @@ int mbedtls_net_recv_timeout ( void* ctx, unsigned char* buf,
     return ret;
   }
 
-  FD_ZERO ( &read_fds );
+  FD_ZERO (&read_fds );
   FD_SET ( ( SOCKET ) fd, &read_fds );
 
   tv.tv_sec  = timeout / 1000;

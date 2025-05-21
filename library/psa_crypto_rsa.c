@@ -44,19 +44,19 @@ static psa_status_t psa_check_rsa_key_byte_aligned (
 {
   mbedtls_mpi n;
   psa_status_t status;
-  mbedtls_mpi_init ( &n );
+  mbedtls_mpi_init (&n );
   status = mbedtls_to_psa_error (
              mbedtls_rsa_export ( rsa, &n, NULL, NULL, NULL, NULL ) );
 
   if ( status == PSA_SUCCESS )
   {
-    if ( mbedtls_mpi_bitlen ( &n ) % 8 != 0 )
+    if ( mbedtls_mpi_bitlen (&n ) % 8 != 0 )
     {
       status = PSA_ERROR_NOT_SUPPORTED;
     }
   }
 
-  mbedtls_mpi_free ( &n );
+  mbedtls_mpi_free (&n );
   return status;
 }
 
@@ -69,21 +69,21 @@ psa_status_t mbedtls_psa_rsa_load_representation (
 
   *p_rsa = mbedtls_calloc ( 1, sizeof ( mbedtls_rsa_context ) );
 
-  if ( *p_rsa == NULL )
+  if (*p_rsa == NULL )
   {
     return PSA_ERROR_INSUFFICIENT_MEMORY;
   }
 
-  mbedtls_rsa_init ( *p_rsa );
+  mbedtls_rsa_init (*p_rsa );
 
   /* Parse the data. */
   if ( PSA_KEY_TYPE_IS_KEY_PAIR ( type ) )
   {
-    status = mbedtls_to_psa_error ( mbedtls_rsa_parse_key ( *p_rsa, data, data_length ) );
+    status = mbedtls_to_psa_error ( mbedtls_rsa_parse_key (*p_rsa, data, data_length ) );
   }
   else
   {
-    status = mbedtls_to_psa_error ( mbedtls_rsa_parse_pubkey ( *p_rsa, data, data_length ) );
+    status = mbedtls_to_psa_error ( mbedtls_rsa_parse_pubkey (*p_rsa, data, data_length ) );
   }
 
   if ( status != PSA_SUCCESS )
@@ -94,7 +94,7 @@ psa_status_t mbedtls_psa_rsa_load_representation (
   /* The size of an RSA key doesn't have to be a multiple of 8. Mbed TLS
    * supports non-byte-aligned key sizes, but not well. For example,
    * mbedtls_rsa_get_len() returns the key size in bytes, not in bits. */
-  bits = PSA_BYTES_TO_BITS ( mbedtls_rsa_get_len ( *p_rsa ) );
+  bits = PSA_BYTES_TO_BITS ( mbedtls_rsa_get_len (*p_rsa ) );
 
   if ( bits > PSA_VENDOR_RSA_MAX_KEY_BITS )
   {
@@ -102,7 +102,7 @@ psa_status_t mbedtls_psa_rsa_load_representation (
     goto exit;
   }
 
-  status = psa_check_rsa_key_byte_aligned ( *p_rsa );
+  status = psa_check_rsa_key_byte_aligned (*p_rsa );
 
   if ( status != PSA_SUCCESS )
   {
@@ -112,6 +112,7 @@ psa_status_t mbedtls_psa_rsa_load_representation (
 exit:
   return status;
 }
+
 #endif /* defined(MBEDTLS_PSA_BUILTIN_ALG_RSA_PKCS1V15_CRYPT) ||
         * defined(MBEDTLS_PSA_BUILTIN_ALG_RSA_OAEP) ||
         * defined(MBEDTLS_PSA_BUILTIN_ALG_RSA_PKCS1V15_SIGN) ||
@@ -161,6 +162,7 @@ exit:
 
   return status;
 }
+
 #endif /* (defined(MBEDTLS_PSA_BUILTIN_KEY_TYPE_RSA_KEY_PAIR_IMPORT) &&
         *  defined(MBEDTLS_PSA_BUILTIN_KEY_TYPE_RSA_KEY_PAIR_EXPORT)) ||
         * defined(MBEDTLS_PSA_BUILTIN_KEY_TYPE_RSA_PUBLIC_KEY) */
@@ -238,6 +240,7 @@ psa_status_t mbedtls_psa_rsa_export_public_key (
 
   return status;
 }
+
 #endif /* defined(MBEDTLS_PSA_BUILTIN_KEY_TYPE_RSA_KEY_PAIR_EXPORT) ||
         * defined(MBEDTLS_PSA_BUILTIN_KEY_TYPE_RSA_PUBLIC_KEY) */
 
@@ -292,26 +295,27 @@ psa_status_t mbedtls_psa_rsa_generate_key (
     }
   }
 
-  mbedtls_rsa_init ( &rsa );
-  ret = mbedtls_rsa_gen_key ( &rsa,
-                              mbedtls_psa_get_random,
-                              MBEDTLS_PSA_RANDOM_STATE,
-                              ( unsigned int ) attributes->bits,
-                              exponent );
+  mbedtls_rsa_init (&rsa );
+  ret = mbedtls_rsa_gen_key (&rsa,
+                             mbedtls_psa_get_random,
+                             MBEDTLS_PSA_RANDOM_STATE,
+                             ( unsigned int ) attributes->bits,
+                             exponent );
 
   if ( ret != 0 )
   {
-    mbedtls_rsa_free ( &rsa );
+    mbedtls_rsa_free (&rsa );
     return mbedtls_to_psa_error ( ret );
   }
 
   status = mbedtls_psa_rsa_export_key ( attributes->type,
                                         &rsa, key_buffer, key_buffer_size,
                                         key_buffer_length );
-  mbedtls_rsa_free ( &rsa );
+  mbedtls_rsa_free (&rsa );
 
   return status;
 }
+
 #endif /* defined(MBEDTLS_PSA_BUILTIN_KEY_TYPE_RSA_KEY_PAIR_GENERATE) */
 
 /****************************************************************/
@@ -345,12 +349,12 @@ static psa_status_t psa_rsa_decode_md_type ( psa_algorithm_t alg,
   /* For signatures using a hash, the hash length must be correct. */
   if ( alg != PSA_ALG_RSA_PKCS1V15_SIGN_RAW )
   {
-    if ( *md_alg == MBEDTLS_MD_NONE )
+    if (*md_alg == MBEDTLS_MD_NONE )
     {
       return PSA_ERROR_NOT_SUPPORTED;
     }
 
-    if ( mbedtls_md_get_size_from_type ( *md_alg ) != hash_length )
+    if ( mbedtls_md_get_size_from_type (*md_alg ) != hash_length )
     {
       return PSA_ERROR_INVALID_ARGUMENT;
     }
@@ -479,6 +483,7 @@ static int rsa_pss_expected_salt_len ( psa_algorithm_t alg,
     return room;
   }
 }
+
 #endif /* MBEDTLS_PSA_BUILTIN_ALG_RSA_PSS */
 
 psa_status_t mbedtls_psa_rsa_verify_hash (
@@ -594,6 +599,7 @@ static int psa_rsa_oaep_set_padding_mode ( psa_algorithm_t alg,
 
   return mbedtls_rsa_set_padding ( rsa, MBEDTLS_RSA_PKCS_V21, md_alg );
 }
+
 #endif /* defined(MBEDTLS_PSA_BUILTIN_ALG_RSA_OAEP) */
 
 psa_status_t mbedtls_psa_asymmetric_encrypt ( const psa_key_attributes_t* attributes,
@@ -670,12 +676,12 @@ psa_status_t mbedtls_psa_asymmetric_encrypt ( const psa_key_attributes_t* attrib
 
       status = mbedtls_to_psa_error (
                  mbedtls_rsa_rsaes_oaep_encrypt ( rsa,
-                     mbedtls_psa_get_random,
-                     MBEDTLS_PSA_RANDOM_STATE,
-                     salt, salt_length,
-                     input_length,
-                     input,
-                     output ) );
+                   mbedtls_psa_get_random,
+                   MBEDTLS_PSA_RANDOM_STATE,
+                   salt, salt_length,
+                   input_length,
+                   input,
+                   output ) );
 #else
       status = PSA_ERROR_NOT_SUPPORTED;
 #endif /* MBEDTLS_PSA_BUILTIN_ALG_RSA_OAEP */
@@ -784,13 +790,13 @@ psa_status_t mbedtls_psa_asymmetric_decrypt ( const psa_key_attributes_t* attrib
 
       status = mbedtls_to_psa_error (
                  mbedtls_rsa_rsaes_oaep_decrypt ( rsa,
-                     mbedtls_psa_get_random,
-                     MBEDTLS_PSA_RANDOM_STATE,
-                     salt, salt_length,
-                     output_length,
-                     input,
-                     output,
-                     output_size ) );
+                   mbedtls_psa_get_random,
+                   MBEDTLS_PSA_RANDOM_STATE,
+                   salt, salt_length,
+                   output_length,
+                   input,
+                   output,
+                   output_size ) );
 #else
       status = PSA_ERROR_NOT_SUPPORTED;
 #endif /* MBEDTLS_PSA_BUILTIN_ALG_RSA_OAEP */

@@ -42,6 +42,7 @@ typedef struct mbedtls_md5_context
   uint32_t MBEDTLS_PRIVATE ( state ) [4];      /*!< intermediate digest state  */
   unsigned char MBEDTLS_PRIVATE ( buffer ) [64]; /*!< data block being processed */
 }
+
 mbedtls_md5_context;
 
 #else  /* MBEDTLS_MD5_ALT */
@@ -186,6 +187,7 @@ int mbedtls_md5_self_test ( int verbose );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* mbedtls_md5.h */

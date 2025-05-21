@@ -107,13 +107,13 @@ static int rsa_verify_wrap ( mbedtls_pk_context* pk, mbedtls_md_type_t md_alg,
     return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
   }
 
-  psa_set_key_usage_flags ( &attributes, PSA_KEY_USAGE_VERIFY_HASH );
-  psa_set_key_algorithm ( &attributes, psa_alg_md );
-  psa_set_key_type ( &attributes, PSA_KEY_TYPE_RSA_PUBLIC_KEY );
+  psa_set_key_usage_flags (&attributes, PSA_KEY_USAGE_VERIFY_HASH );
+  psa_set_key_algorithm (&attributes, psa_alg_md );
+  psa_set_key_type (&attributes, PSA_KEY_TYPE_RSA_PUBLIC_KEY );
 
-  status = psa_import_key ( &attributes,
-                            buf + sizeof ( buf ) - key_len, key_len,
-                            &key_id );
+  status = psa_import_key (&attributes,
+                           buf + sizeof ( buf ) - key_len, key_len,
+                           &key_id );
 
   if ( status != PSA_SUCCESS )
   {
@@ -142,6 +142,7 @@ cleanup:
 
   return ret;
 }
+
 #else /* MBEDTLS_USE_PSA_CRYPTO */
 static int rsa_verify_wrap ( mbedtls_pk_context* pk, mbedtls_md_type_t md_alg,
                              const unsigned char* hash, size_t hash_len,
@@ -184,6 +185,7 @@ static int rsa_verify_wrap ( mbedtls_pk_context* pk, mbedtls_md_type_t md_alg,
 
   return 0;
 }
+
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
@@ -226,13 +228,13 @@ int  mbedtls_pk_psa_rsa_sign_ext ( psa_algorithm_t alg,
     return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
   }
 
-  psa_set_key_usage_flags ( &attributes, PSA_KEY_USAGE_SIGN_HASH );
-  psa_set_key_algorithm ( &attributes, alg );
-  psa_set_key_type ( &attributes, PSA_KEY_TYPE_RSA_KEY_PAIR );
+  psa_set_key_usage_flags (&attributes, PSA_KEY_USAGE_SIGN_HASH );
+  psa_set_key_algorithm (&attributes, alg );
+  psa_set_key_type (&attributes, PSA_KEY_TYPE_RSA_KEY_PAIR );
 
-  status = psa_import_key ( &attributes,
-                            buf + MBEDTLS_PK_RSA_PRV_DER_MAX_BYTES - key_len, key_len,
-                            &key_id );
+  status = psa_import_key (&attributes,
+                           buf + MBEDTLS_PK_RSA_PRV_DER_MAX_BYTES - key_len, key_len,
+                           &key_id );
 
   if ( status != PSA_SUCCESS )
   {
@@ -262,13 +264,14 @@ cleanup:
 
   return ret;
 }
+
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
 static int rsa_sign_wrap ( mbedtls_pk_context* pk, mbedtls_md_type_t md_alg,
                            const unsigned char* hash, size_t hash_len,
                            unsigned char* sig, size_t sig_size, size_t* sig_len,
-                           int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
+                           int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
 {
   ( ( void ) f_rng );
   ( ( void ) p_rng );
@@ -283,7 +286,7 @@ static int rsa_sign_wrap ( mbedtls_pk_context* pk, mbedtls_md_type_t md_alg,
 
   psa_algorithm_t psa_alg;
 
-  if ( mbedtls_rsa_get_padding_mode ( mbedtls_pk_rsa ( *pk ) ) == MBEDTLS_RSA_PKCS_V21 )
+  if ( mbedtls_rsa_get_padding_mode ( mbedtls_pk_rsa (*pk ) ) == MBEDTLS_RSA_PKCS_V21 )
   {
     psa_alg = PSA_ALG_RSA_PSS ( psa_md_alg );
   }
@@ -295,11 +298,12 @@ static int rsa_sign_wrap ( mbedtls_pk_context* pk, mbedtls_md_type_t md_alg,
   return mbedtls_pk_psa_rsa_sign_ext ( psa_alg, pk->pk_ctx, hash, hash_len,
                                        sig, sig_size, sig_len );
 }
+
 #else /* MBEDTLS_USE_PSA_CRYPTO */
 static int rsa_sign_wrap ( mbedtls_pk_context* pk, mbedtls_md_type_t md_alg,
                            const unsigned char* hash, size_t hash_len,
                            unsigned char* sig, size_t sig_size, size_t* sig_len,
-                           int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
+                           int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
 {
   mbedtls_rsa_context* rsa = ( mbedtls_rsa_context* ) pk->pk_ctx;
 
@@ -323,13 +327,14 @@ static int rsa_sign_wrap ( mbedtls_pk_context* pk, mbedtls_md_type_t md_alg,
                                   md_alg, ( unsigned int ) hash_len,
                                   hash, sig );
 }
+
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
 static int rsa_decrypt_wrap ( mbedtls_pk_context* pk,
                               const unsigned char* input, size_t ilen,
                               unsigned char* output, size_t* olen, size_t osize,
-                              int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
+                              int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
 {
   mbedtls_rsa_context* rsa = ( mbedtls_rsa_context* ) pk->pk_ctx;
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
@@ -356,8 +361,8 @@ static int rsa_decrypt_wrap ( mbedtls_pk_context* pk,
     return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
   }
 
-  psa_set_key_type ( &attributes, PSA_KEY_TYPE_RSA_KEY_PAIR );
-  psa_set_key_usage_flags ( &attributes, PSA_KEY_USAGE_DECRYPT );
+  psa_set_key_type (&attributes, PSA_KEY_TYPE_RSA_KEY_PAIR );
+  psa_set_key_usage_flags (&attributes, PSA_KEY_USAGE_DECRYPT );
 
   if ( mbedtls_rsa_get_padding_mode ( rsa ) == MBEDTLS_RSA_PKCS_V21 )
   {
@@ -369,11 +374,11 @@ static int rsa_decrypt_wrap ( mbedtls_pk_context* pk,
     decrypt_alg = PSA_ALG_RSA_PKCS1V15_CRYPT;
   }
 
-  psa_set_key_algorithm ( &attributes, decrypt_alg );
+  psa_set_key_algorithm (&attributes, decrypt_alg );
 
-  status = psa_import_key ( &attributes,
-                            buf + sizeof ( buf ) - key_len, key_len,
-                            &key_id );
+  status = psa_import_key (&attributes,
+                           buf + sizeof ( buf ) - key_len, key_len,
+                           &key_id );
 
   if ( status != PSA_SUCCESS )
   {
@@ -405,11 +410,12 @@ cleanup:
 
   return ret;
 }
+
 #else /* MBEDTLS_USE_PSA_CRYPTO */
 static int rsa_decrypt_wrap ( mbedtls_pk_context* pk,
                               const unsigned char* input, size_t ilen,
                               unsigned char* output, size_t* olen, size_t osize,
-                              int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
+                              int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
 {
   mbedtls_rsa_context* rsa = ( mbedtls_rsa_context* ) pk->pk_ctx;
 
@@ -421,13 +427,14 @@ static int rsa_decrypt_wrap ( mbedtls_pk_context* pk,
   return mbedtls_rsa_pkcs1_decrypt ( rsa, f_rng, p_rng,
                                      olen, input, output, osize );
 }
+
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
 static int rsa_encrypt_wrap ( mbedtls_pk_context* pk,
                               const unsigned char* input, size_t ilen,
                               unsigned char* output, size_t* olen, size_t osize,
-                              int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
+                              int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
 {
   mbedtls_rsa_context* rsa = ( mbedtls_rsa_context* ) pk->pk_ctx;
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
@@ -454,7 +461,7 @@ static int rsa_encrypt_wrap ( mbedtls_pk_context* pk,
     return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
   }
 
-  psa_set_key_usage_flags ( &attributes, PSA_KEY_USAGE_ENCRYPT );
+  psa_set_key_usage_flags (&attributes, PSA_KEY_USAGE_ENCRYPT );
 
   if ( mbedtls_rsa_get_padding_mode ( rsa ) == MBEDTLS_RSA_PKCS_V21 )
   {
@@ -466,12 +473,12 @@ static int rsa_encrypt_wrap ( mbedtls_pk_context* pk,
     psa_encrypt_alg = PSA_ALG_RSA_PKCS1V15_CRYPT;
   }
 
-  psa_set_key_algorithm ( &attributes, psa_encrypt_alg );
-  psa_set_key_type ( &attributes, PSA_KEY_TYPE_RSA_PUBLIC_KEY );
+  psa_set_key_algorithm (&attributes, psa_encrypt_alg );
+  psa_set_key_type (&attributes, PSA_KEY_TYPE_RSA_PUBLIC_KEY );
 
-  status = psa_import_key ( &attributes,
-                            buf + sizeof ( buf ) - key_len, key_len,
-                            &key_id );
+  status = psa_import_key (&attributes,
+                           buf + sizeof ( buf ) - key_len, key_len,
+                           &key_id );
 
   if ( status != PSA_SUCCESS )
   {
@@ -502,16 +509,17 @@ cleanup:
 
   return ret;
 }
+
 #else /* MBEDTLS_USE_PSA_CRYPTO */
 static int rsa_encrypt_wrap ( mbedtls_pk_context* pk,
                               const unsigned char* input, size_t ilen,
                               unsigned char* output, size_t* olen, size_t osize,
-                              int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
+                              int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
 {
   mbedtls_rsa_context* rsa = ( mbedtls_rsa_context* ) pk->pk_ctx;
   *olen = mbedtls_rsa_get_len ( rsa );
 
-  if ( *olen > osize )
+  if (*olen > osize )
   {
     return MBEDTLS_ERR_RSA_OUTPUT_TOO_LARGE;
   }
@@ -519,10 +527,11 @@ static int rsa_encrypt_wrap ( mbedtls_pk_context* pk,
   return mbedtls_rsa_pkcs1_encrypt ( rsa, f_rng, p_rng,
                                      ilen, input, output );
 }
+
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 
 static int rsa_check_pair_wrap ( mbedtls_pk_context* pub, mbedtls_pk_context* prv,
-                                 int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                 int (*f_rng ) ( void*, unsigned char*, size_t ),
                                  void* p_rng )
 {
   ( void ) f_rng;
@@ -637,11 +646,11 @@ static int ecdsa_verify_psa ( unsigned char* key, size_t key_len,
     return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
   }
 
-  psa_set_key_type ( &attributes, PSA_KEY_TYPE_ECC_PUBLIC_KEY ( curve ) );
-  psa_set_key_usage_flags ( &attributes, PSA_KEY_USAGE_VERIFY_HASH );
-  psa_set_key_algorithm ( &attributes, psa_sig_md );
+  psa_set_key_type (&attributes, PSA_KEY_TYPE_ECC_PUBLIC_KEY ( curve ) );
+  psa_set_key_usage_flags (&attributes, PSA_KEY_USAGE_VERIFY_HASH );
+  psa_set_key_algorithm (&attributes, psa_sig_md );
 
-  status = psa_import_key ( &attributes, key, key_len, &key_id );
+  status = psa_import_key (&attributes, key, key_len, &key_id );
 
   if ( status != PSA_SUCCESS )
   {
@@ -712,9 +721,9 @@ static int ecdsa_opaque_verify_wrap ( mbedtls_pk_context* pk,
     return PSA_PK_ECDSA_TO_MBEDTLS_ERR ( status );
   }
 
-  curve = PSA_KEY_TYPE_ECC_GET_FAMILY ( psa_get_key_type ( &key_attr ) );
-  curve_bits = psa_get_key_bits ( &key_attr );
-  psa_reset_key_attributes ( &key_attr );
+  curve = PSA_KEY_TYPE_ECC_GET_FAMILY ( psa_get_key_type (&key_attr ) );
+  curve_bits = psa_get_key_bits (&key_attr );
+  psa_reset_key_attributes (&key_attr );
 
   status = psa_export_public_key ( pk->priv_id, key, sizeof ( key ), &key_len );
 
@@ -740,6 +749,7 @@ static int ecdsa_verify_wrap ( mbedtls_pk_context* pk,
   return ecdsa_verify_psa ( pk->pub_raw, pk->pub_raw_len, curve, curve_bits,
                             hash, hash_len, sig, sig_len );
 }
+
 #else /* MBEDTLS_PK_USE_PSA_EC_DATA */
 static int ecdsa_verify_wrap ( mbedtls_pk_context* pk,
                                mbedtls_md_type_t md_alg,
@@ -754,9 +764,9 @@ static int ecdsa_verify_wrap ( mbedtls_pk_context* pk,
   size_t curve_bits;
   psa_ecc_family_t curve = mbedtls_ecc_group_to_psa ( ctx->grp.id, &curve_bits );
 
-  ret = mbedtls_ecp_point_write_binary ( &ctx->grp, &ctx->Q,
-                                         MBEDTLS_ECP_PF_UNCOMPRESSED,
-                                         &key_len, key, sizeof ( key ) );
+  ret = mbedtls_ecp_point_write_binary (&ctx->grp, &ctx->Q,
+                                        MBEDTLS_ECP_PF_UNCOMPRESSED,
+                                        &key_len, key, sizeof ( key ) );
 
   if ( ret != 0 )
   {
@@ -766,6 +776,7 @@ static int ecdsa_verify_wrap ( mbedtls_pk_context* pk,
   return ecdsa_verify_psa ( key, key_len, curve, curve_bits,
                             hash, hash_len, sig, sig_len );
 }
+
 #endif /* MBEDTLS_PK_USE_PSA_EC_DATA */
 #else /* MBEDTLS_USE_PSA_CRYPTO */
 static int ecdsa_verify_wrap ( mbedtls_pk_context* pk, mbedtls_md_type_t md_alg,
@@ -785,6 +796,7 @@ static int ecdsa_verify_wrap ( mbedtls_pk_context* pk, mbedtls_md_type_t md_alg,
 
   return ret;
 }
+
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 #endif /* MBEDTLS_PK_CAN_ECDSA_VERIFY */
 
@@ -810,8 +822,8 @@ static int ecdsa_sign_psa ( mbedtls_svc_key_id_t key_id, mbedtls_md_type_t md_al
     return PSA_PK_ECDSA_TO_MBEDTLS_ERR ( status );
   }
 
-  key_bits = psa_get_key_bits ( &key_attr );
-  psa_reset_key_attributes ( &key_attr );
+  key_bits = psa_get_key_bits (&key_attr );
+  psa_reset_key_attributes (&key_attr );
 
   status = psa_sign_hash ( key_id,
                            PSA_ALG_DETERMINISTIC_ECDSA ( mbedtls_md_psa_alg_from_type ( md_alg ) ),
@@ -846,7 +858,7 @@ static int ecdsa_opaque_sign_wrap ( mbedtls_pk_context* pk,
                                     const unsigned char* hash, size_t hash_len,
                                     unsigned char* sig, size_t sig_size,
                                     size_t* sig_len,
-                                    int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                    int (*f_rng ) ( void*, unsigned char*, size_t ),
                                     void* p_rng )
 {
   ( ( void ) f_rng );
@@ -864,7 +876,7 @@ static int ecdsa_opaque_sign_wrap ( mbedtls_pk_context* pk,
 static int ecdsa_sign_wrap ( mbedtls_pk_context* pk, mbedtls_md_type_t md_alg,
                              const unsigned char* hash, size_t hash_len,
                              unsigned char* sig, size_t sig_size, size_t* sig_len,
-                             int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
+                             int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
 {
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
   mbedtls_svc_key_id_t key_id = MBEDTLS_SVC_KEY_ID_INIT;
@@ -891,18 +903,18 @@ static int ecdsa_sign_wrap ( mbedtls_pk_context* pk, mbedtls_md_type_t md_alg,
     return MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
   }
 
-  ret = mbedtls_mpi_write_binary ( &ctx->d, buf, key_len );
+  ret = mbedtls_mpi_write_binary (&ctx->d, buf, key_len );
 
   if ( ret != 0 )
   {
     goto cleanup;
   }
 
-  psa_set_key_type ( &attributes, PSA_KEY_TYPE_ECC_KEY_PAIR ( curve ) );
-  psa_set_key_usage_flags ( &attributes, PSA_KEY_USAGE_SIGN_HASH );
-  psa_set_key_algorithm ( &attributes, psa_sig_md );
+  psa_set_key_type (&attributes, PSA_KEY_TYPE_ECC_KEY_PAIR ( curve ) );
+  psa_set_key_usage_flags (&attributes, PSA_KEY_USAGE_SIGN_HASH );
+  psa_set_key_algorithm (&attributes, psa_sig_md );
 
-  status = psa_import_key ( &attributes, buf, key_len, &key_id );
+  status = psa_import_key (&attributes, buf, key_len, &key_id );
 
   if ( status != PSA_SUCCESS )
   {
@@ -923,18 +935,20 @@ cleanup:
 
   return ret;
 }
+
 #endif /* MBEDTLS_PK_USE_PSA_EC_DATA */
 #else /* MBEDTLS_USE_PSA_CRYPTO */
 static int ecdsa_sign_wrap ( mbedtls_pk_context* pk, mbedtls_md_type_t md_alg,
                              const unsigned char* hash, size_t hash_len,
                              unsigned char* sig, size_t sig_size, size_t* sig_len,
-                             int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
+                             int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
 {
   return mbedtls_ecdsa_write_signature ( ( mbedtls_ecdsa_context* ) pk->pk_ctx,
                                          md_alg, hash, hash_len,
                                          sig, sig_size, sig_len,
                                          f_rng, p_rng );
 }
+
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 #endif /* MBEDTLS_PK_CAN_ECDSA_SIGN */
 
@@ -948,7 +962,7 @@ static int ecdsa_verify_rs_wrap ( mbedtls_pk_context* ctx, mbedtls_md_type_t md_
 static int ecdsa_sign_rs_wrap ( mbedtls_pk_context* ctx, mbedtls_md_type_t md_alg,
                                 const unsigned char* hash, size_t hash_len,
                                 unsigned char* sig, size_t sig_size, size_t* sig_len,
-                                int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng,
+                                int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng,
                                 void* rs_ctx );
 
 /*
@@ -972,8 +986,8 @@ static void* eckey_rs_alloc ( void )
   if ( ctx != NULL )
   {
     rs_ctx = ctx;
-    mbedtls_ecdsa_restart_init ( &rs_ctx->ecdsa_rs );
-    mbedtls_ecdsa_init ( &rs_ctx->ecdsa_ctx );
+    mbedtls_ecdsa_restart_init (&rs_ctx->ecdsa_rs );
+    mbedtls_ecdsa_init (&rs_ctx->ecdsa_ctx );
   }
 
   return ctx;
@@ -989,8 +1003,8 @@ static void eckey_rs_free ( void* ctx )
   }
 
   rs_ctx = ctx;
-  mbedtls_ecdsa_restart_free ( &rs_ctx->ecdsa_rs );
-  mbedtls_ecdsa_free ( &rs_ctx->ecdsa_ctx );
+  mbedtls_ecdsa_restart_free (&rs_ctx->ecdsa_rs );
+  mbedtls_ecdsa_free (&rs_ctx->ecdsa_ctx );
 
   mbedtls_free ( ctx );
 }
@@ -1012,7 +1026,7 @@ static int eckey_verify_rs_wrap ( mbedtls_pk_context* pk, mbedtls_md_type_t md_a
   /* set up our own sub-context if needed (that is, on first run) */
   if ( rs->ecdsa_ctx.grp.pbits == 0 )
   {
-    MBEDTLS_MPI_CHK ( mbedtls_ecdsa_from_keypair ( &rs->ecdsa_ctx, pk->pk_ctx ) );
+    MBEDTLS_MPI_CHK ( mbedtls_ecdsa_from_keypair (&rs->ecdsa_ctx, pk->pk_ctx ) );
   }
 
   MBEDTLS_MPI_CHK ( ecdsa_verify_rs_wrap ( pk,
@@ -1026,7 +1040,7 @@ cleanup:
 static int eckey_sign_rs_wrap ( mbedtls_pk_context* pk, mbedtls_md_type_t md_alg,
                                 const unsigned char* hash, size_t hash_len,
                                 unsigned char* sig, size_t sig_size, size_t* sig_len,
-                                int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng,
+                                int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng,
                                 void* rs_ctx )
 {
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
@@ -1041,7 +1055,7 @@ static int eckey_sign_rs_wrap ( mbedtls_pk_context* pk, mbedtls_md_type_t md_alg
   /* set up our own sub-context if needed (that is, on first run) */
   if ( rs->ecdsa_ctx.grp.pbits == 0 )
   {
-    MBEDTLS_MPI_CHK ( mbedtls_ecdsa_from_keypair ( &rs->ecdsa_ctx, pk->pk_ctx ) );
+    MBEDTLS_MPI_CHK ( mbedtls_ecdsa_from_keypair (&rs->ecdsa_ctx, pk->pk_ctx ) );
   }
 
   MBEDTLS_MPI_CHK ( ecdsa_sign_rs_wrap ( pk, md_alg,
@@ -1051,6 +1065,7 @@ static int eckey_sign_rs_wrap ( mbedtls_pk_context* pk, mbedtls_md_type_t md_alg
 cleanup:
   return ret;
 }
+
 #endif /* MBEDTLS_ECDSA_C && MBEDTLS_ECP_RESTARTABLE */
 
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
@@ -1079,6 +1094,7 @@ static int eckey_check_pair_psa ( mbedtls_pk_context* pub, mbedtls_pk_context* p
 
   return 0;
 }
+
 #else /* MBEDTLS_PK_USE_PSA_EC_DATA */
 static int eckey_check_pair_psa ( mbedtls_pk_context* pub, mbedtls_pk_context* prv )
 {
@@ -1093,7 +1109,7 @@ static int eckey_check_pair_psa ( mbedtls_pk_context* pub, mbedtls_pk_context* p
   size_t pub_key_len;
   size_t curve_bits;
   const psa_ecc_family_t curve =
-    mbedtls_ecc_group_to_psa ( mbedtls_pk_ec_ro ( *prv )->grp.id, &curve_bits );
+    mbedtls_ecc_group_to_psa ( mbedtls_pk_ec_ro (*prv )->grp.id, &curve_bits );
   const size_t curve_bytes = PSA_BITS_TO_BYTES ( curve_bits );
 
   if ( curve == 0 )
@@ -1101,11 +1117,11 @@ static int eckey_check_pair_psa ( mbedtls_pk_context* pub, mbedtls_pk_context* p
     return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
   }
 
-  psa_set_key_type ( &key_attr, PSA_KEY_TYPE_ECC_KEY_PAIR ( curve ) );
-  psa_set_key_usage_flags ( &key_attr, PSA_KEY_USAGE_EXPORT );
+  psa_set_key_type (&key_attr, PSA_KEY_TYPE_ECC_KEY_PAIR ( curve ) );
+  psa_set_key_usage_flags (&key_attr, PSA_KEY_USAGE_EXPORT );
 
-  ret = mbedtls_mpi_write_binary ( &mbedtls_pk_ec_ro ( *prv )->d,
-                                   prv_key_buf, curve_bytes );
+  ret = mbedtls_mpi_write_binary (&mbedtls_pk_ec_ro (*prv )->d,
+                                  prv_key_buf, curve_bytes );
 
   if ( ret != 0 )
   {
@@ -1113,7 +1129,7 @@ static int eckey_check_pair_psa ( mbedtls_pk_context* pub, mbedtls_pk_context* p
     return ret;
   }
 
-  status = psa_import_key ( &key_attr, prv_key_buf, curve_bytes, &key_id );
+  status = psa_import_key (&key_attr, prv_key_buf, curve_bytes, &key_id );
   mbedtls_platform_zeroize ( prv_key_buf, sizeof ( prv_key_buf ) );
   ret = PSA_PK_TO_MBEDTLS_ERR ( status );
 
@@ -1137,11 +1153,11 @@ static int eckey_check_pair_psa ( mbedtls_pk_context* pub, mbedtls_pk_context* p
     return PSA_PK_TO_MBEDTLS_ERR ( destruction_status );
   }
 
-  ret = mbedtls_ecp_point_write_binary ( &mbedtls_pk_ec_rw ( *pub )->grp,
-                                         &mbedtls_pk_ec_rw ( *pub )->Q,
-                                         MBEDTLS_ECP_PF_UNCOMPRESSED,
-                                         &pub_key_len, pub_key_buf,
-                                         sizeof ( pub_key_buf ) );
+  ret = mbedtls_ecp_point_write_binary (&mbedtls_pk_ec_rw (*pub )->grp,
+                                        &mbedtls_pk_ec_rw (*pub )->Q,
+                                        MBEDTLS_ECP_PF_UNCOMPRESSED,
+                                        &pub_key_len, pub_key_buf,
+                                        sizeof ( pub_key_buf ) );
 
   if ( ret != 0 )
   {
@@ -1155,25 +1171,28 @@ static int eckey_check_pair_psa ( mbedtls_pk_context* pub, mbedtls_pk_context* p
 
   return 0;
 }
+
 #endif /* MBEDTLS_PK_USE_PSA_EC_DATA */
 
 static int eckey_check_pair_wrap ( mbedtls_pk_context* pub, mbedtls_pk_context* prv,
-                                   int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                   int (*f_rng ) ( void*, unsigned char*, size_t ),
                                    void* p_rng )
 {
   ( void ) f_rng;
   ( void ) p_rng;
   return eckey_check_pair_psa ( pub, prv );
 }
+
 #else /* MBEDTLS_USE_PSA_CRYPTO */
 static int eckey_check_pair_wrap ( mbedtls_pk_context* pub, mbedtls_pk_context* prv,
-                                   int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                   int (*f_rng ) ( void*, unsigned char*, size_t ),
                                    void* p_rng )
 {
   return mbedtls_ecp_check_pub_priv ( ( const mbedtls_ecp_keypair* ) pub->pk_ctx,
                                       ( const mbedtls_ecp_keypair* ) prv->pk_ctx,
                                       f_rng, p_rng );
 }
+
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
@@ -1184,7 +1203,7 @@ static int eckey_check_pair_wrap ( mbedtls_pk_context* pub, mbedtls_pk_context* 
 #else /* MBEDTLS_PK_USE_PSA_EC_DATA */
 static int ecdsa_opaque_check_pair_wrap ( mbedtls_pk_context* pub,
     mbedtls_pk_context* prv,
-    int ( *f_rng ) ( void*, unsigned char*, size_t ),
+    int (*f_rng ) ( void*, unsigned char*, size_t ),
     void* p_rng )
 {
   psa_status_t status;
@@ -1205,10 +1224,10 @@ static int ecdsa_opaque_check_pair_wrap ( mbedtls_pk_context* pub,
     return ret;
   }
 
-  ret = mbedtls_ecp_point_write_binary ( & ( mbedtls_pk_ec_ro ( *pub )->grp ),
-                                         & ( mbedtls_pk_ec_ro ( *pub )->Q ),
-                                         MBEDTLS_ECP_PF_UNCOMPRESSED,
-                                         &pub_key_len, pub_key, sizeof ( pub_key ) );
+  ret = mbedtls_ecp_point_write_binary (& ( mbedtls_pk_ec_ro (*pub )->grp ),
+                                        & ( mbedtls_pk_ec_ro (*pub )->Q ),
+                                        MBEDTLS_ECP_PF_UNCOMPRESSED,
+                                        &pub_key_len, pub_key, sizeof ( pub_key ) );
 
   if ( ret != 0 )
   {
@@ -1223,6 +1242,7 @@ static int ecdsa_opaque_check_pair_wrap ( mbedtls_pk_context* pub,
 
   return 0;
 }
+
 #endif /* MBEDTLS_PK_USE_PSA_EC_DATA */
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 
@@ -1244,6 +1264,7 @@ static void eckey_free_wrap ( void* ctx )
   mbedtls_ecp_keypair_free ( ( mbedtls_ecp_keypair* ) ctx );
   mbedtls_free ( ctx );
 }
+
 #endif /* MBEDTLS_PK_USE_PSA_EC_DATA */
 
 static void eckey_debug ( mbedtls_pk_context* pk, mbedtls_pk_debug_item* items )
@@ -1360,7 +1381,7 @@ static int ecdsa_verify_rs_wrap ( mbedtls_pk_context* pk, mbedtls_md_type_t md_a
 static int ecdsa_sign_rs_wrap ( mbedtls_pk_context* pk, mbedtls_md_type_t md_alg,
                                 const unsigned char* hash, size_t hash_len,
                                 unsigned char* sig, size_t sig_size, size_t* sig_len,
-                                int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng,
+                                int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng,
                                 void* rs_ctx )
 {
   return mbedtls_ecdsa_write_signature_restartable (
@@ -1387,6 +1408,7 @@ static void ecdsa_rs_free ( void* ctx )
   mbedtls_ecdsa_restart_free ( ctx );
   mbedtls_free ( ctx );
 }
+
 #endif /* MBEDTLS_ECDSA_C && MBEDTLS_ECP_RESTARTABLE */
 
 const mbedtls_pk_info_t mbedtls_ecdsa_info =
@@ -1446,7 +1468,7 @@ static size_t rsa_alt_get_bitlen ( mbedtls_pk_context* pk )
 static int rsa_alt_sign_wrap ( mbedtls_pk_context* pk, mbedtls_md_type_t md_alg,
                                const unsigned char* hash, size_t hash_len,
                                unsigned char* sig, size_t sig_size, size_t* sig_len,
-                               int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
+                               int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
 {
   mbedtls_rsa_alt_context* rsa_alt = pk->pk_ctx;
 
@@ -1461,12 +1483,12 @@ static int rsa_alt_sign_wrap ( mbedtls_pk_context* pk, mbedtls_md_type_t md_alg,
 
   *sig_len = rsa_alt->key_len_func ( rsa_alt->key );
 
-  if ( *sig_len > MBEDTLS_PK_SIGNATURE_MAX_SIZE )
+  if (*sig_len > MBEDTLS_PK_SIGNATURE_MAX_SIZE )
   {
     return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
   }
 
-  if ( *sig_len > sig_size )
+  if (*sig_len > sig_size )
   {
     return MBEDTLS_ERR_PK_BUFFER_TOO_SMALL;
   }
@@ -1478,7 +1500,7 @@ static int rsa_alt_sign_wrap ( mbedtls_pk_context* pk, mbedtls_md_type_t md_alg,
 static int rsa_alt_decrypt_wrap ( mbedtls_pk_context* pk,
                                   const unsigned char* input, size_t ilen,
                                   unsigned char* output, size_t* olen, size_t osize,
-                                  int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
+                                  int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
 {
   mbedtls_rsa_alt_context* rsa_alt = pk->pk_ctx;
 
@@ -1496,7 +1518,7 @@ static int rsa_alt_decrypt_wrap ( mbedtls_pk_context* pk,
 
 #if defined(MBEDTLS_RSA_C)
 static int rsa_alt_check_pair ( mbedtls_pk_context* pub, mbedtls_pk_context* prv,
-                                int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                int (*f_rng ) ( void*, unsigned char*, size_t ),
                                 void* p_rng )
 {
   unsigned char sig[MBEDTLS_MPI_MAX_SIZE];
@@ -1527,6 +1549,7 @@ static int rsa_alt_check_pair ( mbedtls_pk_context* pub, mbedtls_pk_context* prv
 
   return 0;
 }
+
 #endif /* MBEDTLS_RSA_C */
 
 static void* rsa_alt_alloc_wrap ( void )
@@ -1584,8 +1607,8 @@ static size_t opaque_get_bitlen ( mbedtls_pk_context* pk )
     return 0;
   }
 
-  bits = psa_get_key_bits ( &attributes );
-  psa_reset_key_attributes ( &attributes );
+  bits = psa_get_key_bits (&attributes );
+  psa_reset_key_attributes (&attributes );
   return bits;
 }
 
@@ -1637,7 +1660,7 @@ static int rsa_opaque_can_do ( mbedtls_pk_type_t type )
 static int rsa_opaque_decrypt ( mbedtls_pk_context* pk,
                                 const unsigned char* input, size_t ilen,
                                 unsigned char* output, size_t* olen, size_t osize,
-                                int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
+                                int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
 {
   psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
   psa_algorithm_t alg;
@@ -1655,11 +1678,11 @@ static int rsa_opaque_decrypt ( mbedtls_pk_context* pk,
     return PSA_PK_TO_MBEDTLS_ERR ( status );
   }
 
-  type = psa_get_key_type ( &attributes );
-  alg = psa_get_key_algorithm ( &attributes );
-  psa_reset_key_attributes ( &attributes );
+  type = psa_get_key_type (&attributes );
+  alg = psa_get_key_algorithm (&attributes );
+  psa_reset_key_attributes (&attributes );
 
-  if ( !PSA_KEY_TYPE_IS_RSA ( type ) )
+  if (!PSA_KEY_TYPE_IS_RSA ( type ) )
   {
     return MBEDTLS_ERR_PK_FEATURE_UNAVAILABLE;
   }
@@ -1673,12 +1696,13 @@ static int rsa_opaque_decrypt ( mbedtls_pk_context* pk,
 
   return 0;
 }
+
 #endif /* PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_BASIC */
 
 static int rsa_opaque_sign_wrap ( mbedtls_pk_context* pk, mbedtls_md_type_t md_alg,
                                   const unsigned char* hash, size_t hash_len,
                                   unsigned char* sig, size_t sig_size, size_t* sig_len,
-                                  int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
+                                  int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
 {
 #if defined(MBEDTLS_RSA_C)
   psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
@@ -1697,9 +1721,9 @@ static int rsa_opaque_sign_wrap ( mbedtls_pk_context* pk, mbedtls_md_type_t md_a
     return PSA_PK_TO_MBEDTLS_ERR ( status );
   }
 
-  type = psa_get_key_type ( &attributes );
-  alg = psa_get_key_algorithm ( &attributes );
-  psa_reset_key_attributes ( &attributes );
+  type = psa_get_key_type (&attributes );
+  alg = psa_get_key_algorithm (&attributes );
+  psa_reset_key_attributes (&attributes );
 
   if ( PSA_KEY_TYPE_IS_RSA ( type ) )
   {

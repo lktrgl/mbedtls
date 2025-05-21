@@ -23,6 +23,7 @@ int main ( void )
                    "MBEDTLS_CTR_DRBG_C not defined and/or MBEDTLS_X509_REMOVE_INFO defined.\n" );
   mbedtls_exit ( 0 );
 }
+
 #else
 
 #include "mbedtls/entropy.h"
@@ -106,7 +107,7 @@ static int my_verify ( void* data, mbedtls_x509_crt* crt, int depth, uint32_t* f
   mbedtls_x509_crt_info ( buf, sizeof ( buf ) - 1, "", crt );
   mbedtls_printf ( "%s", buf );
 
-  if ( ( *flags ) == 0 )
+  if ( (*flags ) == 0 )
   {
     mbedtls_printf ( "  This certificate has no flags\n" );
   }
@@ -134,24 +135,24 @@ int main ( int argc, char* argv[] )
   int i, j;
   uint32_t flags;
   int verify = 0;
-  char* p, *q;
+  char* p, * q;
   const char* pers = "cert_app";
 
   /*
    * Set to sane values
    */
-  mbedtls_net_init ( &server_fd );
-  mbedtls_ctr_drbg_init ( &ctr_drbg );
-  mbedtls_ssl_init ( &ssl );
-  mbedtls_ssl_config_init ( &conf );
-  mbedtls_x509_crt_init ( &cacert );
-  mbedtls_entropy_init ( &entropy );
+  mbedtls_net_init (&server_fd );
+  mbedtls_ctr_drbg_init (&ctr_drbg );
+  mbedtls_ssl_init (&ssl );
+  mbedtls_ssl_config_init (&conf );
+  mbedtls_x509_crt_init (&cacert );
+  mbedtls_entropy_init (&entropy );
 #if defined(MBEDTLS_X509_CRL_PARSE_C)
-  mbedtls_x509_crl_init ( &cacrl );
+  mbedtls_x509_crl_init (&cacrl );
 #else
   /* Zeroize structure as CRL parsing is not supported and we have to pass
      it to the verify function */
-  memset ( &cacrl, 0, sizeof ( mbedtls_x509_crl ) );
+  memset (&cacrl, 0, sizeof ( mbedtls_x509_crl ) );
 #endif
 
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
@@ -273,7 +274,7 @@ usage:
 
   if ( strlen ( opt.ca_path ) )
   {
-    if ( ( ret = mbedtls_x509_crt_parse_path ( &cacert, opt.ca_path ) ) < 0 )
+    if ( ( ret = mbedtls_x509_crt_parse_path (&cacert, opt.ca_path ) ) < 0 )
     {
       mbedtls_printf ( " failed\n  !  mbedtls_x509_crt_parse_path returned -0x%x\n\n",
                        ( unsigned int ) - ret );
@@ -284,7 +285,7 @@ usage:
   }
   else if ( strlen ( opt.ca_file ) )
   {
-    if ( ( ret = mbedtls_x509_crt_parse_file ( &cacert, opt.ca_file ) ) < 0 )
+    if ( ( ret = mbedtls_x509_crt_parse_file (&cacert, opt.ca_file ) ) < 0 )
     {
       mbedtls_printf ( " failed\n  !  mbedtls_x509_crt_parse_file returned -0x%x\n\n",
                        ( unsigned int ) - ret );
@@ -300,7 +301,7 @@ usage:
 
   if ( strlen ( opt.crl_file ) )
   {
-    if ( ( ret = mbedtls_x509_crl_parse_file ( &cacrl, opt.crl_file ) ) != 0 )
+    if ( ( ret = mbedtls_x509_crl_parse_file (&cacrl, opt.crl_file ) ) != 0 )
     {
       mbedtls_printf ( " failed\n  !  mbedtls_x509_crl_parse returned -0x%x\n\n",
                        ( unsigned int ) - ret );
@@ -316,7 +317,7 @@ usage:
   {
     mbedtls_x509_crt crt;
     mbedtls_x509_crt* cur = &crt;
-    mbedtls_x509_crt_init ( &crt );
+    mbedtls_x509_crt_init (&crt );
 
     /*
      * 1.1. Load the certificate(s)
@@ -324,12 +325,12 @@ usage:
     mbedtls_printf ( "\n  . Loading the certificate(s) ..." );
     fflush ( stdout );
 
-    ret = mbedtls_x509_crt_parse_file ( &crt, opt.filename );
+    ret = mbedtls_x509_crt_parse_file (&crt, opt.filename );
 
     if ( ret < 0 )
     {
       mbedtls_printf ( " failed\n  !  mbedtls_x509_crt_parse_file returned %d\n\n", ret );
-      mbedtls_x509_crt_free ( &crt );
+      mbedtls_x509_crt_free (&crt );
       goto exit;
     }
 
@@ -338,7 +339,7 @@ usage:
       mbedtls_printf (
         " failed\n  !  mbedtls_x509_crt_parse failed to parse %d certificates\n\n",
         ret );
-      mbedtls_x509_crt_free ( &crt );
+      mbedtls_x509_crt_free (&crt );
       goto exit;
     }
 
@@ -356,7 +357,7 @@ usage:
       if ( ret == -1 )
       {
         mbedtls_printf ( " failed\n  !  mbedtls_x509_crt_info returned %d\n\n", ret );
-        mbedtls_x509_crt_free ( &crt );
+        mbedtls_x509_crt_free (&crt );
         goto exit;
       }
 
@@ -372,8 +373,8 @@ usage:
     {
       mbedtls_printf ( "  . Verifying X.509 certificate..." );
 
-      if ( ( ret = mbedtls_x509_crt_verify ( &crt, &cacert, &cacrl, NULL, &flags,
-                                             my_verify, NULL ) ) != 0 )
+      if ( ( ret = mbedtls_x509_crt_verify (&crt, &cacert, &cacrl, NULL, &flags,
+                                            my_verify, NULL ) ) != 0 )
       {
         char vrfy_buf[512];
 
@@ -389,7 +390,7 @@ usage:
       }
     }
 
-    mbedtls_x509_crt_free ( &crt );
+    mbedtls_x509_crt_free (&crt );
   }
   else if ( opt.mode == MODE_SSL )
   {
@@ -399,9 +400,9 @@ usage:
     mbedtls_printf ( "\n  . Seeding the random number generator..." );
     fflush ( stdout );
 
-    if ( ( ret = mbedtls_ctr_drbg_seed ( &ctr_drbg, mbedtls_entropy_func, &entropy,
-                                         ( const unsigned char* ) pers,
-                                         strlen ( pers ) ) ) != 0 )
+    if ( ( ret = mbedtls_ctr_drbg_seed (&ctr_drbg, mbedtls_entropy_func, &entropy,
+                                        ( const unsigned char* ) pers,
+                                        strlen ( pers ) ) ) != 0 )
     {
       mbedtls_printf ( " failed\n  ! mbedtls_ctr_drbg_seed returned %d\n", ret );
       goto ssl_exit;
@@ -420,8 +421,8 @@ usage:
                      opt.server_port );
     fflush ( stdout );
 
-    if ( ( ret = mbedtls_net_connect ( &server_fd, opt.server_name,
-                                       opt.server_port, MBEDTLS_NET_PROTO_TCP ) ) != 0 )
+    if ( ( ret = mbedtls_net_connect (&server_fd, opt.server_name,
+                                      opt.server_port, MBEDTLS_NET_PROTO_TCP ) ) != 0 )
     {
       mbedtls_printf ( " failed\n  ! mbedtls_net_connect returned %d\n\n", ret );
       goto ssl_exit;
@@ -430,7 +431,7 @@ usage:
     /*
      * 3. Setup stuff
      */
-    if ( ( ret = mbedtls_ssl_config_defaults ( &conf,
+    if ( ( ret = mbedtls_ssl_config_defaults (&conf,
                  MBEDTLS_SSL_IS_CLIENT,
                  MBEDTLS_SSL_TRANSPORT_STREAM,
                  MBEDTLS_SSL_PRESET_DEFAULT ) ) != 0 )
@@ -441,36 +442,36 @@ usage:
 
     if ( verify )
     {
-      mbedtls_ssl_conf_authmode ( &conf, MBEDTLS_SSL_VERIFY_REQUIRED );
-      mbedtls_ssl_conf_ca_chain ( &conf, &cacert, NULL );
-      mbedtls_ssl_conf_verify ( &conf, my_verify, NULL );
+      mbedtls_ssl_conf_authmode (&conf, MBEDTLS_SSL_VERIFY_REQUIRED );
+      mbedtls_ssl_conf_ca_chain (&conf, &cacert, NULL );
+      mbedtls_ssl_conf_verify (&conf, my_verify, NULL );
     }
     else
     {
-      mbedtls_ssl_conf_authmode ( &conf, MBEDTLS_SSL_VERIFY_NONE );
+      mbedtls_ssl_conf_authmode (&conf, MBEDTLS_SSL_VERIFY_NONE );
     }
 
-    mbedtls_ssl_conf_rng ( &conf, mbedtls_ctr_drbg_random, &ctr_drbg );
-    mbedtls_ssl_conf_dbg ( &conf, my_debug, stdout );
+    mbedtls_ssl_conf_rng (&conf, mbedtls_ctr_drbg_random, &ctr_drbg );
+    mbedtls_ssl_conf_dbg (&conf, my_debug, stdout );
 
-    if ( ( ret = mbedtls_ssl_setup ( &ssl, &conf ) ) != 0 )
+    if ( ( ret = mbedtls_ssl_setup (&ssl, &conf ) ) != 0 )
     {
       mbedtls_printf ( " failed\n  ! mbedtls_ssl_setup returned %d\n\n", ret );
       goto ssl_exit;
     }
 
-    if ( ( ret = mbedtls_ssl_set_hostname ( &ssl, opt.server_name ) ) != 0 )
+    if ( ( ret = mbedtls_ssl_set_hostname (&ssl, opt.server_name ) ) != 0 )
     {
       mbedtls_printf ( " failed\n  ! mbedtls_ssl_set_hostname returned %d\n\n", ret );
       goto ssl_exit;
     }
 
-    mbedtls_ssl_set_bio ( &ssl, &server_fd, mbedtls_net_send, mbedtls_net_recv, NULL );
+    mbedtls_ssl_set_bio (&ssl, &server_fd, mbedtls_net_send, mbedtls_net_recv, NULL );
 
     /*
      * 4. Handshake
      */
-    while ( ( ret = mbedtls_ssl_handshake ( &ssl ) ) != 0 )
+    while ( ( ret = mbedtls_ssl_handshake (&ssl ) ) != 0 )
     {
       if ( ret != MBEDTLS_ERR_SSL_WANT_READ && ret != MBEDTLS_ERR_SSL_WANT_WRITE )
       {
@@ -489,7 +490,7 @@ usage:
 #else
     mbedtls_printf ( "  . Peer certificate information    ...\n" );
     ret = mbedtls_x509_crt_info ( ( char* ) buf, sizeof ( buf ) - 1, "      ",
-                                  mbedtls_ssl_get_peer_cert ( &ssl ) );
+                                  mbedtls_ssl_get_peer_cert (&ssl ) );
 
     if ( ret == -1 )
     {
@@ -500,11 +501,11 @@ usage:
     mbedtls_printf ( "%s\n", buf );
 #endif /* MBEDTLS_SSL_KEEP_PEER_CERTIFICATE */
 
-    mbedtls_ssl_close_notify ( &ssl );
+    mbedtls_ssl_close_notify (&ssl );
 
 ssl_exit:
-    mbedtls_ssl_free ( &ssl );
-    mbedtls_ssl_config_free ( &conf );
+    mbedtls_ssl_free (&ssl );
+    mbedtls_ssl_config_free (&conf );
   }
   else
   {
@@ -515,19 +516,20 @@ ssl_exit:
 
 exit:
 
-  mbedtls_net_free ( &server_fd );
-  mbedtls_x509_crt_free ( &cacert );
+  mbedtls_net_free (&server_fd );
+  mbedtls_x509_crt_free (&cacert );
 #if defined(MBEDTLS_X509_CRL_PARSE_C)
-  mbedtls_x509_crl_free ( &cacrl );
+  mbedtls_x509_crl_free (&cacrl );
 #endif
-  mbedtls_ctr_drbg_free ( &ctr_drbg );
-  mbedtls_entropy_free ( &entropy );
+  mbedtls_ctr_drbg_free (&ctr_drbg );
+  mbedtls_entropy_free (&entropy );
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
   mbedtls_psa_crypto_free();
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 
   mbedtls_exit ( exit_code );
 }
+
 #endif /* MBEDTLS_BIGNUM_C && MBEDTLS_ENTROPY_C && MBEDTLS_SSL_TLS_C &&
           MBEDTLS_SSL_CLI_C && MBEDTLS_NET_C && MBEDTLS_RSA_C &&
           MBEDTLS_X509_CRT_PARSE_C && MBEDTLS_FS_IO && MBEDTLS_CTR_DRBG_C */

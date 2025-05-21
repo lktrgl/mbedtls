@@ -28,11 +28,11 @@ typedef int64_t FStar_Int63_t, FStar_Int63_t_;
 
 typedef double FStar_Float_float;
 typedef uint32_t FStar_Char_char;
-typedef FILE* FStar_IO_fd_read, *FStar_IO_fd_write;
+typedef FILE* FStar_IO_fd_read, * FStar_IO_fd_write;
 
 typedef void* FStar_Dyn_dyn;
 
-typedef const char* C_String_t, *C_String_t_;
+typedef const char* C_String_t, * C_String_t_;
 
 typedef int exit_code;
 typedef FILE* channel;
@@ -55,6 +55,7 @@ typedef struct FStar_UInt128_uint128_s
   uint64_t low;
   uint64_t high;
 } FStar_UInt128_uint128;
+
 #endif
 
 typedef FStar_UInt128_uint128 FStar_UInt128_t, FStar_UInt128_t_, uint128_t;

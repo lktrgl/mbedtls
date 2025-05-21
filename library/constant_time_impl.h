@@ -151,7 +151,7 @@ static inline mbedtls_ct_condition_t mbedtls_ct_bool ( mbedtls_ct_uint_t x )
                  [x] "+&l" ( x )
                  :
                  :
-                 "cc" /* clobbers flag bits */
+  "cc" /* clobbers flag bits */
                );
   return ( mbedtls_ct_condition_t ) x;
 #elif defined(MBEDTLS_CT_X86_64_ASM) && (defined(MBEDTLS_CT_SIZE_32) || defined(MBEDTLS_CT_SIZE_64))
@@ -189,13 +189,13 @@ static inline mbedtls_ct_condition_t mbedtls_ct_bool ( mbedtls_ct_uint_t x )
 #pragma warning( disable : 4146 )
 #endif
   // y is negative (i.e., top bit set) iff x is non-zero
-  mbedtls_ct_int_t y = ( -xo ) | - ( xo >> 1 );
+  mbedtls_ct_int_t y = (-xo ) | - ( xo >> 1 );
 
   // extract only the sign bit of y so that y == 1 (if x is non-zero) or 0 (if x is zero)
   y = ( ( ( mbedtls_ct_uint_t ) y ) >> ( MBEDTLS_CT_SIZE - 1 ) );
 
   // -y has all bits set (if x is non-zero), or all bits clear (if x is zero)
-  return ( mbedtls_ct_condition_t ) ( -y );
+  return ( mbedtls_ct_condition_t ) (-y );
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
@@ -232,7 +232,7 @@ static inline mbedtls_ct_uint_t mbedtls_ct_if ( mbedtls_ct_condition_t condition
                  :
                  [if0] "l" ( if0 )
                  :
-                 "cc"
+  "cc"
                );
   return ( mbedtls_ct_uint_t ) condition;
 #elif defined(MBEDTLS_CT_X86_64_ASM) && (defined(MBEDTLS_CT_SIZE_32) || defined(MBEDTLS_CT_SIZE_64))
@@ -263,7 +263,7 @@ static inline mbedtls_ct_uint_t mbedtls_ct_if ( mbedtls_ct_condition_t condition
   return if1;
 #else
   mbedtls_ct_condition_t not_cond =
-    ( mbedtls_ct_condition_t ) ( ~mbedtls_ct_compiler_opaque ( condition ) );
+    ( mbedtls_ct_condition_t ) (~mbedtls_ct_compiler_opaque ( condition ) );
   return ( mbedtls_ct_uint_t ) ( ( condition & if1 ) | ( not_cond & if0 ) );
 #endif
 }
@@ -401,7 +401,7 @@ static inline unsigned char mbedtls_ct_uchar_in_range_if ( unsigned char low,
   /* high_mask is: 0 if c <= high, 0x...ff if c > high */
   unsigned high_mask = ( ( unsigned ) high - co ) >> 8;
 
-  return ( unsigned char ) ( ~ ( low_mask | high_mask ) ) & to;
+  return ( unsigned char ) (~ ( low_mask | high_mask ) ) & to;
 }
 
 /* ============================================================================
@@ -477,13 +477,13 @@ static inline int mbedtls_ct_error_if ( mbedtls_ct_condition_t condition, int if
    * This means that (0 <= -if0 < INT_MAX), so negating if0 is safe, and similarly for
    * converting back to int.
    */
-  return - ( ( int ) mbedtls_ct_if ( condition, ( mbedtls_ct_uint_t ) ( -if1 ),
-                                     ( mbedtls_ct_uint_t ) ( -if0 ) ) );
+  return - ( ( int ) mbedtls_ct_if ( condition, ( mbedtls_ct_uint_t ) (-if1 ),
+                                     ( mbedtls_ct_uint_t ) (-if0 ) ) );
 }
 
 static inline int mbedtls_ct_error_if_else_0 ( mbedtls_ct_condition_t condition, int if1 )
 {
-  return - ( ( int ) ( condition & ( -if1 ) ) );
+  return - ( ( int ) ( condition & (-if1 ) ) );
 }
 
 static inline mbedtls_ct_condition_t mbedtls_ct_uint_eq ( mbedtls_ct_uint_t x,
@@ -530,7 +530,7 @@ static inline mbedtls_ct_condition_t mbedtls_ct_bool_or ( mbedtls_ct_condition_t
 
 static inline mbedtls_ct_condition_t mbedtls_ct_bool_not ( mbedtls_ct_condition_t x )
 {
-  return ( mbedtls_ct_condition_t ) ( ~x );
+  return ( mbedtls_ct_condition_t ) (~x );
 }
 
 #if defined(MBEDTLS_COMPILER_IS_GCC) && (__GNUC__ > 4)

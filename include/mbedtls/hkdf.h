@@ -119,6 +119,7 @@ int mbedtls_hkdf_expand ( const mbedtls_md_info_t* md, const unsigned char* prk,
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* hkdf.h */

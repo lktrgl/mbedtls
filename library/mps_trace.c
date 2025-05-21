@@ -60,10 +60,12 @@ int mbedtls_mps_trace_get_depth()
 {
   return trace_depth;
 }
+
 void mbedtls_mps_trace_dec_depth()
 {
   trace_depth--;
 }
+
 void mbedtls_mps_trace_inc_depth()
 {
   trace_depth++;
@@ -71,7 +73,7 @@ void mbedtls_mps_trace_inc_depth()
 
 void mbedtls_mps_trace_color ( int id )
 {
-  if ( id > ( int ) ( sizeof ( colors ) / sizeof ( *colors ) ) )
+  if ( id > ( int ) ( sizeof ( colors ) / sizeof (*colors ) ) )
   {
     return;
   }
@@ -83,7 +85,7 @@ void mbedtls_mps_trace_indent ( int level, mbedtls_mps_trace_type ty )
 {
   if ( level > 0 )
   {
-    while ( --level )
+    while (--level )
     {
       printf ( "|  " );
     }

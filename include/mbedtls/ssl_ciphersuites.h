@@ -479,6 +479,7 @@ size_t mbedtls_ssl_ciphersuite_get_cipher_key_bitlen ( const mbedtls_ssl_ciphers
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* ssl_ciphersuites.h */

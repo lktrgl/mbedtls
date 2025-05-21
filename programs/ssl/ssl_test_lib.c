@@ -23,12 +23,12 @@ void my_debug ( void* ctx, int level,
                 const char* file, int line,
                 const char* str )
 {
-  const char* p, *basename;
+  const char* p, * basename;
 
   /* Extract basename from file */
   for ( p = basename = file; *p != '\0'; p++ )
   {
-    if ( *p == '/' || *p == '\\' )
+    if (*p == '/' || *p == '\\' )
     {
       basename = p + 1;
     }
@@ -45,6 +45,7 @@ mbedtls_time_t dummy_constant_time ( mbedtls_time_t* time )
   ( void ) time;
   return 0x5af2a056;
 }
+
 #endif
 
 #if !defined(MBEDTLS_TEST_USE_PSA_CRYPTO_RNG)
@@ -64,6 +65,7 @@ static int dummy_entropy ( void* data, unsigned char* output, size_t len )
 
   return ret;
 }
+
 #endif
 
 void rng_init ( rng_context_t* rng )
@@ -74,14 +76,14 @@ void rng_init ( rng_context_t* rng )
 #else /* !MBEDTLS_TEST_USE_PSA_CRYPTO_RNG */
 
 #if defined(MBEDTLS_CTR_DRBG_C)
-  mbedtls_ctr_drbg_init ( &rng->drbg );
+  mbedtls_ctr_drbg_init (&rng->drbg );
 #elif defined(MBEDTLS_HMAC_DRBG_C)
-  mbedtls_hmac_drbg_init ( &rng->drbg );
+  mbedtls_hmac_drbg_init (&rng->drbg );
 #else
 #error "No DRBG available"
 #endif
 
-  mbedtls_entropy_init ( &rng->entropy );
+  mbedtls_entropy_init (&rng->entropy );
 #endif /* !MBEDTLS_TEST_USE_PSA_CRYPTO_RNG */
 }
 
@@ -111,7 +113,7 @@ int rng_seed ( rng_context_t* rng, int reproducible, const char* pers )
 
   return 0;
 #else /* !MBEDTLS_TEST_USE_PSA_CRYPTO_RNG */
-  int ( *f_entropy ) ( void*, unsigned char*, size_t ) =
+  int (*f_entropy ) ( void*, unsigned char*, size_t ) =
     ( reproducible ? dummy_entropy : mbedtls_entropy_func );
 
   if ( reproducible )
@@ -120,10 +122,10 @@ int rng_seed ( rng_context_t* rng, int reproducible, const char* pers )
   }
 
 #if defined(MBEDTLS_CTR_DRBG_C)
-  int ret = mbedtls_ctr_drbg_seed ( &rng->drbg,
-                                    f_entropy, &rng->entropy,
-                                    ( const unsigned char* ) pers,
-                                    strlen ( pers ) );
+  int ret = mbedtls_ctr_drbg_seed (&rng->drbg,
+                                   f_entropy, &rng->entropy,
+                                   ( const unsigned char* ) pers,
+                                   strlen ( pers ) );
 #elif defined(MBEDTLS_HMAC_DRBG_C)
 #if defined(MBEDTLS_MD_CAN_SHA256)
   const mbedtls_md_type_t md_type = MBEDTLS_MD_SHA256;
@@ -132,11 +134,11 @@ int rng_seed ( rng_context_t* rng, int reproducible, const char* pers )
 #else
 #error "No message digest available for HMAC_DRBG"
 #endif
-  int ret = mbedtls_hmac_drbg_seed ( &rng->drbg,
-                                     mbedtls_md_info_from_type ( md_type ),
-                                     f_entropy, &rng->entropy,
-                                     ( const unsigned char* ) pers,
-                                     strlen ( pers ) );
+  int ret = mbedtls_hmac_drbg_seed (&rng->drbg,
+                                    mbedtls_md_info_from_type ( md_type ),
+                                    f_entropy, &rng->entropy,
+                                    ( const unsigned char* ) pers,
+                                    strlen ( pers ) );
 #else /* !defined(MBEDTLS_CTR_DRBG_C) && !defined(MBEDTLS_HMAC_DRBG_C) */
 #error "No DRBG available"
 #endif /* !defined(MBEDTLS_CTR_DRBG_C) && !defined(MBEDTLS_HMAC_DRBG_C) */
@@ -164,14 +166,14 @@ void rng_free ( rng_context_t* rng )
 #else /* !MBEDTLS_TEST_USE_PSA_CRYPTO_RNG */
 
 #if defined(MBEDTLS_CTR_DRBG_C)
-  mbedtls_ctr_drbg_free ( &rng->drbg );
+  mbedtls_ctr_drbg_free (&rng->drbg );
 #elif defined(MBEDTLS_HMAC_DRBG_C)
-  mbedtls_hmac_drbg_free ( &rng->drbg );
+  mbedtls_hmac_drbg_free (&rng->drbg );
 #else
 #error "No DRBG available"
 #endif
 
-  mbedtls_entropy_free ( &rng->entropy );
+  mbedtls_entropy_free (&rng->entropy );
 #endif /* !MBEDTLS_TEST_USE_PSA_CRYPTO_RNG */
 }
 
@@ -185,9 +187,9 @@ int rng_get ( void* p_rng, unsigned char* output, size_t output_len )
   rng_context_t* rng = p_rng;
 
 #if defined(MBEDTLS_CTR_DRBG_C)
-  return mbedtls_ctr_drbg_random ( &rng->drbg, output, output_len );
+  return mbedtls_ctr_drbg_random (&rng->drbg, output, output_len );
 #elif defined(MBEDTLS_HMAC_DRBG_C)
-  return mbedtls_hmac_drbg_random ( &rng->drbg, output, output_len );
+  return mbedtls_hmac_drbg_random (&rng->drbg, output, output_len );
 #else
 #error "No DRBG available"
 #endif
@@ -209,27 +211,27 @@ int key_opaque_alg_parse ( const char* arg, const char** alg1, const char** alg2
   *alg1 = arg;
   *alg2 = separator + 1;
 
-  if ( strcmp ( *alg1, "rsa-sign-pkcs1" ) != 0 &&
-       strcmp ( *alg1, "rsa-sign-pss" ) != 0 &&
-       strcmp ( *alg1, "rsa-sign-pss-sha256" ) != 0 &&
-       strcmp ( *alg1, "rsa-sign-pss-sha384" ) != 0 &&
-       strcmp ( *alg1, "rsa-sign-pss-sha512" ) != 0 &&
-       strcmp ( *alg1, "rsa-decrypt" ) != 0 &&
-       strcmp ( *alg1, "ecdsa-sign" ) != 0 &&
-       strcmp ( *alg1, "ecdh" ) != 0 )
+  if ( strcmp (*alg1, "rsa-sign-pkcs1" ) != 0 &&
+       strcmp (*alg1, "rsa-sign-pss" ) != 0 &&
+       strcmp (*alg1, "rsa-sign-pss-sha256" ) != 0 &&
+       strcmp (*alg1, "rsa-sign-pss-sha384" ) != 0 &&
+       strcmp (*alg1, "rsa-sign-pss-sha512" ) != 0 &&
+       strcmp (*alg1, "rsa-decrypt" ) != 0 &&
+       strcmp (*alg1, "ecdsa-sign" ) != 0 &&
+       strcmp (*alg1, "ecdh" ) != 0 )
   {
     return 1;
   }
 
-  if ( strcmp ( *alg2, "rsa-sign-pkcs1" ) != 0 &&
-       strcmp ( *alg2, "rsa-sign-pss" ) != 0 &&
-       strcmp ( *alg1, "rsa-sign-pss-sha256" ) != 0 &&
-       strcmp ( *alg1, "rsa-sign-pss-sha384" ) != 0 &&
-       strcmp ( *alg1, "rsa-sign-pss-sha512" ) != 0 &&
-       strcmp ( *alg2, "rsa-decrypt" ) != 0 &&
-       strcmp ( *alg2, "ecdsa-sign" ) != 0 &&
-       strcmp ( *alg2, "ecdh" ) != 0 &&
-       strcmp ( *alg2, "none" ) != 0 )
+  if ( strcmp (*alg2, "rsa-sign-pkcs1" ) != 0 &&
+       strcmp (*alg2, "rsa-sign-pss" ) != 0 &&
+       strcmp (*alg1, "rsa-sign-pss-sha256" ) != 0 &&
+       strcmp (*alg1, "rsa-sign-pss-sha384" ) != 0 &&
+       strcmp (*alg1, "rsa-sign-pss-sha512" ) != 0 &&
+       strcmp (*alg2, "rsa-decrypt" ) != 0 &&
+       strcmp (*alg2, "ecdsa-sign" ) != 0 &&
+       strcmp (*alg2, "ecdh" ) != 0 &&
+       strcmp (*alg2, "none" ) != 0 )
   {
     return 1;
   }
@@ -334,12 +336,12 @@ int pk_wrap_as_opaque ( mbedtls_pk_context* pk, psa_algorithm_t psa_alg, psa_alg
     return ret;
   }
 
-  psa_set_key_usage_flags ( &key_attr, psa_usage );
-  psa_set_key_algorithm ( &key_attr, psa_alg );
+  psa_set_key_usage_flags (&key_attr, psa_usage );
+  psa_set_key_algorithm (&key_attr, psa_alg );
 
   if ( psa_alg2 != PSA_ALG_NONE )
   {
-    psa_set_key_enrollment_algorithm ( &key_attr, psa_alg2 );
+    psa_set_key_enrollment_algorithm (&key_attr, psa_alg2 );
   }
 
   ret = mbedtls_pk_import_into_psa ( pk, &key_attr, key_id );
@@ -360,6 +362,7 @@ int pk_wrap_as_opaque ( mbedtls_pk_context* pk, psa_algorithm_t psa_alg, psa_alg
 
   return 0;
 }
+
 #endif /* MBEDTLS_PK_C */
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 
@@ -420,6 +423,7 @@ exit:
   *candidates = first;
   return ret;
 }
+
 #endif /* MBEDTLS_X509_TRUSTED_CERTIFICATE_CALLBACK */
 
 int delayed_recv ( void* ctx, unsigned char* buf, size_t len )
@@ -566,6 +570,7 @@ static const struct
   const char* name;
   uint8_t is_supported;
 } tls_id_group_name_table[] =
+
 {
 #if defined(MBEDTLS_ECP_DP_SECP521R1_ENABLED) || defined(PSA_WANT_ECC_SECP_R1_521)
   { MBEDTLS_SSL_IANA_TLS_GROUP_SECP521R1, "secp521r1", 1 },
@@ -711,12 +716,12 @@ int parse_groups ( const char* groups, uint16_t* group_list, size_t group_list_l
       q = p;
 
       /* Terminate the current string */
-      while ( *p != ',' && *p != '\0' )
+      while (*p != ',' && *p != '\0' )
       {
         p++;
       }
 
-      if ( *p == ',' )
+      if (*p == ',' )
       {
         *p++ = '\0';
       }

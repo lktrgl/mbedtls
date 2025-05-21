@@ -139,6 +139,7 @@ static inline mbedtls_md_type_t mbedtls_md_type_from_psa_alg ( psa_algorithm_t p
 {
   return ( mbedtls_md_type_t ) ( psa_alg & PSA_ALG_HASH_MASK );
 }
+
 #endif /* MBEDTLS_PSA_CRYPTO_CLIENT */
 
 #if defined(MBEDTLS_PSA_UTIL_HAVE_ECDSA)

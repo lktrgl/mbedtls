@@ -82,6 +82,7 @@ struct psa_hash_operation_s
   psa_driver_hash_context_t MBEDTLS_PRIVATE ( ctx );
 #endif
 };
+
 #if defined(MBEDTLS_PSA_CRYPTO_CLIENT) && !defined(MBEDTLS_PSA_CRYPTO_C)
 #define PSA_HASH_OPERATION_INIT { 0 }
 #else
@@ -278,6 +279,7 @@ struct psa_key_policy_s
   psa_algorithm_t MBEDTLS_PRIVATE ( alg );
   psa_algorithm_t MBEDTLS_PRIVATE ( alg2 );
 };
+
 typedef struct psa_key_policy_s psa_key_policy_t;
 
 #define PSA_KEY_POLICY_INIT { 0, 0, 0 }
@@ -369,6 +371,7 @@ static inline void mbedtls_set_key_owner_id ( psa_key_attributes_t* attributes,
 {
   attributes->MBEDTLS_PRIVATE ( id ).MBEDTLS_PRIVATE ( owner ) = owner;
 }
+
 #endif
 
 static inline void psa_set_key_lifetime ( psa_key_attributes_t* attributes,
@@ -394,12 +397,12 @@ static inline psa_key_lifetime_t psa_get_key_lifetime (
 
 static inline void psa_extend_key_usage_flags ( psa_key_usage_t* usage_flags )
 {
-  if ( *usage_flags & PSA_KEY_USAGE_SIGN_HASH )
+  if (*usage_flags & PSA_KEY_USAGE_SIGN_HASH )
   {
     *usage_flags |= PSA_KEY_USAGE_SIGN_MESSAGE;
   }
 
-  if ( *usage_flags & PSA_KEY_USAGE_VERIFY_HASH )
+  if (*usage_flags & PSA_KEY_USAGE_VERIFY_HASH )
   {
     *usage_flags |= PSA_KEY_USAGE_VERIFY_MESSAGE;
   }
@@ -408,7 +411,7 @@ static inline void psa_extend_key_usage_flags ( psa_key_usage_t* usage_flags )
 static inline void psa_set_key_usage_flags ( psa_key_attributes_t* attributes,
     psa_key_usage_t usage_flags )
 {
-  psa_extend_key_usage_flags ( &usage_flags );
+  psa_extend_key_usage_flags (&usage_flags );
   attributes->MBEDTLS_PRIVATE ( policy ).MBEDTLS_PRIVATE ( usage ) = usage_flags;
 }
 
@@ -541,6 +544,7 @@ psa_verify_hash_interruptible_operation_init ( void )
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* PSA_CRYPTO_STRUCT_H */

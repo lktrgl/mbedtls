@@ -27,6 +27,7 @@ static int local_err_translation ( psa_status_t status )
                                  ARRAY_LENGTH ( psa_to_ssl_errors ),
                                  psa_generic_status_to_mbedtls );
 }
+
 #define PSA_TO_MBEDTLS_ERR(status) local_err_translation(status)
 #endif
 
@@ -38,7 +39,7 @@ void mbedtls_ssl_ticket_init ( mbedtls_ssl_ticket_context* ctx )
   memset ( ctx, 0, sizeof ( mbedtls_ssl_ticket_context ) );
 
 #if defined(MBEDTLS_THREADING_C)
-  mbedtls_mutex_init ( &ctx->mutex );
+  mbedtls_mutex_init (&ctx->mutex );
 #endif
 }
 
@@ -91,21 +92,21 @@ static int ssl_ticket_gen_key ( mbedtls_ssl_ticket_context* ctx,
   }
 
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
-  psa_set_key_usage_flags ( &attributes,
-                            PSA_KEY_USAGE_ENCRYPT | PSA_KEY_USAGE_DECRYPT );
-  psa_set_key_algorithm ( &attributes, key->alg );
-  psa_set_key_type ( &attributes, key->key_type );
-  psa_set_key_bits ( &attributes, key->key_bits );
+  psa_set_key_usage_flags (&attributes,
+                           PSA_KEY_USAGE_ENCRYPT | PSA_KEY_USAGE_DECRYPT );
+  psa_set_key_algorithm (&attributes, key->alg );
+  psa_set_key_type (&attributes, key->key_type );
+  psa_set_key_bits (&attributes, key->key_bits );
 
   ret = PSA_TO_MBEDTLS_ERR (
-          psa_import_key ( &attributes, buf,
-                           PSA_BITS_TO_BYTES ( key->key_bits ),
-                           &key->key ) );
+          psa_import_key (&attributes, buf,
+                          PSA_BITS_TO_BYTES ( key->key_bits ),
+                          &key->key ) );
 #else
   /* With GCM and CCM, same context can encrypt & decrypt */
-  ret = mbedtls_cipher_setkey ( &key->ctx, buf,
-                                mbedtls_cipher_get_key_bitlen ( &key->ctx ),
-                                MBEDTLS_ENCRYPT );
+  ret = mbedtls_cipher_setkey (&key->ctx, buf,
+                               mbedtls_cipher_get_key_bitlen (&key->ctx ),
+                               MBEDTLS_ENCRYPT );
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 
   mbedtls_platform_zeroize ( buf, sizeof ( buf ) );
@@ -174,7 +175,7 @@ int mbedtls_ssl_ticket_rotate ( mbedtls_ssl_ticket_context* ctx,
   psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
   const size_t bitlen = key->key_bits;
 #else
-  const int bitlen = mbedtls_cipher_get_key_bitlen ( &key->ctx );
+  const int bitlen = mbedtls_cipher_get_key_bitlen (&key->ctx );
 #endif
 
   if ( nlength < TICKET_KEY_NAME_BYTES || klength * 8 < ( size_t ) bitlen )
@@ -190,22 +191,22 @@ int mbedtls_ssl_ticket_rotate ( mbedtls_ssl_ticket_context* ctx,
     return ret;
   }
 
-  psa_set_key_usage_flags ( &attributes,
-                            PSA_KEY_USAGE_ENCRYPT | PSA_KEY_USAGE_DECRYPT );
-  psa_set_key_algorithm ( &attributes, key->alg );
-  psa_set_key_type ( &attributes, key->key_type );
-  psa_set_key_bits ( &attributes, key->key_bits );
+  psa_set_key_usage_flags (&attributes,
+                           PSA_KEY_USAGE_ENCRYPT | PSA_KEY_USAGE_DECRYPT );
+  psa_set_key_algorithm (&attributes, key->alg );
+  psa_set_key_type (&attributes, key->key_type );
+  psa_set_key_bits (&attributes, key->key_bits );
 
-  if ( ( status = psa_import_key ( &attributes, k,
-                                   PSA_BITS_TO_BYTES ( key->key_bits ),
-                                   &key->key ) ) != PSA_SUCCESS )
+  if ( ( status = psa_import_key (&attributes, k,
+                                  PSA_BITS_TO_BYTES ( key->key_bits ),
+                                  &key->key ) ) != PSA_SUCCESS )
   {
     ret = PSA_TO_MBEDTLS_ERR ( status );
     return ret;
   }
 
 #else
-  ret = mbedtls_cipher_setkey ( &key->ctx, k, bitlen, MBEDTLS_ENCRYPT );
+  ret = mbedtls_cipher_setkey (&key->ctx, k, bitlen, MBEDTLS_ENCRYPT );
 
   if ( ret != 0 )
   {
@@ -229,7 +230,7 @@ int mbedtls_ssl_ticket_rotate ( mbedtls_ssl_ticket_context* ctx,
  * Setup context for actual use
  */
 int mbedtls_ssl_ticket_setup ( mbedtls_ssl_ticket_context* ctx,
-                               int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng,
+                               int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng,
                                mbedtls_cipher_type_t cipher,
                                uint32_t lifetime )
 {
@@ -289,12 +290,12 @@ int mbedtls_ssl_ticket_setup ( mbedtls_ssl_ticket_context* ctx,
   ctx->keys[1].key_bits = key_bits;
 #else
 
-  if ( ( ret = mbedtls_cipher_setup ( &ctx->keys[0].ctx, cipher_info ) ) != 0 )
+  if ( ( ret = mbedtls_cipher_setup (&ctx->keys[0].ctx, cipher_info ) ) != 0 )
   {
     return ret;
   }
 
-  if ( ( ret = mbedtls_cipher_setup ( &ctx->keys[1].ctx, cipher_info ) ) != 0 )
+  if ( ( ret = mbedtls_cipher_setup (&ctx->keys[1].ctx, cipher_info ) ) != 0 )
   {
     return ret;
   }
@@ -357,7 +358,7 @@ int mbedtls_ssl_ticket_write ( void* p_ticket,
 
 #if defined(MBEDTLS_THREADING_C)
 
-  if ( ( ret = mbedtls_mutex_lock ( &ctx->mutex ) ) != 0 )
+  if ( ( ret = mbedtls_mutex_lock (&ctx->mutex ) ) != 0 )
   {
     return ret;
   }
@@ -406,7 +407,7 @@ int mbedtls_ssl_ticket_write ( void* p_ticket,
 
 #else
 
-  if ( ( ret = mbedtls_cipher_auth_encrypt_ext ( &key->ctx,
+  if ( ( ret = mbedtls_cipher_auth_encrypt_ext (&key->ctx,
                iv, TICKET_IV_BYTES,
                /* Additional data: key name, IV and length */
                key_name, TICKET_ADD_DATA_LEN,
@@ -430,7 +431,7 @@ int mbedtls_ssl_ticket_write ( void* p_ticket,
 cleanup:
 #if defined(MBEDTLS_THREADING_C)
 
-  if ( mbedtls_mutex_unlock ( &ctx->mutex ) != 0 )
+  if ( mbedtls_mutex_unlock (&ctx->mutex ) != 0 )
   {
     return MBEDTLS_ERR_THREADING_MUTEX_ERROR;
   }
@@ -449,7 +450,7 @@ static mbedtls_ssl_ticket_key* ssl_ticket_select_key (
 {
   unsigned char i;
 
-  for ( i = 0; i < sizeof ( ctx->keys ) / sizeof ( *ctx->keys ); i++ )
+  for ( i = 0; i < sizeof ( ctx->keys ) / sizeof (*ctx->keys ); i++ )
   {
     if ( memcmp ( name, ctx->keys[i].name, 4 ) == 0 )
     {
@@ -493,7 +494,7 @@ int mbedtls_ssl_ticket_parse ( void* p_ticket,
 
 #if defined(MBEDTLS_THREADING_C)
 
-  if ( ( ret = mbedtls_mutex_lock ( &ctx->mutex ) ) != 0 )
+  if ( ( ret = mbedtls_mutex_lock (&ctx->mutex ) ) != 0 )
   {
     return ret;
   }
@@ -536,7 +537,7 @@ int mbedtls_ssl_ticket_parse ( void* p_ticket,
 
 #else
 
-  if ( ( ret = mbedtls_cipher_auth_decrypt_ext ( &key->ctx,
+  if ( ( ret = mbedtls_cipher_auth_decrypt_ext (&key->ctx,
                iv, TICKET_IV_BYTES,
                /* Additional data: key name, IV and length */
                key_name, TICKET_ADD_DATA_LEN,
@@ -592,7 +593,7 @@ int mbedtls_ssl_ticket_parse ( void* p_ticket,
 cleanup:
 #if defined(MBEDTLS_THREADING_C)
 
-  if ( mbedtls_mutex_unlock ( &ctx->mutex ) != 0 )
+  if ( mbedtls_mutex_unlock (&ctx->mutex ) != 0 )
   {
     return MBEDTLS_ERR_THREADING_MUTEX_ERROR;
   }
@@ -616,12 +617,12 @@ void mbedtls_ssl_ticket_free ( mbedtls_ssl_ticket_context* ctx )
   psa_destroy_key ( ctx->keys[0].key );
   psa_destroy_key ( ctx->keys[1].key );
 #else
-  mbedtls_cipher_free ( &ctx->keys[0].ctx );
-  mbedtls_cipher_free ( &ctx->keys[1].ctx );
+  mbedtls_cipher_free (&ctx->keys[0].ctx );
+  mbedtls_cipher_free (&ctx->keys[1].ctx );
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 
 #if defined(MBEDTLS_THREADING_C)
-  mbedtls_mutex_free ( &ctx->mutex );
+  mbedtls_mutex_free (&ctx->mutex );
 #endif
 
   mbedtls_platform_zeroize ( ctx, sizeof ( mbedtls_ssl_ticket_context ) );

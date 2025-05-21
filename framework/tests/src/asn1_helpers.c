@@ -35,10 +35,10 @@ int mbedtls_test_asn1_skip_integer ( unsigned char** p, const unsigned char* end
   /* Tolerate a slight departure from DER encoding:
    * - 0 may be represented by an empty string or a 1-byte string.
    * - The sign bit may be used as a value bit. */
-  if ( ( len == 1 && ( *p ) [0] == 0 ) ||
-       ( len > 1 && ( *p ) [0] == 0 && ( ( *p ) [1] & 0x80 ) != 0 ) )
+  if ( ( len == 1 && (*p ) [0] == 0 ) ||
+       ( len > 1 && (*p ) [0] == 0 && ( (*p ) [1] & 0x80 ) != 0 ) )
   {
-    ++ ( *p );
+    ++ (*p );
     --len;
   }
 
@@ -47,7 +47,7 @@ int mbedtls_test_asn1_skip_integer ( unsigned char** p, const unsigned char* end
     return 1;
   }
 
-  msb = ( *p ) [0];
+  msb = (*p ) [0];
   TEST_ASSERT ( msb != 0 );
   actual_bits = 8 * ( len - 1 );
 
@@ -62,7 +62,7 @@ int mbedtls_test_asn1_skip_integer ( unsigned char** p, const unsigned char* end
 
   if ( must_be_odd )
   {
-    TEST_ASSERT ( ( ( *p ) [len - 1] & 1 ) != 0 );
+    TEST_ASSERT ( ( (*p ) [len - 1] & 1 ) != 0 );
   }
 
   *p += len;

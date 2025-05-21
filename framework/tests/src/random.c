@@ -119,8 +119,8 @@ int mbedtls_test_rnd_pseudo_rand ( void* rng_state,
 {
   mbedtls_test_rnd_pseudo_info* info =
     ( mbedtls_test_rnd_pseudo_info* ) rng_state;
-  uint32_t i, *k, sum, delta = 0x9E3779B9;
-  unsigned char result[4], *out = output;
+  uint32_t i, * k, sum, delta = 0x9E3779B9;
+  unsigned char result[4], * out = output;
 
   if ( rng_state == NULL )
   {

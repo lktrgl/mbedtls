@@ -11,6 +11,7 @@ typedef struct mbedtls_poly1305_context
 {
   int dummy;
 }
+
 mbedtls_poly1305_context;
 
 

@@ -110,7 +110,7 @@ int mbedtls_rsa_write_pubkey ( const mbedtls_rsa_context* rsa, unsigned char* st
  *        of the functioning and parameters of this function.
  */
 int mbedtls_rsa_rsassa_pss_sign_no_mode_check ( mbedtls_rsa_context* ctx,
-    int ( *f_rng ) ( void*, unsigned char*, size_t ),
+    int (*f_rng ) ( void*, unsigned char*, size_t ),
     void* p_rng,
     mbedtls_md_type_t md_alg,
     unsigned int hashlen,

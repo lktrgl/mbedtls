@@ -122,6 +122,7 @@ int mbedtls_aesce_setkey_enc ( unsigned char* rk,
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #else

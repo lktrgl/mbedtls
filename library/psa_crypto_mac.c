@@ -25,7 +25,7 @@ static psa_status_t psa_hmac_abort_internal (
   mbedtls_psa_hmac_operation_t* hmac )
 {
   mbedtls_platform_zeroize ( hmac->opad, sizeof ( hmac->opad ) );
-  return psa_hash_abort ( &hmac->hash_ctx );
+  return psa_hash_abort (&hmac->hash_ctx );
 }
 
 static psa_status_t psa_hmac_setup_internal (
@@ -100,14 +100,14 @@ static psa_status_t psa_hmac_setup_internal (
 
   memset ( hmac->opad + key_length, 0x5C, block_size - key_length );
 
-  status = psa_hash_setup ( &hmac->hash_ctx, hash_alg );
+  status = psa_hash_setup (&hmac->hash_ctx, hash_alg );
 
   if ( status != PSA_SUCCESS )
   {
     goto cleanup;
   }
 
-  status = psa_hash_update ( &hmac->hash_ctx, ipad, block_size );
+  status = psa_hash_update (&hmac->hash_ctx, ipad, block_size );
 
 cleanup:
   mbedtls_platform_zeroize ( ipad, sizeof ( ipad ) );
@@ -120,7 +120,7 @@ static psa_status_t psa_hmac_update_internal (
   const uint8_t* data,
   size_t data_length )
 {
-  return psa_hash_update ( &hmac->hash_ctx, data, data_length );
+  return psa_hash_update (&hmac->hash_ctx, data, data_length );
 }
 
 static psa_status_t psa_hmac_finish_internal (
@@ -134,7 +134,7 @@ static psa_status_t psa_hmac_finish_internal (
   size_t block_size = PSA_HASH_BLOCK_LENGTH ( hash_alg );
   psa_status_t status;
 
-  status = psa_hash_finish ( &hmac->hash_ctx, tmp, sizeof ( tmp ), &hash_size );
+  status = psa_hash_finish (&hmac->hash_ctx, tmp, sizeof ( tmp ), &hash_size );
 
   if ( status != PSA_SUCCESS )
   {
@@ -143,28 +143,28 @@ static psa_status_t psa_hmac_finish_internal (
 
   /* From here on, tmp needs to be wiped. */
 
-  status = psa_hash_setup ( &hmac->hash_ctx, hash_alg );
+  status = psa_hash_setup (&hmac->hash_ctx, hash_alg );
 
   if ( status != PSA_SUCCESS )
   {
     goto exit;
   }
 
-  status = psa_hash_update ( &hmac->hash_ctx, hmac->opad, block_size );
+  status = psa_hash_update (&hmac->hash_ctx, hmac->opad, block_size );
 
   if ( status != PSA_SUCCESS )
   {
     goto exit;
   }
 
-  status = psa_hash_update ( &hmac->hash_ctx, tmp, hash_size );
+  status = psa_hash_update (&hmac->hash_ctx, tmp, hash_size );
 
   if ( status != PSA_SUCCESS )
   {
     goto exit;
   }
 
-  status = psa_hash_finish ( &hmac->hash_ctx, tmp, sizeof ( tmp ), &hash_size );
+  status = psa_hash_finish (&hmac->hash_ctx, tmp, sizeof ( tmp ), &hash_size );
 
   if ( status != PSA_SUCCESS )
   {
@@ -177,6 +177,7 @@ exit:
   mbedtls_platform_zeroize ( tmp, hash_size );
   return status;
 }
+
 #endif /* MBEDTLS_PSA_BUILTIN_ALG_HMAC */
 
 #if defined(MBEDTLS_PSA_BUILTIN_ALG_CMAC)
@@ -211,19 +212,20 @@ static psa_status_t cmac_setup ( mbedtls_psa_mac_operation_t* operation,
     return PSA_ERROR_NOT_SUPPORTED;
   }
 
-  ret = mbedtls_cipher_setup ( &operation->ctx.cmac, cipher_info );
+  ret = mbedtls_cipher_setup (&operation->ctx.cmac, cipher_info );
 
   if ( ret != 0 )
   {
     goto exit;
   }
 
-  ret = mbedtls_cipher_cmac_starts ( &operation->ctx.cmac,
-                                     key_buffer,
-                                     psa_get_key_bits ( attributes ) );
+  ret = mbedtls_cipher_cmac_starts (&operation->ctx.cmac,
+                                    key_buffer,
+                                    psa_get_key_bits ( attributes ) );
 exit:
   return mbedtls_to_psa_error ( ret );
 }
+
 #endif /* MBEDTLS_PSA_BUILTIN_ALG_CMAC */
 
 #if defined(MBEDTLS_PSA_BUILTIN_ALG_HMAC) || \
@@ -243,7 +245,7 @@ static psa_status_t mac_init (
 
   if ( PSA_ALG_FULL_LENGTH_MAC ( operation->alg ) == PSA_ALG_CMAC )
   {
-    mbedtls_cipher_init ( &operation->ctx.cmac );
+    mbedtls_cipher_init (&operation->ctx.cmac );
     status = PSA_SUCCESS;
   }
   else
@@ -264,7 +266,7 @@ static psa_status_t mac_init (
 
   if ( status != PSA_SUCCESS )
   {
-    memset ( operation, 0, sizeof ( *operation ) );
+    memset ( operation, 0, sizeof (*operation ) );
   }
 
   return status;
@@ -283,14 +285,14 @@ psa_status_t mbedtls_psa_mac_abort ( mbedtls_psa_mac_operation_t* operation )
 #if defined(MBEDTLS_PSA_BUILTIN_ALG_CMAC)
     if ( PSA_ALG_FULL_LENGTH_MAC ( operation->alg ) == PSA_ALG_CMAC )
     {
-      mbedtls_cipher_free ( &operation->ctx.cmac );
+      mbedtls_cipher_free (&operation->ctx.cmac );
     }
     else
 #endif /* MBEDTLS_PSA_BUILTIN_ALG_CMAC */
 #if defined(MBEDTLS_PSA_BUILTIN_ALG_HMAC)
       if ( PSA_ALG_IS_HMAC ( operation->alg ) )
       {
-        psa_hmac_abort_internal ( &operation->ctx.hmac );
+        psa_hmac_abort_internal (&operation->ctx.hmac );
       }
       else
 #endif /* MBEDTLS_PSA_BUILTIN_ALG_HMAC */
@@ -309,7 +311,7 @@ bad_state:
    * anything. Wipe the object in case it contains confidential data.
    * This may result in a memory leak if a pointer gets overwritten,
    * but it's too late to do anything about this. */
-  memset ( operation, 0, sizeof ( *operation ) );
+  memset ( operation, 0, sizeof (*operation ) );
   return PSA_ERROR_BAD_STATE;
 }
 
@@ -348,10 +350,10 @@ static psa_status_t psa_mac_setup ( mbedtls_psa_mac_operation_t* operation,
 #if defined(MBEDTLS_PSA_BUILTIN_ALG_HMAC)
     if ( PSA_ALG_IS_HMAC ( alg ) )
     {
-      status = psa_hmac_setup_internal ( &operation->ctx.hmac,
-                                         key_buffer,
-                                         key_buffer_size,
-                                         PSA_ALG_HMAC_GET_HASH ( alg ) );
+      status = psa_hmac_setup_internal (&operation->ctx.hmac,
+                                        key_buffer,
+                                        key_buffer_size,
+                                        PSA_ALG_HMAC_GET_HASH ( alg ) );
     }
     else
 #endif /* MBEDTLS_PSA_BUILTIN_ALG_HMAC */
@@ -407,16 +409,16 @@ psa_status_t mbedtls_psa_mac_update (
   if ( PSA_ALG_FULL_LENGTH_MAC ( operation->alg ) == PSA_ALG_CMAC )
   {
     return mbedtls_to_psa_error (
-             mbedtls_cipher_cmac_update ( &operation->ctx.cmac,
-                                          input, input_length ) );
+             mbedtls_cipher_cmac_update (&operation->ctx.cmac,
+                                         input, input_length ) );
   }
   else
 #endif /* MBEDTLS_PSA_BUILTIN_ALG_CMAC */
 #if defined(MBEDTLS_PSA_BUILTIN_ALG_HMAC)
     if ( PSA_ALG_IS_HMAC ( operation->alg ) )
     {
-      return psa_hmac_update_internal ( &operation->ctx.hmac,
-                                        input, input_length );
+      return psa_hmac_update_internal (&operation->ctx.hmac,
+                                       input, input_length );
     }
     else
 #endif /* MBEDTLS_PSA_BUILTIN_ALG_HMAC */
@@ -438,7 +440,7 @@ static psa_status_t psa_mac_finish_internal (
   if ( PSA_ALG_FULL_LENGTH_MAC ( operation->alg ) == PSA_ALG_CMAC )
   {
     uint8_t tmp[PSA_BLOCK_CIPHER_BLOCK_MAX_SIZE];
-    int ret = mbedtls_cipher_cmac_finish ( &operation->ctx.cmac, tmp );
+    int ret = mbedtls_cipher_cmac_finish (&operation->ctx.cmac, tmp );
 
     if ( ret == 0 )
     {
@@ -453,8 +455,8 @@ static psa_status_t psa_mac_finish_internal (
 #if defined(MBEDTLS_PSA_BUILTIN_ALG_HMAC)
     if ( PSA_ALG_IS_HMAC ( operation->alg ) )
     {
-      return psa_hmac_finish_internal ( &operation->ctx.hmac,
-                                        mac, mac_size );
+      return psa_hmac_finish_internal (&operation->ctx.hmac,
+                                       mac, mac_size );
     }
     else
 #endif /* MBEDTLS_PSA_BUILTIN_ALG_HMAC */
@@ -542,9 +544,9 @@ psa_status_t mbedtls_psa_mac_compute (
   psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
   mbedtls_psa_mac_operation_t operation = MBEDTLS_PSA_MAC_OPERATION_INIT;
 
-  status = psa_mac_setup ( &operation,
-                           attributes, key_buffer, key_buffer_size,
-                           alg );
+  status = psa_mac_setup (&operation,
+                          attributes, key_buffer, key_buffer_size,
+                          alg );
 
   if ( status != PSA_SUCCESS )
   {
@@ -553,7 +555,7 @@ psa_status_t mbedtls_psa_mac_compute (
 
   if ( input_length > 0 )
   {
-    status = mbedtls_psa_mac_update ( &operation, input, input_length );
+    status = mbedtls_psa_mac_update (&operation, input, input_length );
 
     if ( status != PSA_SUCCESS )
     {
@@ -561,7 +563,7 @@ psa_status_t mbedtls_psa_mac_compute (
     }
   }
 
-  status = psa_mac_finish_internal ( &operation, mac, mac_size );
+  status = psa_mac_finish_internal (&operation, mac, mac_size );
 
   if ( status == PSA_SUCCESS )
   {
@@ -569,7 +571,7 @@ psa_status_t mbedtls_psa_mac_compute (
   }
 
 exit:
-  mbedtls_psa_mac_abort ( &operation );
+  mbedtls_psa_mac_abort (&operation );
 
   return status;
 }

@@ -109,7 +109,7 @@ psa_status_t mbedtls_test_transparent_hash_clone (
         defined(LIBTESTDRIVER1_MBEDTLS_PSA_BUILTIN_HASH)
     mbedtls_test_driver_hash_hooks.driver_status =
       libtestdriver1_mbedtls_psa_hash_clone ( source_operation,
-          target_operation );
+        target_operation );
 #elif defined(MBEDTLS_PSA_BUILTIN_HASH)
     mbedtls_test_driver_hash_hooks.driver_status =
       mbedtls_psa_hash_clone ( source_operation, target_operation );
@@ -218,4 +218,5 @@ psa_status_t mbedtls_test_transparent_hash_abort (
 
   return mbedtls_test_driver_hash_hooks.driver_status;
 }
+
 #endif /* PSA_CRYPTO_DRIVER_TEST */

@@ -27,9 +27,9 @@ int LLVMFuzzerTestOneInput ( const uint8_t* Data, size_t Size )
     Size = MAX_LEN;
   }
 
-  mbedtls_ctr_drbg_init ( &ctr_drbg );
-  mbedtls_entropy_init ( &entropy );
-  mbedtls_pk_init ( &pk );
+  mbedtls_ctr_drbg_init (&ctr_drbg );
+  mbedtls_entropy_init (&entropy );
+  mbedtls_pk_init (&pk );
 
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
   psa_status_t status = psa_crypto_init();
@@ -41,32 +41,32 @@ int LLVMFuzzerTestOneInput ( const uint8_t* Data, size_t Size )
 
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 
-  if ( mbedtls_ctr_drbg_seed ( &ctr_drbg, dummy_entropy, &entropy,
-                               ( const unsigned char* ) pers, strlen ( pers ) ) != 0 )
+  if ( mbedtls_ctr_drbg_seed (&ctr_drbg, dummy_entropy, &entropy,
+                              ( const unsigned char* ) pers, strlen ( pers ) ) != 0 )
   {
     goto exit;
   }
 
-  ret = mbedtls_pk_parse_key ( &pk, Data, Size, NULL, 0,
-                               dummy_random, &ctr_drbg );
+  ret = mbedtls_pk_parse_key (&pk, Data, Size, NULL, 0,
+                              dummy_random, &ctr_drbg );
 
   if ( ret == 0 )
   {
 #if defined(MBEDTLS_RSA_C)
 
-    if ( mbedtls_pk_get_type ( &pk ) == MBEDTLS_PK_RSA )
+    if ( mbedtls_pk_get_type (&pk ) == MBEDTLS_PK_RSA )
     {
       mbedtls_mpi N, P, Q, D, E, DP, DQ, QP;
       mbedtls_rsa_context* rsa;
 
-      mbedtls_mpi_init ( &N );
-      mbedtls_mpi_init ( &P );
-      mbedtls_mpi_init ( &Q );
-      mbedtls_mpi_init ( &D );
-      mbedtls_mpi_init ( &E );
-      mbedtls_mpi_init ( &DP );
-      mbedtls_mpi_init ( &DQ );
-      mbedtls_mpi_init ( &QP );
+      mbedtls_mpi_init (&N );
+      mbedtls_mpi_init (&P );
+      mbedtls_mpi_init (&Q );
+      mbedtls_mpi_init (&D );
+      mbedtls_mpi_init (&E );
+      mbedtls_mpi_init (&DP );
+      mbedtls_mpi_init (&DQ );
+      mbedtls_mpi_init (&QP );
 
       rsa = mbedtls_pk_rsa ( pk );
 
@@ -80,20 +80,20 @@ int LLVMFuzzerTestOneInput ( const uint8_t* Data, size_t Size )
         abort();
       }
 
-      mbedtls_mpi_free ( &N );
-      mbedtls_mpi_free ( &P );
-      mbedtls_mpi_free ( &Q );
-      mbedtls_mpi_free ( &D );
-      mbedtls_mpi_free ( &E );
-      mbedtls_mpi_free ( &DP );
-      mbedtls_mpi_free ( &DQ );
-      mbedtls_mpi_free ( &QP );
+      mbedtls_mpi_free (&N );
+      mbedtls_mpi_free (&P );
+      mbedtls_mpi_free (&Q );
+      mbedtls_mpi_free (&D );
+      mbedtls_mpi_free (&E );
+      mbedtls_mpi_free (&DP );
+      mbedtls_mpi_free (&DQ );
+      mbedtls_mpi_free (&QP );
     }
     else
 #endif
 #if defined(MBEDTLS_ECP_C)
-      if ( mbedtls_pk_get_type ( &pk ) == MBEDTLS_PK_ECKEY ||
-           mbedtls_pk_get_type ( &pk ) == MBEDTLS_PK_ECKEY_DH )
+      if ( mbedtls_pk_get_type (&pk ) == MBEDTLS_PK_ECKEY ||
+           mbedtls_pk_get_type (&pk ) == MBEDTLS_PK_ECKEY_DH )
       {
         mbedtls_ecp_keypair* ecp = mbedtls_pk_ec ( pk );
         mbedtls_ecp_group_id grp_id = mbedtls_ecp_keypair_get_group_id ( ecp );
@@ -117,9 +117,9 @@ int LLVMFuzzerTestOneInput ( const uint8_t* Data, size_t Size )
   }
 
 exit:
-  mbedtls_entropy_free ( &entropy );
-  mbedtls_ctr_drbg_free ( &ctr_drbg );
-  mbedtls_pk_free ( &pk );
+  mbedtls_entropy_free (&entropy );
+  mbedtls_ctr_drbg_free (&ctr_drbg );
+  mbedtls_pk_free (&pk );
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
   mbedtls_psa_crypto_free();
 #endif /* MBEDTLS_USE_PSA_CRYPTO */

@@ -71,7 +71,7 @@ psa_status_t p256_transparent_import_key ( const psa_key_attributes_t* attribute
     size_t* bits )
 {
   /* Check the key size */
-  if ( *bits != 0 && *bits != CURVE_BITS )
+  if (*bits != 0 && *bits != CURVE_BITS )
   {
     return PSA_ERROR_NOT_SUPPORTED;
   }

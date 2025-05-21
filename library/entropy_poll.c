@@ -58,8 +58,8 @@ int mbedtls_platform_entropy_poll ( void* data, unsigned char* output, size_t le
     unsigned long ulong_bytes =
       ( len > ULONG_MAX ) ? ULONG_MAX : ( unsigned long ) len;
 
-    if ( !BCRYPT_SUCCESS ( BCryptGenRandom ( NULL, output, ulong_bytes,
-                           BCRYPT_USE_SYSTEM_PREFERRED_RNG ) ) )
+    if (!BCRYPT_SUCCESS ( BCryptGenRandom ( NULL, output, ulong_bytes,
+                                            BCRYPT_USE_SYSTEM_PREFERRED_RNG ) ) )
     {
       return MBEDTLS_ERR_ENTROPY_SOURCE_FAILED;
     }
@@ -70,6 +70,7 @@ int mbedtls_platform_entropy_poll ( void* data, unsigned char* output, size_t le
 
   return 0;
 }
+
 #else /* _WIN32 && !EFIX64 && !EFI32 */
 
 /*
@@ -94,6 +95,7 @@ static int getrandom_wrapper ( void* buf, size_t buflen, unsigned int flags )
 #endif
   return ( int ) syscall ( SYS_getrandom, buf, buflen, flags );
 }
+
 #endif /* SYS_getrandom */
 #endif /* __linux__ || __midipix__ */
 
@@ -108,6 +110,7 @@ static int getrandom_wrapper ( void* buf, size_t buflen, unsigned int flags )
 {
   return ( int ) getrandom ( buf, buflen, flags );
 }
+
 #endif /* (__FreeBSD__ && __FreeBSD_version >= 1200000) ||
           (__DragonFly__ && __DragonFly_version >= 500700) */
 #endif /* __FreeBSD__ || __DragonFly__ */
@@ -149,6 +152,7 @@ static int sysctl_arnd_wrapper ( unsigned char* buf, size_t buflen )
 
   return 0;
 }
+
 #endif /* KERN_ARND */
 #endif /* __FreeBSD__ || __NetBSD__ */
 
@@ -219,6 +223,7 @@ int mbedtls_platform_entropy_poll ( void* data,
   return 0;
 #endif /* HAVE_SYSCTL_ARND */
 }
+
 #endif /* _WIN32 && !EFIX64 && !EFI32 */
 #endif /* !MBEDTLS_NO_PLATFORM_ENTROPY */
 
@@ -247,6 +252,7 @@ int mbedtls_nv_seed_poll ( void* data,
 
   return 0;
 }
+
 #endif /* MBEDTLS_ENTROPY_NV_SEED */
 
 #endif /* MBEDTLS_ENTROPY_C */

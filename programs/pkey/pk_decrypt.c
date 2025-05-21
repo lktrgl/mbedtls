@@ -31,6 +31,7 @@ int main ( void )
                    "MBEDTLS_CTR_DRBG_C not defined.\n" );
   mbedtls_exit ( 0 );
 }
+
 #else
 
 
@@ -49,9 +50,9 @@ int main ( int argc, char* argv[] )
   const char* pers = "mbedtls_pk_decrypt";
   ( ( void ) argv );
 
-  mbedtls_pk_init ( &pk );
-  mbedtls_entropy_init ( &entropy );
-  mbedtls_ctr_drbg_init ( &ctr_drbg );
+  mbedtls_pk_init (&pk );
+  mbedtls_entropy_init (&entropy );
+  mbedtls_ctr_drbg_init (&ctr_drbg );
 
   memset ( result, 0, sizeof ( result ) );
 
@@ -81,9 +82,9 @@ int main ( int argc, char* argv[] )
   mbedtls_printf ( "\n  . Seeding the random number generator..." );
   fflush ( stdout );
 
-  if ( ( ret = mbedtls_ctr_drbg_seed ( &ctr_drbg, mbedtls_entropy_func,
-                                       &entropy, ( const unsigned char* ) pers,
-                                       strlen ( pers ) ) ) != 0 )
+  if ( ( ret = mbedtls_ctr_drbg_seed (&ctr_drbg, mbedtls_entropy_func,
+                                      &entropy, ( const unsigned char* ) pers,
+                                      strlen ( pers ) ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_ctr_drbg_seed returned -0x%04x\n",
                      ( unsigned int ) - ret );
@@ -93,8 +94,8 @@ int main ( int argc, char* argv[] )
   mbedtls_printf ( "\n  . Reading private key from '%s'", argv[1] );
   fflush ( stdout );
 
-  if ( ( ret = mbedtls_pk_parse_keyfile ( &pk, argv[1], "",
-                                          mbedtls_ctr_drbg_random, &ctr_drbg ) ) != 0 )
+  if ( ( ret = mbedtls_pk_parse_keyfile (&pk, argv[1], "",
+                                         mbedtls_ctr_drbg_random, &ctr_drbg ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_pk_parse_keyfile returned -0x%04x\n",
                      ( unsigned int ) - ret );
@@ -127,8 +128,8 @@ int main ( int argc, char* argv[] )
   mbedtls_printf ( "\n  . Decrypting the encrypted data" );
   fflush ( stdout );
 
-  if ( ( ret = mbedtls_pk_decrypt ( &pk, buf, i, result, &olen, sizeof ( result ),
-                                    mbedtls_ctr_drbg_random, &ctr_drbg ) ) != 0 )
+  if ( ( ret = mbedtls_pk_decrypt (&pk, buf, i, result, &olen, sizeof ( result ),
+                                   mbedtls_ctr_drbg_random, &ctr_drbg ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_pk_decrypt returned -0x%04x\n",
                      ( unsigned int ) - ret );
@@ -143,9 +144,9 @@ int main ( int argc, char* argv[] )
 
 exit:
 
-  mbedtls_pk_free ( &pk );
-  mbedtls_entropy_free ( &entropy );
-  mbedtls_ctr_drbg_free ( &ctr_drbg );
+  mbedtls_pk_free (&pk );
+  mbedtls_entropy_free (&entropy );
+  mbedtls_ctr_drbg_free (&ctr_drbg );
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
   mbedtls_psa_crypto_free();
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
@@ -162,5 +163,6 @@ exit:
 
   mbedtls_exit ( exit_code );
 }
+
 #endif /* MBEDTLS_BIGNUM_C && MBEDTLS_PK_PARSE_C && MBEDTLS_FS_IO &&
           MBEDTLS_ENTROPY_C && MBEDTLS_CTR_DRBG_C */

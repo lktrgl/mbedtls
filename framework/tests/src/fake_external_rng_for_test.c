@@ -32,7 +32,7 @@ psa_status_t mbedtls_psa_external_get_random (
 {
   ( void ) context;
 
-  if ( !test_insecure_external_rng_enabled )
+  if (!test_insecure_external_rng_enabled )
   {
     return PSA_ERROR_INSUFFICIENT_ENTROPY;
   }
@@ -43,4 +43,5 @@ psa_status_t mbedtls_psa_external_get_random (
   *output_length = output_size;
   return PSA_SUCCESS;
 }
+
 #endif /* MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG */

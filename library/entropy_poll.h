@@ -59,6 +59,7 @@ int mbedtls_nv_seed_poll ( void* data,
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* entropy_poll.h */

@@ -32,6 +32,7 @@ static int local_err_translation ( psa_status_t status )
                                  ARRAY_LENGTH ( psa_to_ssl_errors ),
                                  psa_generic_status_to_mbedtls );
 }
+
 #define PSA_TO_MBEDTLS_ERR(status) local_err_translation(status)
 
 #define MBEDTLS_SSL_TLS1_3_LABEL(name, string)       \
@@ -173,7 +174,7 @@ int mbedtls_ssl_tls13_hkdf_expand_label (
     return MBEDTLS_ERR_SSL_INTERNAL_ERROR;
   }
 
-  if ( !PSA_ALG_IS_HASH ( hash_alg ) )
+  if (!PSA_ALG_IS_HASH ( hash_alg ) )
   {
     return MBEDTLS_ERR_SSL_BAD_INPUT_DATA;
   }
@@ -184,14 +185,14 @@ int mbedtls_ssl_tls13_hkdf_expand_label (
                                 hkdf_label,
                                 &hkdf_label_len );
 
-  status = psa_key_derivation_setup ( &operation, PSA_ALG_HKDF_EXPAND ( hash_alg ) );
+  status = psa_key_derivation_setup (&operation, PSA_ALG_HKDF_EXPAND ( hash_alg ) );
 
   if ( status != PSA_SUCCESS )
   {
     goto cleanup;
   }
 
-  status = psa_key_derivation_input_bytes ( &operation,
+  status = psa_key_derivation_input_bytes (&operation,
            PSA_KEY_DERIVATION_INPUT_SECRET,
            secret,
            secret_len );
@@ -201,7 +202,7 @@ int mbedtls_ssl_tls13_hkdf_expand_label (
     goto cleanup;
   }
 
-  status = psa_key_derivation_input_bytes ( &operation,
+  status = psa_key_derivation_input_bytes (&operation,
            PSA_KEY_DERIVATION_INPUT_INFO,
            hkdf_label,
            hkdf_label_len );
@@ -211,7 +212,7 @@ int mbedtls_ssl_tls13_hkdf_expand_label (
     goto cleanup;
   }
 
-  status = psa_key_derivation_output_bytes ( &operation,
+  status = psa_key_derivation_output_bytes (&operation,
            buf,
            buf_len );
 
@@ -221,7 +222,7 @@ int mbedtls_ssl_tls13_hkdf_expand_label (
   }
 
 cleanup:
-  abort_status = psa_key_derivation_abort ( &operation );
+  abort_status = psa_key_derivation_abort (&operation );
   status = ( status == PSA_SUCCESS ? abort_status : status );
   mbedtls_platform_zeroize ( hkdf_label, hkdf_label_len );
   return PSA_TO_MBEDTLS_ERR ( status );
@@ -372,7 +373,7 @@ int mbedtls_ssl_tls13_evolve_secret (
   psa_key_derivation_operation_t operation =
     PSA_KEY_DERIVATION_OPERATION_INIT;
 
-  if ( !PSA_ALG_IS_HASH ( hash_alg ) )
+  if (!PSA_ALG_IS_HASH ( hash_alg ) )
   {
     return MBEDTLS_ERR_SSL_BAD_INPUT_DATA;
   }
@@ -410,15 +411,15 @@ int mbedtls_ssl_tls13_evolve_secret (
     l_input_len = hlen;
   }
 
-  status = psa_key_derivation_setup ( &operation,
-                                      PSA_ALG_HKDF_EXTRACT ( hash_alg ) );
+  status = psa_key_derivation_setup (&operation,
+                                     PSA_ALG_HKDF_EXTRACT ( hash_alg ) );
 
   if ( status != PSA_SUCCESS )
   {
     goto cleanup;
   }
 
-  status = psa_key_derivation_input_bytes ( &operation,
+  status = psa_key_derivation_input_bytes (&operation,
            PSA_KEY_DERIVATION_INPUT_SALT,
            tmp_secret,
            hlen );
@@ -428,7 +429,7 @@ int mbedtls_ssl_tls13_evolve_secret (
     goto cleanup;
   }
 
-  status = psa_key_derivation_input_bytes ( &operation,
+  status = psa_key_derivation_input_bytes (&operation,
            PSA_KEY_DERIVATION_INPUT_SECRET,
            l_input, l_input_len );
 
@@ -437,7 +438,7 @@ int mbedtls_ssl_tls13_evolve_secret (
     goto cleanup;
   }
 
-  status = psa_key_derivation_output_bytes ( &operation,
+  status = psa_key_derivation_output_bytes (&operation,
            secret_new,
            PSA_HASH_LENGTH ( hash_alg ) );
 
@@ -447,7 +448,7 @@ int mbedtls_ssl_tls13_evolve_secret (
   }
 
 cleanup:
-  abort_status = psa_key_derivation_abort ( &operation );
+  abort_status = psa_key_derivation_abort (&operation );
   status = ( status == PSA_SUCCESS ? abort_status : status );
   ret = ( ret == 0 ? PSA_TO_MBEDTLS_ERR ( status ) : ret );
   mbedtls_platform_zeroize ( tmp_secret, sizeof ( tmp_secret ) );
@@ -465,7 +466,7 @@ int mbedtls_ssl_tls13_derive_early_secrets (
 
   /* We should never call this function with an unknown hash,
    * but add an assertion anyway. */
-  if ( !PSA_ALG_IS_HASH ( hash_alg ) )
+  if (!PSA_ALG_IS_HASH ( hash_alg ) )
   {
     return MBEDTLS_ERR_SSL_INTERNAL_ERROR;
   }
@@ -528,7 +529,7 @@ int mbedtls_ssl_tls13_derive_handshake_secrets (
 
   /* We should never call this function with an unknown hash,
    * but add an assertion anyway. */
-  if ( !PSA_ALG_IS_HASH ( hash_alg ) )
+  if (!PSA_ALG_IS_HASH ( hash_alg ) )
   {
     return MBEDTLS_ERR_SSL_INTERNAL_ERROR;
   }
@@ -599,7 +600,7 @@ int mbedtls_ssl_tls13_derive_application_secrets (
 
   /* We should never call this function with an unknown hash,
    * but add an assertion anyway. */
-  if ( !PSA_ALG_IS_HASH ( hash_alg ) )
+  if (!PSA_ALG_IS_HASH ( hash_alg ) )
   {
     return MBEDTLS_ERR_SSL_INTERNAL_ERROR;
   }
@@ -682,7 +683,7 @@ int mbedtls_ssl_tls13_derive_resumption_master_secret (
 
   /* We should never call this function with an unknown hash,
    * but add an assertion anyway. */
-  if ( !PSA_ALG_IS_HASH ( hash_alg ) )
+  if (!PSA_ALG_IS_HASH ( hash_alg ) )
   {
     return MBEDTLS_ERR_SSL_INTERNAL_ERROR;
   }
@@ -767,7 +768,7 @@ static int ssl_tls13_calc_finished_core ( psa_algorithm_t hash_alg,
 
   /* We should never call this function with an unknown hash,
    * but add an assertion anyway. */
-  if ( !PSA_ALG_IS_HASH ( hash_alg ) )
+  if (!PSA_ALG_IS_HASH ( hash_alg ) )
   {
     return MBEDTLS_ERR_SSL_INTERNAL_ERROR;
   }
@@ -801,11 +802,11 @@ static int ssl_tls13_calc_finished_core ( psa_algorithm_t hash_alg,
   }
 
   alg = PSA_ALG_HMAC ( hash_alg );
-  psa_set_key_usage_flags ( &attributes, PSA_KEY_USAGE_SIGN_MESSAGE );
-  psa_set_key_algorithm ( &attributes, alg );
-  psa_set_key_type ( &attributes, PSA_KEY_TYPE_HMAC );
+  psa_set_key_usage_flags (&attributes, PSA_KEY_USAGE_SIGN_MESSAGE );
+  psa_set_key_algorithm (&attributes, alg );
+  psa_set_key_type (&attributes, PSA_KEY_TYPE_HMAC );
 
-  status = psa_import_key ( &attributes, finished_key, hash_len, &key );
+  status = psa_import_key (&attributes, finished_key, hash_len, &key );
 
   if ( status != PSA_SUCCESS )
   {
@@ -922,7 +923,7 @@ int mbedtls_ssl_tls13_create_psk_binder ( mbedtls_ssl_context* ssl,
 
   /* We should never call this function with an unknown hash,
    * but add an assertion anyway. */
-  if ( !PSA_ALG_IS_HASH ( hash_alg ) )
+  if (!PSA_ALG_IS_HASH ( hash_alg ) )
   {
     return MBEDTLS_ERR_SSL_INTERNAL_ERROR;
   }
@@ -1052,15 +1053,15 @@ int mbedtls_ssl_tls13_populate_transform (
   /*
    * Setup cipher contexts in target transform
    */
-  if ( ( ret = mbedtls_cipher_setup ( &transform->cipher_ctx_enc,
-                                      cipher_info ) ) != 0 )
+  if ( ( ret = mbedtls_cipher_setup (&transform->cipher_ctx_enc,
+                                     cipher_info ) ) != 0 )
   {
     MBEDTLS_SSL_DEBUG_RET ( 1, "mbedtls_cipher_setup", ret );
     return ret;
   }
 
-  if ( ( ret = mbedtls_cipher_setup ( &transform->cipher_ctx_dec,
-                                      cipher_info ) ) != 0 )
+  if ( ( ret = mbedtls_cipher_setup (&transform->cipher_ctx_dec,
+                                     cipher_info ) ) != 0 )
   {
     MBEDTLS_SSL_DEBUG_RET ( 1, "mbedtls_cipher_setup", ret );
     return ret;
@@ -1099,17 +1100,17 @@ int mbedtls_ssl_tls13_populate_transform (
 
 #if !defined(MBEDTLS_USE_PSA_CRYPTO)
 
-  if ( ( ret = mbedtls_cipher_setkey ( &transform->cipher_ctx_enc,
-                                       key_enc, ( int ) mbedtls_cipher_info_get_key_bitlen ( cipher_info ),
-                                       MBEDTLS_ENCRYPT ) ) != 0 )
+  if ( ( ret = mbedtls_cipher_setkey (&transform->cipher_ctx_enc,
+                                      key_enc, ( int ) mbedtls_cipher_info_get_key_bitlen ( cipher_info ),
+                                      MBEDTLS_ENCRYPT ) ) != 0 )
   {
     MBEDTLS_SSL_DEBUG_RET ( 1, "mbedtls_cipher_setkey", ret );
     return ret;
   }
 
-  if ( ( ret = mbedtls_cipher_setkey ( &transform->cipher_ctx_dec,
-                                       key_dec, ( int ) mbedtls_cipher_info_get_key_bitlen ( cipher_info ),
-                                       MBEDTLS_DECRYPT ) ) != 0 )
+  if ( ( ret = mbedtls_cipher_setkey (&transform->cipher_ctx_dec,
+                                      key_dec, ( int ) mbedtls_cipher_info_get_key_bitlen ( cipher_info ),
+                                      MBEDTLS_DECRYPT ) ) != 0 )
   {
     MBEDTLS_SSL_DEBUG_RET ( 1, "mbedtls_cipher_setkey", ret );
     return ret;
@@ -1162,26 +1163,26 @@ int mbedtls_ssl_tls13_populate_transform (
 
   if ( alg != MBEDTLS_SSL_NULL_CIPHER )
   {
-    psa_set_key_usage_flags ( &attributes, PSA_KEY_USAGE_ENCRYPT );
-    psa_set_key_algorithm ( &attributes, alg );
-    psa_set_key_type ( &attributes, key_type );
+    psa_set_key_usage_flags (&attributes, PSA_KEY_USAGE_ENCRYPT );
+    psa_set_key_algorithm (&attributes, alg );
+    psa_set_key_type (&attributes, key_type );
 
-    if ( ( status = psa_import_key ( &attributes,
-                                     key_enc,
-                                     PSA_BITS_TO_BYTES ( key_bits ),
-                                     &transform->psa_key_enc ) ) != PSA_SUCCESS )
+    if ( ( status = psa_import_key (&attributes,
+                                    key_enc,
+                                    PSA_BITS_TO_BYTES ( key_bits ),
+                                    &transform->psa_key_enc ) ) != PSA_SUCCESS )
     {
       MBEDTLS_SSL_DEBUG_RET (
         1, "psa_import_key", PSA_TO_MBEDTLS_ERR ( status ) );
       return PSA_TO_MBEDTLS_ERR ( status );
     }
 
-    psa_set_key_usage_flags ( &attributes, PSA_KEY_USAGE_DECRYPT );
+    psa_set_key_usage_flags (&attributes, PSA_KEY_USAGE_DECRYPT );
 
-    if ( ( status = psa_import_key ( &attributes,
-                                     key_dec,
-                                     PSA_BITS_TO_BYTES ( key_bits ),
-                                     &transform->psa_key_dec ) ) != PSA_SUCCESS )
+    if ( ( status = psa_import_key (&attributes,
+                                    key_dec,
+                                    PSA_BITS_TO_BYTES ( key_bits ),
+                                    &transform->psa_key_dec ) ) != PSA_SUCCESS )
     {
       MBEDTLS_SSL_DEBUG_RET (
         1, "psa_import_key", PSA_TO_MBEDTLS_ERR ( status ) );
@@ -1391,7 +1392,7 @@ int mbedtls_ssl_tls13_compute_early_transform ( mbedtls_ssl_context* ssl )
   handshake->transform_earlydata = transform_earlydata;
 
 cleanup:
-  mbedtls_platform_zeroize ( &traffic_keys, sizeof ( traffic_keys ) );
+  mbedtls_platform_zeroize (&traffic_keys, sizeof ( traffic_keys ) );
 
   if ( ret != 0 )
   {
@@ -1400,6 +1401,7 @@ cleanup:
 
   return ret;
 }
+
 #endif /* MBEDTLS_SSL_EARLY_DATA */
 
 int mbedtls_ssl_tls13_key_schedule_stage_early ( mbedtls_ssl_context* ssl )
@@ -1648,7 +1650,7 @@ static int ssl_tls13_key_schedule_stage_handshake ( mbedtls_ssl_context* ssl )
       }
 
       shared_secret_len = PSA_BITS_TO_BYTES (
-                            psa_get_key_bits ( &key_attributes ) );
+                            psa_get_key_bits (&key_attributes ) );
       shared_secret = mbedtls_calloc ( 1, shared_secret_len );
 
       if ( shared_secret == NULL )
@@ -1918,7 +1920,7 @@ int mbedtls_ssl_tls13_compute_handshake_transform ( mbedtls_ssl_context* ssl )
   handshake->transform_handshake = transform_handshake;
 
 cleanup:
-  mbedtls_platform_zeroize ( &traffic_keys, sizeof ( traffic_keys ) );
+  mbedtls_platform_zeroize (&traffic_keys, sizeof ( traffic_keys ) );
 
   if ( ret != 0 )
   {
@@ -1962,8 +1964,8 @@ int mbedtls_ssl_tls13_compute_resumption_master_secret ( mbedtls_ssl_context* ss
   }
 
   /* Erase master secrets */
-  mbedtls_platform_zeroize ( &handshake->tls13_master_secrets,
-                             sizeof ( handshake->tls13_master_secrets ) );
+  mbedtls_platform_zeroize (&handshake->tls13_master_secrets,
+                            sizeof ( handshake->tls13_master_secrets ) );
 
   MBEDTLS_SSL_DEBUG_BUF (
     4, "Resumption master secret",
@@ -2025,7 +2027,7 @@ int mbedtls_ssl_tls13_compute_application_transform ( mbedtls_ssl_context* ssl )
 
 cleanup:
 
-  mbedtls_platform_zeroize ( &traffic_keys, sizeof ( traffic_keys ) );
+  mbedtls_platform_zeroize (&traffic_keys, sizeof ( traffic_keys ) );
 
   if ( ret != 0 )
   {
@@ -2059,10 +2061,10 @@ int mbedtls_ssl_tls13_export_handshake_psk ( mbedtls_ssl_context* ssl,
     return PSA_TO_MBEDTLS_ERR ( status );
   }
 
-  *psk_len = PSA_BITS_TO_BYTES ( psa_get_key_bits ( &key_attributes ) );
+  *psk_len = PSA_BITS_TO_BYTES ( psa_get_key_bits (&key_attributes ) );
   *psk = mbedtls_calloc ( 1, *psk_len );
 
-  if ( *psk == NULL )
+  if (*psk == NULL )
   {
     return MBEDTLS_ERR_SSL_ALLOC_FAILED;
   }
@@ -2082,7 +2084,7 @@ int mbedtls_ssl_tls13_export_handshake_psk ( mbedtls_ssl_context* ssl,
   *psk = ssl->handshake->psk;
   *psk_len = ssl->handshake->psk_len;
 
-  if ( *psk == NULL )
+  if (*psk == NULL )
   {
     return MBEDTLS_ERR_SSL_INTERNAL_ERROR;
   }
@@ -2090,6 +2092,7 @@ int mbedtls_ssl_tls13_export_handshake_psk ( mbedtls_ssl_context* ssl,
   return 0;
 #endif /* !MBEDTLS_USE_PSA_CRYPTO */
 }
+
 #endif /* MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_SOME_PSK_ENABLED */
 
 #endif /* MBEDTLS_SSL_PROTO_TLS1_3 */

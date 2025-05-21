@@ -84,7 +84,7 @@ int psa_generic_status_to_mbedtls ( psa_status_t status );
 int psa_status_to_mbedtls ( psa_status_t status,
                             const mbedtls_error_pair_t* local_translations,
                             size_t local_errors_num,
-                            int ( *fallback_f ) ( psa_status_t ) );
+                            int (*fallback_f ) ( psa_status_t ) );
 
 /* The second out of three-stage error handling functions of the pk module,
  * acts as a fallback after RSA / ECDSA error translation, and if no match

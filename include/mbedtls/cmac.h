@@ -242,6 +242,7 @@ int mbedtls_cmac_self_test ( int verbose );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* MBEDTLS_CMAC_H */

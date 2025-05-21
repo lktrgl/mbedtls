@@ -24,6 +24,7 @@ int main ( void )
                    "MBEDTLS_ERROR_C not defined.\n" );
   mbedtls_exit ( 0 );
 }
+
 #else
 
 #include "mbedtls/x509_crt.h"
@@ -207,7 +208,7 @@ struct options
 } opt;
 
 static int write_certificate ( mbedtls_x509write_cert* crt, const char* output_file,
-                               int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                               int (*f_rng ) ( void*, unsigned char*, size_t ),
                                void* p_rng )
 {
   int ret;
@@ -282,7 +283,7 @@ static int parse_serial_decimal_format ( unsigned char* obuf, size_t obufmax,
 
   while ( remaining_bytes > 0 )
   {
-    if ( obufmax < ( *len + 1 ) )
+    if ( obufmax < (*len + 1 ) )
     {
       return -1;
     }
@@ -290,10 +291,10 @@ static int parse_serial_decimal_format ( unsigned char* obuf, size_t obufmax,
     val = ( dec >> ( ( remaining_bytes - 1 ) * 8 ) ) & 0xFF;
 
     /* Skip leading zeros */
-    if ( ( val != 0 ) || ( *len != 0 ) )
+    if ( ( val != 0 ) || (*len != 0 ) )
     {
       *p = val;
-      ( *len )++;
+      (*len )++;
       p++;
     }
 
@@ -310,11 +311,11 @@ int main ( int argc, char* argv[] )
   mbedtls_x509_crt issuer_crt;
   mbedtls_pk_context loaded_issuer_key, loaded_subject_key;
   mbedtls_pk_context* issuer_key = &loaded_issuer_key,
-                      *subject_key = &loaded_subject_key;
+                      * subject_key = &loaded_subject_key;
   char buf[1024];
   char issuer_name[256];
   int i;
-  char* p, *q, *r;
+  char* p, * q, * r;
 #if defined(MBEDTLS_X509_CSR_PARSE_C)
   char subject_name[256];
   mbedtls_x509_csr csr;
@@ -327,21 +328,21 @@ int main ( int argc, char* argv[] )
   mbedtls_entropy_context entropy;
   mbedtls_ctr_drbg_context ctr_drbg;
   const char* pers = "crt example app";
-  mbedtls_x509_san_list* cur, *prev;
+  mbedtls_x509_san_list* cur, * prev;
   mbedtls_asn1_named_data* ext_san_dirname = NULL;
   uint8_t ip[4] = { 0 };
   /*
    * Set to sane values
    */
-  mbedtls_x509write_crt_init ( &crt );
-  mbedtls_pk_init ( &loaded_issuer_key );
-  mbedtls_pk_init ( &loaded_subject_key );
-  mbedtls_ctr_drbg_init ( &ctr_drbg );
-  mbedtls_entropy_init ( &entropy );
+  mbedtls_x509write_crt_init (&crt );
+  mbedtls_pk_init (&loaded_issuer_key );
+  mbedtls_pk_init (&loaded_subject_key );
+  mbedtls_ctr_drbg_init (&ctr_drbg );
+  mbedtls_entropy_init (&entropy );
 #if defined(MBEDTLS_X509_CSR_PARSE_C)
-  mbedtls_x509_csr_init ( &csr );
+  mbedtls_x509_csr_init (&csr );
 #endif
-  mbedtls_x509_crt_init ( &issuer_crt );
+  mbedtls_x509_crt_init (&issuer_crt );
   memset ( buf, 0, sizeof ( buf ) );
   memset ( serial, 0, sizeof ( serial ) );
 
@@ -672,7 +673,7 @@ usage:
         {
           if ( ( semicolon = strchr ( r, ';' ) ) != NULL )
           {
-            if ( * ( semicolon - 1 ) != '\\' )
+            if (* ( semicolon - 1 ) != '\\' )
             {
               r = semicolon;
               break;
@@ -751,7 +752,7 @@ usage:
         {
           cur->node.type = MBEDTLS_X509_SAN_DIRECTORY_NAME;
 
-          if ( ( ret = mbedtls_x509_string_to_names ( &ext_san_dirname,
+          if ( ( ret = mbedtls_x509_string_to_names (&ext_san_dirname,
                        subtype_value ) ) != 0 )
           {
             mbedtls_strerror ( ret, buf, sizeof ( buf ) );
@@ -868,9 +869,9 @@ usage:
   mbedtls_printf ( "  . Seeding the random number generator..." );
   fflush ( stdout );
 
-  if ( ( ret = mbedtls_ctr_drbg_seed ( &ctr_drbg, mbedtls_entropy_func, &entropy,
-                                       ( const unsigned char* ) pers,
-                                       strlen ( pers ) ) ) != 0 )
+  if ( ( ret = mbedtls_ctr_drbg_seed (&ctr_drbg, mbedtls_entropy_func, &entropy,
+                                      ( const unsigned char* ) pers,
+                                      strlen ( pers ) ) ) != 0 )
   {
     mbedtls_strerror ( ret, buf, sizeof ( buf ) );
     mbedtls_printf ( " failed\n  !  mbedtls_ctr_drbg_seed returned %d - %s\n",
@@ -906,7 +907,7 @@ usage:
 
   // Parse issuer certificate if present
   //
-  if ( !opt.selfsign && strlen ( opt.issuer_crt ) )
+  if (!opt.selfsign && strlen ( opt.issuer_crt ) )
   {
     /*
      * 1.0.a. Load the certificates
@@ -914,7 +915,7 @@ usage:
     mbedtls_printf ( "  . Loading the issuer certificate ..." );
     fflush ( stdout );
 
-    if ( ( ret = mbedtls_x509_crt_parse_file ( &issuer_crt, opt.issuer_crt ) ) != 0 )
+    if ( ( ret = mbedtls_x509_crt_parse_file (&issuer_crt, opt.issuer_crt ) ) != 0 )
     {
       mbedtls_strerror ( ret, buf, sizeof ( buf ) );
       mbedtls_printf ( " failed\n  !  mbedtls_x509_crt_parse_file "
@@ -942,7 +943,7 @@ usage:
 
   // Parse certificate request if present
   //
-  if ( !opt.selfsign && strlen ( opt.request_file ) )
+  if (!opt.selfsign && strlen ( opt.request_file ) )
   {
     /*
      * 1.0.b. Load the CSR
@@ -950,7 +951,7 @@ usage:
     mbedtls_printf ( "  . Loading the certificate request ..." );
     fflush ( stdout );
 
-    if ( ( ret = mbedtls_x509_csr_parse_file ( &csr, opt.request_file ) ) != 0 )
+    if ( ( ret = mbedtls_x509_csr_parse_file (&csr, opt.request_file ) ) != 0 )
     {
       mbedtls_strerror ( ret, buf, sizeof ( buf ) );
       mbedtls_printf ( " failed\n  !  mbedtls_x509_csr_parse_file "
@@ -980,13 +981,13 @@ usage:
   /*
    * 1.1. Load the keys
    */
-  if ( !opt.selfsign && !strlen ( opt.request_file ) )
+  if (!opt.selfsign && !strlen ( opt.request_file ) )
   {
     mbedtls_printf ( "  . Loading the subject key ..." );
     fflush ( stdout );
 
-    ret = mbedtls_pk_parse_keyfile ( &loaded_subject_key, opt.subject_key,
-                                     opt.subject_pwd, mbedtls_ctr_drbg_random, &ctr_drbg );
+    ret = mbedtls_pk_parse_keyfile (&loaded_subject_key, opt.subject_key,
+                                    opt.subject_pwd, mbedtls_ctr_drbg_random, &ctr_drbg );
 
     if ( ret != 0 )
     {
@@ -1002,8 +1003,8 @@ usage:
   mbedtls_printf ( "  . Loading the issuer key ..." );
   fflush ( stdout );
 
-  ret = mbedtls_pk_parse_keyfile ( &loaded_issuer_key, opt.issuer_key,
-                                   opt.issuer_pwd, mbedtls_ctr_drbg_random, &ctr_drbg );
+  ret = mbedtls_pk_parse_keyfile (&loaded_issuer_key, opt.issuer_key,
+                                  opt.issuer_pwd, mbedtls_ctr_drbg_random, &ctr_drbg );
 
   if ( ret != 0 )
   {
@@ -1017,8 +1018,8 @@ usage:
   //
   if ( strlen ( opt.issuer_crt ) )
   {
-    if ( mbedtls_pk_check_pair ( &issuer_crt.pk, issuer_key,
-                                 mbedtls_ctr_drbg_random, &ctr_drbg ) != 0 )
+    if ( mbedtls_pk_check_pair (&issuer_crt.pk, issuer_key,
+                                mbedtls_ctr_drbg_random, &ctr_drbg ) != 0 )
     {
       mbedtls_printf ( " failed\n  !  issuer_key does not match "
                        "issuer certificate\n\n" );
@@ -1034,13 +1035,13 @@ usage:
     subject_key = issuer_key;
   }
 
-  mbedtls_x509write_crt_set_subject_key ( &crt, subject_key );
-  mbedtls_x509write_crt_set_issuer_key ( &crt, issuer_key );
+  mbedtls_x509write_crt_set_subject_key (&crt, subject_key );
+  mbedtls_x509write_crt_set_issuer_key (&crt, issuer_key );
 
   /*
    * 1.0. Check the names for validity
    */
-  if ( ( ret = mbedtls_x509write_crt_set_subject_name ( &crt, opt.subject_name ) ) != 0 )
+  if ( ( ret = mbedtls_x509write_crt_set_subject_name (&crt, opt.subject_name ) ) != 0 )
   {
     mbedtls_strerror ( ret, buf, sizeof ( buf ) );
     mbedtls_printf ( " failed\n  !  mbedtls_x509write_crt_set_subject_name "
@@ -1048,7 +1049,7 @@ usage:
     goto exit;
   }
 
-  if ( ( ret = mbedtls_x509write_crt_set_issuer_name ( &crt, opt.issuer_name ) ) != 0 )
+  if ( ( ret = mbedtls_x509write_crt_set_issuer_name (&crt, opt.issuer_name ) ) != 0 )
   {
     mbedtls_strerror ( ret, buf, sizeof ( buf ) );
     mbedtls_printf ( " failed\n  !  mbedtls_x509write_crt_set_issuer_name "
@@ -1059,10 +1060,10 @@ usage:
   mbedtls_printf ( "  . Setting certificate values ..." );
   fflush ( stdout );
 
-  mbedtls_x509write_crt_set_version ( &crt, opt.version );
-  mbedtls_x509write_crt_set_md_alg ( &crt, opt.md );
+  mbedtls_x509write_crt_set_version (&crt, opt.version );
+  mbedtls_x509write_crt_set_md_alg (&crt, opt.md );
 
-  ret = mbedtls_x509write_crt_set_serial_raw ( &crt, serial, serial_len );
+  ret = mbedtls_x509write_crt_set_serial_raw (&crt, serial, serial_len );
 
   if ( ret != 0 )
   {
@@ -1072,7 +1073,7 @@ usage:
     goto exit;
   }
 
-  ret = mbedtls_x509write_crt_set_validity ( &crt, opt.not_before, opt.not_after );
+  ret = mbedtls_x509write_crt_set_validity (&crt, opt.not_before, opt.not_after );
 
   if ( ret != 0 )
   {
@@ -1090,7 +1091,7 @@ usage:
     mbedtls_printf ( "  . Adding the Basic Constraints extension ..." );
     fflush ( stdout );
 
-    ret = mbedtls_x509write_crt_set_basic_constraints ( &crt, opt.is_ca,
+    ret = mbedtls_x509write_crt_set_basic_constraints (&crt, opt.is_ca,
           opt.max_pathlen );
 
     if ( ret != 0 )
@@ -1112,7 +1113,7 @@ usage:
     mbedtls_printf ( "  . Adding the Subject Key Identifier ..." );
     fflush ( stdout );
 
-    ret = mbedtls_x509write_crt_set_subject_key_identifier ( &crt );
+    ret = mbedtls_x509write_crt_set_subject_key_identifier (&crt );
 
     if ( ret != 0 )
     {
@@ -1132,7 +1133,7 @@ usage:
     mbedtls_printf ( "  . Adding the Authority Key Identifier ..." );
     fflush ( stdout );
 
-    ret = mbedtls_x509write_crt_set_authority_key_identifier ( &crt );
+    ret = mbedtls_x509write_crt_set_authority_key_identifier (&crt );
 
     if ( ret != 0 )
     {
@@ -1154,7 +1155,7 @@ usage:
     mbedtls_printf ( "  . Adding the Key Usage extension ..." );
     fflush ( stdout );
 
-    ret = mbedtls_x509write_crt_set_key_usage ( &crt, opt.key_usage );
+    ret = mbedtls_x509write_crt_set_key_usage (&crt, opt.key_usage );
 
     if ( ret != 0 )
     {
@@ -1169,7 +1170,7 @@ usage:
 
   if ( opt.san_list != NULL )
   {
-    ret = mbedtls_x509write_crt_set_subject_alternative_name ( &crt, opt.san_list );
+    ret = mbedtls_x509write_crt_set_subject_alternative_name (&crt, opt.san_list );
 
     if ( ret != 0 )
     {
@@ -1185,7 +1186,7 @@ usage:
     mbedtls_printf ( "  . Adding the Extended Key Usage extension ..." );
     fflush ( stdout );
 
-    ret = mbedtls_x509write_crt_set_ext_key_usage ( &crt, opt.ext_key_usage );
+    ret = mbedtls_x509write_crt_set_ext_key_usage (&crt, opt.ext_key_usage );
 
     if ( ret != 0 )
     {
@@ -1206,7 +1207,7 @@ usage:
     mbedtls_printf ( "  . Adding the NS Cert Type extension ..." );
     fflush ( stdout );
 
-    ret = mbedtls_x509write_crt_set_ns_cert_type ( &crt, opt.ns_cert_type );
+    ret = mbedtls_x509write_crt_set_ns_cert_type (&crt, opt.ns_cert_type );
 
     if ( ret != 0 )
     {
@@ -1225,8 +1226,8 @@ usage:
   mbedtls_printf ( "  . Writing the certificate..." );
   fflush ( stdout );
 
-  if ( ( ret = write_certificate ( &crt, opt.output_file,
-                                   mbedtls_ctr_drbg_random, &ctr_drbg ) ) != 0 )
+  if ( ( ret = write_certificate (&crt, opt.output_file,
+                                  mbedtls_ctr_drbg_random, &ctr_drbg ) ) != 0 )
   {
     mbedtls_strerror ( ret, buf, sizeof ( buf ) );
     mbedtls_printf ( " failed\n  !  write_certificate -0x%04x - %s\n\n",
@@ -1240,21 +1241,22 @@ usage:
 
 exit:
 #if defined(MBEDTLS_X509_CSR_PARSE_C)
-  mbedtls_x509_csr_free ( &csr );
+  mbedtls_x509_csr_free (&csr );
 #endif /* MBEDTLS_X509_CSR_PARSE_C */
-  mbedtls_asn1_free_named_data_list ( &ext_san_dirname );
-  mbedtls_x509_crt_free ( &issuer_crt );
-  mbedtls_x509write_crt_free ( &crt );
-  mbedtls_pk_free ( &loaded_subject_key );
-  mbedtls_pk_free ( &loaded_issuer_key );
-  mbedtls_ctr_drbg_free ( &ctr_drbg );
-  mbedtls_entropy_free ( &entropy );
+  mbedtls_asn1_free_named_data_list (&ext_san_dirname );
+  mbedtls_x509_crt_free (&issuer_crt );
+  mbedtls_x509write_crt_free (&crt );
+  mbedtls_pk_free (&loaded_subject_key );
+  mbedtls_pk_free (&loaded_issuer_key );
+  mbedtls_ctr_drbg_free (&ctr_drbg );
+  mbedtls_entropy_free (&entropy );
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
   mbedtls_psa_crypto_free();
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 
   mbedtls_exit ( exit_code );
 }
+
 #endif /* MBEDTLS_X509_CRT_WRITE_C && MBEDTLS_X509_CRT_PARSE_C &&
           MBEDTLS_FS_IO && MBEDTLS_ENTROPY_C && MBEDTLS_CTR_DRBG_C &&
           MBEDTLS_ERROR_C && MBEDTLS_PEM_WRITE_C */

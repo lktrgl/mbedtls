@@ -236,6 +236,7 @@ static uint64_t u32_muladd64 ( uint32_t x, uint32_t y, uint32_t z, uint32_t t )
   );
   return ( ( uint64_t ) t << 32 ) | z;
 }
+
 #define MULADD64_ASM
 #define MULADD64_SMALL
 
@@ -305,6 +306,7 @@ static uint64_t u32_muladd64 ( uint32_t x, uint32_t y, uint32_t z, uint32_t t )
 
   return ( ( uint64_t ) y << 32 ) | x;
 }
+
 #define MULADD64_ASM
 
 #endif /* __ARM_FEATURE_DSP */
@@ -317,6 +319,7 @@ static uint64_t u32_muladd64 ( uint32_t x, uint32_t y, uint32_t z, uint32_t t )
 {
   return ( uint64_t ) x * y + z + t;
 }
+
 #define MULADD64_SMALL
 #else
 static uint64_t u32_muladd64 ( uint32_t x, uint32_t y, uint32_t z, uint32_t t )
@@ -342,6 +345,7 @@ static uint64_t u32_muladd64 ( uint32_t x, uint32_t y, uint32_t z, uint32_t t )
 
   return acc;
 }
+
 #endif /* MUL64_IS_CONSTANT_TIME */
 #endif /* MULADD64_ASM */
 
@@ -487,6 +491,7 @@ typedef struct
   uint32_t R2[8];
   uint32_t ni;
 }
+
 m256_mod;
 
 /*
@@ -1255,7 +1260,7 @@ static int scalar_gen_with_pub ( uint8_t sbytes[32], uint32_t s[8],
     }
 
     ret = scalar_from_bytes ( s, sbytes );
-    CT_UNPOISON ( &ret, sizeof ret );
+    CT_UNPOISON (&ret, sizeof ret );
   }
   while ( ret != 0 );
 
@@ -1305,7 +1310,7 @@ int p256_ecdh_shared_secret ( uint8_t secret[32],
   int ret;
 
   ret = scalar_from_bytes ( s, priv );
-  CT_UNPOISON ( &ret, sizeof ret );
+  CT_UNPOISON (&ret, sizeof ret );
 
   if ( ret != 0 )
   {
@@ -1454,7 +1459,7 @@ int p256_ecdsa_sign ( uint8_t sig[64], const uint8_t priv[32],
 
   /* Note: dU will be erased by re-using t4 for the value of s (public) */
   ret = scalar_from_bytes ( t4, priv ); /* t4 = dU (integer domain) */
-  CT_UNPOISON ( &ret, sizeof ret ); /* Result of input validation */
+  CT_UNPOISON (&ret, sizeof ret ); /* Result of input validation */
 
   if ( ret != 0 )
   {

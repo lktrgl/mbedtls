@@ -79,6 +79,7 @@ typedef struct mbedtls_aes_context
                                                     </li></ul> */
 #endif /* MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH && !MBEDTLS_PADLOCK_C */
 }
+
 mbedtls_aes_context;
 
 #if defined(MBEDTLS_CIPHER_MODE_XTS)
@@ -92,6 +93,7 @@ typedef struct mbedtls_aes_xts_context
   mbedtls_aes_context MBEDTLS_PRIVATE ( tweak ); /*!< The AES context used for tweak
                                                    computation. */
 } mbedtls_aes_xts_context;
+
 #endif /* MBEDTLS_CIPHER_MODE_XTS */
 
 #else  /* MBEDTLS_AES_ALT */
@@ -628,6 +630,7 @@ int mbedtls_aes_self_test ( int verbose );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* aes.h */

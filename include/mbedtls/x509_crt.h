@@ -99,6 +99,7 @@ typedef struct mbedtls_x509_crt
    * Do not modify this field directly. */
   struct mbedtls_x509_crt* next;
 }
+
 mbedtls_x509_crt;
 
 /**
@@ -141,6 +142,7 @@ typedef struct mbedtls_x509_crt_profile
   uint32_t allowed_curves;    /**< Elliptic curves for ECDSA  */
   uint32_t rsa_min_bitlen;    /**< Minimum size for RSA keys  */
 }
+
 mbedtls_x509_crt_profile;
 
 #define MBEDTLS_X509_CRT_VERSION_1              0
@@ -239,6 +241,7 @@ typedef struct mbedtls_x509write_cert
   char MBEDTLS_PRIVATE ( not_after ) [MBEDTLS_X509_RFC5280_UTC_TIME_LEN + 1];
   mbedtls_asn1_named_data* MBEDTLS_PRIVATE ( extensions );
 }
+
 mbedtls_x509write_cert;
 
 /**
@@ -415,7 +418,7 @@ int mbedtls_x509_crt_parse_der ( mbedtls_x509_crt* chain,
  * \return         \c 0 on success.
  * \return         A negative error code on failure.
  */
-typedef int ( *mbedtls_x509_crt_ext_cb_t ) ( void* p_ctx,
+typedef int (*mbedtls_x509_crt_ext_cb_t ) ( void* p_ctx,
     mbedtls_x509_crt const* crt,
     mbedtls_x509_buf const* oid,
     int critical,
@@ -687,7 +690,7 @@ int mbedtls_x509_crt_verify ( mbedtls_x509_crt* crt,
                               mbedtls_x509_crt* trust_ca,
                               mbedtls_x509_crl* ca_crl,
                               const char* cn, uint32_t* flags,
-                              int ( *f_vrfy ) ( void*, mbedtls_x509_crt*, int, uint32_t* ),
+                              int (*f_vrfy ) ( void*, mbedtls_x509_crt*, int, uint32_t* ),
                               void* p_vrfy );
 
 /**
@@ -729,7 +732,7 @@ int mbedtls_x509_crt_verify_with_profile ( mbedtls_x509_crt* crt,
     mbedtls_x509_crl* ca_crl,
     const mbedtls_x509_crt_profile* profile,
     const char* cn, uint32_t* flags,
-    int ( *f_vrfy ) ( void*, mbedtls_x509_crt*, int, uint32_t* ),
+    int (*f_vrfy ) ( void*, mbedtls_x509_crt*, int, uint32_t* ),
     void* p_vrfy );
 
 /**
@@ -763,7 +766,7 @@ int mbedtls_x509_crt_verify_restartable ( mbedtls_x509_crt* crt,
     mbedtls_x509_crl* ca_crl,
     const mbedtls_x509_crt_profile* profile,
     const char* cn, uint32_t* flags,
-    int ( *f_vrfy ) ( void*, mbedtls_x509_crt*, int, uint32_t* ),
+    int (*f_vrfy ) ( void*, mbedtls_x509_crt*, int, uint32_t* ),
     void* p_vrfy,
     mbedtls_x509_crt_restart_ctx* rs_ctx );
 
@@ -797,7 +800,7 @@ int mbedtls_x509_crt_verify_restartable ( mbedtls_x509_crt* crt,
  *                      to the caller.
  * \return              A negative error code on failure.
  */
-typedef int ( *mbedtls_x509_crt_ca_cb_t ) ( void* p_ctx,
+typedef int (*mbedtls_x509_crt_ca_cb_t ) ( void* p_ctx,
     mbedtls_x509_crt const* child,
     mbedtls_x509_crt** candidate_cas );
 
@@ -829,7 +832,7 @@ int mbedtls_x509_crt_verify_with_ca_cb ( mbedtls_x509_crt* crt,
     void* p_ca_cb,
     const mbedtls_x509_crt_profile* profile,
     const char* cn, uint32_t* flags,
-    int ( *f_vrfy ) ( void*, mbedtls_x509_crt*, int, uint32_t* ),
+    int (*f_vrfy ) ( void*, mbedtls_x509_crt*, int, uint32_t* ),
     void* p_vrfy );
 
 #endif /* MBEDTLS_X509_TRUSTED_CERTIFICATE_CALLBACK */
@@ -1192,7 +1195,7 @@ void mbedtls_x509write_crt_free ( mbedtls_x509write_cert* ctx );
  * \note            \p f_rng is used for the signature operation.
  */
 int mbedtls_x509write_crt_der ( mbedtls_x509write_cert* ctx, unsigned char* buf, size_t size,
-                                int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                int (*f_rng ) ( void*, unsigned char*, size_t ),
                                 void* p_rng );
 
 #if defined(MBEDTLS_PEM_WRITE_C)
@@ -1210,7 +1213,7 @@ int mbedtls_x509write_crt_der ( mbedtls_x509write_cert* ctx, unsigned char* buf,
  * \note            \p f_rng is used for the signature operation.
  */
 int mbedtls_x509write_crt_pem ( mbedtls_x509write_cert* ctx, unsigned char* buf, size_t size,
-                                int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                int (*f_rng ) ( void*, unsigned char*, size_t ),
                                 void* p_rng );
 #endif /* MBEDTLS_PEM_WRITE_C */
 #endif /* MBEDTLS_X509_CRT_WRITE_C */
@@ -1219,6 +1222,7 @@ int mbedtls_x509write_crt_pem ( mbedtls_x509write_cert* ctx, unsigned char* buf,
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* mbedtls_x509_crt.h */

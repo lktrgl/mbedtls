@@ -49,6 +49,7 @@ typedef struct mbedtls_des_context
 {
   uint32_t MBEDTLS_PRIVATE ( sk ) [32];        /*!<  DES subkeys       */
 }
+
 mbedtls_des_context;
 
 /**
@@ -62,6 +63,7 @@ typedef struct mbedtls_des3_context
 {
   uint32_t MBEDTLS_PRIVATE ( sk ) [96];        /*!<  3DES subkeys      */
 }
+
 mbedtls_des3_context;
 
 #else  /* MBEDTLS_DES_ALT */
@@ -382,6 +384,7 @@ int mbedtls_des_self_test ( int verbose );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* des.h */

@@ -289,6 +289,7 @@ static int md_can_use_psa ( const mbedtls_md_info_t* info )
 
   return psa_can_do_hash ( alg );
 }
+
 #endif /* MBEDTLS_MD_SOME_PSA */
 
 void mbedtls_md_init ( mbedtls_md_context_t* ctx )
@@ -607,6 +608,7 @@ int mbedtls_md_setup ( mbedtls_md_context_t* ctx, const mbedtls_md_info_t* md_in
 
   return 0;
 }
+
 #undef ALLOC
 
 int mbedtls_md_starts ( mbedtls_md_context_t* ctx )
@@ -939,6 +941,7 @@ int mbedtls_md_error_from_psa ( psa_status_t status )
   return PSA_TO_MBEDTLS_ERR_LIST ( status, psa_to_md_errors,
                                    psa_generic_status_to_mbedtls );
 }
+
 #endif /* MBEDTLS_PSA_CRYPTO_CLIENT */
 
 
@@ -1119,21 +1122,21 @@ int mbedtls_md_file ( const mbedtls_md_info_t* md_info, const char* path, unsign
   /* Ensure no stdio buffering of secrets, as such buffers cannot be wiped. */
   mbedtls_setbuf ( f, NULL );
 
-  mbedtls_md_init ( &ctx );
+  mbedtls_md_init (&ctx );
 
-  if ( ( ret = mbedtls_md_setup ( &ctx, md_info, 0 ) ) != 0 )
+  if ( ( ret = mbedtls_md_setup (&ctx, md_info, 0 ) ) != 0 )
   {
     goto cleanup;
   }
 
-  if ( ( ret = mbedtls_md_starts ( &ctx ) ) != 0 )
+  if ( ( ret = mbedtls_md_starts (&ctx ) ) != 0 )
   {
     goto cleanup;
   }
 
   while ( ( n = fread ( buf, 1, sizeof ( buf ), f ) ) > 0 )
   {
-    if ( ( ret = mbedtls_md_update ( &ctx, buf, n ) ) != 0 )
+    if ( ( ret = mbedtls_md_update (&ctx, buf, n ) ) != 0 )
     {
       goto cleanup;
     }
@@ -1145,23 +1148,24 @@ int mbedtls_md_file ( const mbedtls_md_info_t* md_info, const char* path, unsign
   }
   else
   {
-    ret = mbedtls_md_finish ( &ctx, output );
+    ret = mbedtls_md_finish (&ctx, output );
   }
 
 cleanup:
   mbedtls_platform_zeroize ( buf, sizeof ( buf ) );
   fclose ( f );
-  mbedtls_md_free ( &ctx );
+  mbedtls_md_free (&ctx );
 
   return ret;
 }
+
 #endif /* MBEDTLS_FS_IO */
 
 int mbedtls_md_hmac_starts ( mbedtls_md_context_t* ctx, const unsigned char* key, size_t keylen )
 {
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
   unsigned char sum[MBEDTLS_MD_MAX_SIZE];
-  unsigned char* ipad, *opad;
+  unsigned char* ipad, * opad;
 
   if ( ctx == NULL || ctx->md_info == NULL || ctx->hmac_ctx == NULL )
   {
@@ -1296,30 +1300,30 @@ int mbedtls_md_hmac ( const mbedtls_md_info_t* md_info,
     return MBEDTLS_ERR_MD_BAD_INPUT_DATA;
   }
 
-  mbedtls_md_init ( &ctx );
+  mbedtls_md_init (&ctx );
 
-  if ( ( ret = mbedtls_md_setup ( &ctx, md_info, 1 ) ) != 0 )
+  if ( ( ret = mbedtls_md_setup (&ctx, md_info, 1 ) ) != 0 )
   {
     goto cleanup;
   }
 
-  if ( ( ret = mbedtls_md_hmac_starts ( &ctx, key, keylen ) ) != 0 )
+  if ( ( ret = mbedtls_md_hmac_starts (&ctx, key, keylen ) ) != 0 )
   {
     goto cleanup;
   }
 
-  if ( ( ret = mbedtls_md_hmac_update ( &ctx, input, ilen ) ) != 0 )
+  if ( ( ret = mbedtls_md_hmac_update (&ctx, input, ilen ) ) != 0 )
   {
     goto cleanup;
   }
 
-  if ( ( ret = mbedtls_md_hmac_finish ( &ctx, output ) ) != 0 )
+  if ( ( ret = mbedtls_md_hmac_finish (&ctx, output ) ) != 0 )
   {
     goto cleanup;
   }
 
 cleanup:
-  mbedtls_md_free ( &ctx );
+  mbedtls_md_free (&ctx );
 
   return ret;
 }

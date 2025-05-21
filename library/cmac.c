@@ -81,7 +81,7 @@ static int cmac_multiply_by_u ( unsigned char* output,
 
   for ( i = ( int ) blocksize - 4; i >= 0; i -= 4 )
   {
-    uint32_t i32 = MBEDTLS_GET_UINT32_BE ( &input[i], 0 );
+    uint32_t i32 = MBEDTLS_GET_UINT32_BE (&input[i], 0 );
     uint32_t new_overflow = i32 >> 31;
     i32 = ( i32 << 1 ) | overflow;
     MBEDTLS_PUT_UINT32_BE ( i32, &output[i], 0 );
@@ -134,6 +134,7 @@ exit:
 
   return ret;
 }
+
 #endif /* !defined(MBEDTLS_CMAC_ALT) || defined(MBEDTLS_SELF_TEST) */
 
 #if !defined(MBEDTLS_CMAC_ALT)
@@ -243,9 +244,9 @@ int mbedtls_cipher_cmac_update ( mbedtls_cipher_context_t* ctx,
   if ( cmac_ctx->unprocessed_len > 0 &&
        ilen > block_size - cmac_ctx->unprocessed_len )
   {
-    memcpy ( &cmac_ctx->unprocessed_block[cmac_ctx->unprocessed_len],
-             input,
-             block_size - cmac_ctx->unprocessed_len );
+    memcpy (&cmac_ctx->unprocessed_block[cmac_ctx->unprocessed_len],
+            input,
+            block_size - cmac_ctx->unprocessed_len );
 
     mbedtls_xor_no_simd ( state, cmac_ctx->unprocessed_block, state, block_size );
 
@@ -282,9 +283,9 @@ int mbedtls_cipher_cmac_update ( mbedtls_cipher_context_t* ctx,
   /* If there is data left over that wasn't aligned to a block */
   if ( ilen > 0 )
   {
-    memcpy ( &cmac_ctx->unprocessed_block[cmac_ctx->unprocessed_len],
-             input,
-             ilen );
+    memcpy (&cmac_ctx->unprocessed_block[cmac_ctx->unprocessed_len],
+            input,
+            ilen );
     cmac_ctx->unprocessed_len += ilen;
   }
 
@@ -296,7 +297,7 @@ int mbedtls_cipher_cmac_finish ( mbedtls_cipher_context_t* ctx,
                                  unsigned char* output )
 {
   mbedtls_cmac_context_t* cmac_ctx;
-  unsigned char* state, *last_block;
+  unsigned char* state, * last_block;
   unsigned char K1[MBEDTLS_CMAC_MAX_BLOCK_SIZE];
   unsigned char K2[MBEDTLS_CMAC_MAX_BLOCK_SIZE];
   unsigned char M_last[MBEDTLS_CMAC_MAX_BLOCK_SIZE];
@@ -391,31 +392,31 @@ int mbedtls_cipher_cmac ( const mbedtls_cipher_info_t* cipher_info,
     return MBEDTLS_ERR_CIPHER_BAD_INPUT_DATA;
   }
 
-  mbedtls_cipher_init ( &ctx );
+  mbedtls_cipher_init (&ctx );
 
-  if ( ( ret = mbedtls_cipher_setup ( &ctx, cipher_info ) ) != 0 )
+  if ( ( ret = mbedtls_cipher_setup (&ctx, cipher_info ) ) != 0 )
   {
     goto exit;
   }
 
-  ret = mbedtls_cipher_cmac_starts ( &ctx, key, keylen );
+  ret = mbedtls_cipher_cmac_starts (&ctx, key, keylen );
 
   if ( ret != 0 )
   {
     goto exit;
   }
 
-  ret = mbedtls_cipher_cmac_update ( &ctx, input, ilen );
+  ret = mbedtls_cipher_cmac_update (&ctx, input, ilen );
 
   if ( ret != 0 )
   {
     goto exit;
   }
 
-  ret = mbedtls_cipher_cmac_finish ( &ctx, output );
+  ret = mbedtls_cipher_cmac_finish (&ctx, output );
 
 exit:
-  mbedtls_cipher_free ( &ctx );
+  mbedtls_cipher_free (&ctx );
 
   return ret;
 }
@@ -473,6 +474,7 @@ exit:
 
   return ret;
 }
+
 #endif /* MBEDTLS_AES_C */
 
 #endif /* !MBEDTLS_CMAC_ALT */
@@ -823,9 +825,9 @@ static int cmac_test_subkeys ( int verbose,
       mbedtls_printf ( "  %s CMAC subkey #%d: ", testname, i + 1 );
     }
 
-    mbedtls_cipher_init ( &ctx );
+    mbedtls_cipher_init (&ctx );
 
-    if ( ( ret = mbedtls_cipher_setup ( &ctx, cipher_info ) ) != 0 )
+    if ( ( ret = mbedtls_cipher_setup (&ctx, cipher_info ) ) != 0 )
     {
       if ( verbose != 0 )
       {
@@ -835,8 +837,8 @@ static int cmac_test_subkeys ( int verbose,
       goto cleanup;
     }
 
-    if ( ( ret = mbedtls_cipher_setkey ( &ctx, key, keybits,
-                                         MBEDTLS_ENCRYPT ) ) != 0 )
+    if ( ( ret = mbedtls_cipher_setkey (&ctx, key, keybits,
+                                        MBEDTLS_ENCRYPT ) ) != 0 )
     {
       /* When CMAC is implemented by an alternative implementation, or
        * the underlying primitive itself is implemented alternatively,
@@ -862,7 +864,7 @@ static int cmac_test_subkeys ( int verbose,
       goto cleanup;
     }
 
-    ret = cmac_generate_subkeys ( &ctx, K1, K2 );
+    ret = cmac_generate_subkeys (&ctx, K1, K2 );
 
     if ( ret != 0 )
     {
@@ -891,14 +893,14 @@ static int cmac_test_subkeys ( int verbose,
     }
 
 next_test:
-    mbedtls_cipher_free ( &ctx );
+    mbedtls_cipher_free (&ctx );
   }
 
   ret = 0;
   goto exit;
 
 cleanup:
-  mbedtls_cipher_free ( &ctx );
+  mbedtls_cipher_free (&ctx );
 
 exit:
   return ret;
@@ -1016,6 +1018,7 @@ static int test_aes128_cmac_prf ( int verbose )
 
   return ret;
 }
+
 #endif /* MBEDTLS_AES_C */
 
 int mbedtls_cmac_self_test ( int verbose )

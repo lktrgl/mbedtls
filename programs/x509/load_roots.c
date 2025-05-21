@@ -17,6 +17,7 @@ int main ( void )
                    "MBEDTLS_TIMING_C not defined.\n" );
   mbedtls_exit ( 0 );
 }
+
 #else
 
 #include "mbedtls/error.h"
@@ -55,11 +56,11 @@ static int read_certificates ( const char* const* filenames )
   int ret = 0;
   const char* const* cur;
 
-  mbedtls_x509_crt_init ( &cas );
+  mbedtls_x509_crt_init (&cas );
 
   for ( cur = filenames; *cur != NULL; cur++ )
   {
-    ret = mbedtls_x509_crt_parse_file ( &cas, *cur );
+    ret = mbedtls_x509_crt_parse_file (&cas, *cur );
 
     if ( ret != 0 )
     {
@@ -77,7 +78,7 @@ static int read_certificates ( const char* const* filenames )
   }
 
 exit:
-  mbedtls_x509_crt_free ( &cas );
+  mbedtls_x509_crt_free (&cas );
   return ret == 0;
 }
 
@@ -153,7 +154,7 @@ int main ( int argc, char* argv[] )
 
   opt.filenames = ( const char** ) argv + i;
 
-  if ( *opt.filenames == 0 )
+  if (*opt.filenames == 0 )
   {
     mbedtls_printf ( "Missing list of certificate files to parse\n" );
     goto exit;
@@ -163,7 +164,7 @@ int main ( int argc, char* argv[] )
 
   if ( opt.prime_cache )
   {
-    if ( !read_certificates ( opt.filenames ) )
+    if (!read_certificates ( opt.filenames ) )
     {
       goto exit;
     }
@@ -171,11 +172,11 @@ int main ( int argc, char* argv[] )
     mbedtls_printf ( " " );
   }
 
-  ( void ) mbedtls_timing_get_timer ( &timer, 1 );
+  ( void ) mbedtls_timing_get_timer (&timer, 1 );
 
   for ( i = 1; i <= opt.iterations; i++ )
   {
-    if ( !read_certificates ( opt.filenames ) )
+    if (!read_certificates ( opt.filenames ) )
     {
       goto exit;
     }
@@ -183,7 +184,7 @@ int main ( int argc, char* argv[] )
     mbedtls_printf ( "." );
   }
 
-  ms = mbedtls_timing_get_timer ( &timer, 0 );
+  ms = mbedtls_timing_get_timer (&timer, 0 );
   mbedtls_printf ( "\n%u iterations -> %lu ms\n", opt.iterations, ms );
   exit_code = MBEDTLS_EXIT_SUCCESS;
 
@@ -193,4 +194,5 @@ exit:
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
   mbedtls_exit ( exit_code );
 }
+
 #endif /* necessary configuration */

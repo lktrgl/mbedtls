@@ -181,6 +181,7 @@ int mbedtls_pkcs12_derivation ( unsigned char* data, size_t datalen,
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* pkcs12.h */

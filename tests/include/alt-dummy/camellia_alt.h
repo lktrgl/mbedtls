@@ -11,6 +11,7 @@ typedef struct mbedtls_camellia_context
 {
   int dummy;
 }
+
 mbedtls_camellia_context;
 
 

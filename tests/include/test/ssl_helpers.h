@@ -117,8 +117,8 @@ typedef struct mbedtls_test_handshake_test_options
   int legacy_renegotiation;
   void* srv_log_obj;
   void* cli_log_obj;
-  void ( *srv_log_fun ) ( void*, int, const char*, int, const char* );
-  void ( *cli_log_fun ) ( void*, int, const char*, int, const char* );
+  void (*srv_log_fun ) ( void*, int, const char*, int, const char* );
+  void (*cli_log_fun ) ( void*, int, const char*, int, const char* );
   int resize_buffers;
   int early_data;
   int max_early_data_size;
@@ -639,13 +639,13 @@ int mbedtls_test_get_tls13_ticket (
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
 #define ECJPAKE_TEST_SET_PASSWORD(exp_ret_val)                            \
   ret = (use_opaque_arg) ?                                              \
-        mbedtls_ssl_set_hs_ecjpake_password_opaque(&ssl, pwd_slot) :    \
-        mbedtls_ssl_set_hs_ecjpake_password(&ssl, pwd_string, pwd_len); \
+  mbedtls_ssl_set_hs_ecjpake_password_opaque(&ssl, pwd_slot) :    \
+  mbedtls_ssl_set_hs_ecjpake_password(&ssl, pwd_string, pwd_len); \
   TEST_EQUAL(ret, exp_ret_val)
 #else
 #define ECJPAKE_TEST_SET_PASSWORD(exp_ret_val)                            \
   ret = mbedtls_ssl_set_hs_ecjpake_password(&ssl,                       \
-        pwd_string, pwd_len);       \
+    pwd_string, pwd_len);       \
   TEST_EQUAL(ret, exp_ret_val)
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 

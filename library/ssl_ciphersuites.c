@@ -2179,6 +2179,7 @@ const int* mbedtls_ssl_list_ciphersuites ( void )
 {
   return ciphersuite_preference;
 }
+
 #else
 #define MAX_CIPHERSUITES    sizeof(ciphersuite_definitions) /         \
   sizeof(ciphersuite_definitions[0])
@@ -2210,7 +2211,7 @@ const int* mbedtls_ssl_list_ciphersuites ( void )
     {
       const mbedtls_ssl_ciphersuite_t* cs_info;
 
-      if ( ( cs_info = mbedtls_ssl_ciphersuite_from_id ( *p ) ) != NULL &&
+      if ( ( cs_info = mbedtls_ssl_ciphersuite_from_id (*p ) ) != NULL &&
            !ciphersuite_is_removed ( cs_info ) )
       {
         * ( q++ ) = *p;
@@ -2224,6 +2225,7 @@ const int* mbedtls_ssl_list_ciphersuites ( void )
 
   return supported_ciphersuites;
 }
+
 #endif /* MBEDTLS_SSL_CIPHERSUITES */
 
 const mbedtls_ssl_ciphersuite_t* mbedtls_ssl_ciphersuite_from_string (
@@ -2390,6 +2392,7 @@ psa_key_usage_t mbedtls_ssl_get_ciphersuite_sig_pk_psa_usage ( const mbedtls_ssl
     return 0;
   }
 }
+
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 
 mbedtls_pk_type_t mbedtls_ssl_get_ciphersuite_sig_alg ( const mbedtls_ssl_ciphersuite_t* info )
@@ -2429,6 +2432,7 @@ int mbedtls_ssl_ciphersuite_uses_ec ( const mbedtls_ssl_ciphersuite_t* info )
     return 0;
   }
 }
+
 #endif /* MBEDTLS_KEY_EXCHANGE_SOME_ECDH_OR_ECDHE_1_2_ENABLED ||
         * MBEDTLS_KEY_EXCHANGE_ECDSA_CERT_REQ_ALLOWED_ENABLED ||
         * MBEDTLS_KEY_EXCHANGE_ECJPAKE_ENABLED*/
@@ -2448,6 +2452,7 @@ int mbedtls_ssl_ciphersuite_uses_psk ( const mbedtls_ssl_ciphersuite_t* info )
     return 0;
   }
 }
+
 #endif /* MBEDTLS_KEY_EXCHANGE_SOME_PSK_ENABLED */
 
 #endif /* MBEDTLS_SSL_TLS_C */

@@ -24,6 +24,7 @@ int main ( void )
                    "not defined.\n" );
   mbedtls_exit ( 0 );
 }
+
 #else
 
 #include "mbedtls/x509_csr.h"
@@ -109,7 +110,7 @@ struct options
 } opt;
 
 static int write_certificate_request ( mbedtls_x509write_csr* req, const char* output_file,
-                                       int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                       int (*f_rng ) ( void*, unsigned char*, size_t ),
                                        void* p_rng )
 {
   int ret;
@@ -149,12 +150,12 @@ int main ( int argc, char* argv[] )
   mbedtls_pk_context key;
   char buf[1024];
   int i;
-  char* p, *q, *r;
+  char* p, * q, * r;
   mbedtls_x509write_csr req;
   mbedtls_entropy_context entropy;
   mbedtls_ctr_drbg_context ctr_drbg;
   const char* pers = "csr example app";
-  mbedtls_x509_san_list* cur, *prev;
+  mbedtls_x509_san_list* cur, * prev;
   mbedtls_asn1_named_data* ext_san_dirname = NULL;
 #if defined(MBEDTLS_X509_CRT_PARSE_C)
   uint8_t ip[4] = { 0 };
@@ -162,11 +163,11 @@ int main ( int argc, char* argv[] )
   /*
    * Set to sane values
    */
-  mbedtls_x509write_csr_init ( &req );
-  mbedtls_pk_init ( &key );
-  mbedtls_ctr_drbg_init ( &ctr_drbg );
+  mbedtls_x509write_csr_init (&req );
+  mbedtls_pk_init (&key );
+  mbedtls_ctr_drbg_init (&ctr_drbg );
   memset ( buf, 0, sizeof ( buf ) );
-  mbedtls_entropy_init ( &entropy );
+  mbedtls_entropy_init (&entropy );
 
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
   psa_status_t status = psa_crypto_init();
@@ -250,7 +251,7 @@ usage:
         {
           if ( ( semicolon = strchr ( r, ';' ) ) != NULL )
           {
-            if ( * ( semicolon - 1 ) != '\\' )
+            if (* ( semicolon - 1 ) != '\\' )
             {
               r = semicolon;
               break;
@@ -329,7 +330,7 @@ usage:
         {
           cur->node.type = MBEDTLS_X509_SAN_DIRECTORY_NAME;
 
-          if ( ( ret = mbedtls_x509_string_to_names ( &ext_san_dirname,
+          if ( ( ret = mbedtls_x509_string_to_names (&ext_san_dirname,
                        subtype_value ) ) != 0 )
           {
             mbedtls_strerror ( ret, buf, sizeof ( buf ) );
@@ -512,12 +513,12 @@ usage:
   }
 
   /* Set the MD algorithm to use for the signature in the CSR */
-  mbedtls_x509write_csr_set_md_alg ( &req, opt.md_alg );
+  mbedtls_x509write_csr_set_md_alg (&req, opt.md_alg );
 
   /* Set the Key Usage Extension flags in the CSR */
   if ( opt.key_usage || opt.force_key_usage == 1 )
   {
-    ret = mbedtls_x509write_csr_set_key_usage ( &req, opt.key_usage );
+    ret = mbedtls_x509write_csr_set_key_usage (&req, opt.key_usage );
 
     if ( ret != 0 )
     {
@@ -529,7 +530,7 @@ usage:
   /* Set the Cert Type flags in the CSR */
   if ( opt.ns_cert_type || opt.force_ns_cert_type == 1 )
   {
-    ret = mbedtls_x509write_csr_set_ns_cert_type ( &req, opt.ns_cert_type );
+    ret = mbedtls_x509write_csr_set_ns_cert_type (&req, opt.ns_cert_type );
 
     if ( ret != 0 )
     {
@@ -541,7 +542,7 @@ usage:
   /* Set the SubjectAltName in the CSR */
   if ( opt.san_list != NULL )
   {
-    ret = mbedtls_x509write_csr_set_subject_alternative_name ( &req, opt.san_list );
+    ret = mbedtls_x509write_csr_set_subject_alternative_name (&req, opt.san_list );
 
     if ( ret != 0 )
     {
@@ -558,9 +559,9 @@ usage:
   mbedtls_printf ( "  . Seeding the random number generator..." );
   fflush ( stdout );
 
-  if ( ( ret = mbedtls_ctr_drbg_seed ( &ctr_drbg, mbedtls_entropy_func, &entropy,
-                                       ( const unsigned char* ) pers,
-                                       strlen ( pers ) ) ) != 0 )
+  if ( ( ret = mbedtls_ctr_drbg_seed (&ctr_drbg, mbedtls_entropy_func, &entropy,
+                                      ( const unsigned char* ) pers,
+                                      strlen ( pers ) ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  !  mbedtls_ctr_drbg_seed returned %d", ret );
     goto exit;
@@ -574,7 +575,7 @@ usage:
   mbedtls_printf ( "  . Checking subject name..." );
   fflush ( stdout );
 
-  if ( ( ret = mbedtls_x509write_csr_set_subject_name ( &req, opt.subject_name ) ) != 0 )
+  if ( ( ret = mbedtls_x509write_csr_set_subject_name (&req, opt.subject_name ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  !  mbedtls_x509write_csr_set_subject_name returned %d", ret );
     goto exit;
@@ -588,8 +589,8 @@ usage:
   mbedtls_printf ( "  . Loading the private key ..." );
   fflush ( stdout );
 
-  ret = mbedtls_pk_parse_keyfile ( &key, opt.filename, opt.password,
-                                   mbedtls_ctr_drbg_random, &ctr_drbg );
+  ret = mbedtls_pk_parse_keyfile (&key, opt.filename, opt.password,
+                                  mbedtls_ctr_drbg_random, &ctr_drbg );
 
   if ( ret != 0 )
   {
@@ -597,7 +598,7 @@ usage:
     goto exit;
   }
 
-  mbedtls_x509write_csr_set_key ( &req, &key );
+  mbedtls_x509write_csr_set_key (&req, &key );
 
   mbedtls_printf ( " ok\n" );
 
@@ -607,8 +608,8 @@ usage:
   mbedtls_printf ( "  . Writing the certificate request ..." );
   fflush ( stdout );
 
-  if ( ( ret = write_certificate_request ( &req, opt.output_file,
-               mbedtls_ctr_drbg_random, &ctr_drbg ) ) != 0 )
+  if ( ( ret = write_certificate_request (&req, opt.output_file,
+                                          mbedtls_ctr_drbg_random, &ctr_drbg ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  !  write_certificate_request %d", ret );
     goto exit;
@@ -630,11 +631,11 @@ exit:
 #endif
   }
 
-  mbedtls_x509write_csr_free ( &req );
-  mbedtls_asn1_free_named_data_list ( &ext_san_dirname );
-  mbedtls_pk_free ( &key );
-  mbedtls_ctr_drbg_free ( &ctr_drbg );
-  mbedtls_entropy_free ( &entropy );
+  mbedtls_x509write_csr_free (&req );
+  mbedtls_asn1_free_named_data_list (&ext_san_dirname );
+  mbedtls_pk_free (&key );
+  mbedtls_ctr_drbg_free (&ctr_drbg );
+  mbedtls_entropy_free (&entropy );
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
   mbedtls_psa_crypto_free();
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
@@ -651,5 +652,6 @@ exit:
 
   mbedtls_exit ( exit_code );
 }
+
 #endif /* MBEDTLS_X509_CSR_WRITE_C && MBEDTLS_PK_PARSE_C && MBEDTLS_FS_IO &&
           MBEDTLS_ENTROPY_C && MBEDTLS_CTR_DRBG_C && MBEDTLS_PEM_WRITE_C */

@@ -55,6 +55,7 @@ typedef struct mbedtls_aria_context
   /*! The ARIA round keys. */
   uint32_t MBEDTLS_PRIVATE ( rk ) [MBEDTLS_ARIA_MAX_ROUNDS + 1][MBEDTLS_ARIA_BLOCKSIZE / 4];
 }
+
 mbedtls_aria_context;
 
 #else  /* MBEDTLS_ARIA_ALT */
@@ -339,6 +340,7 @@ int mbedtls_aria_self_test ( int verbose );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* aria.h */

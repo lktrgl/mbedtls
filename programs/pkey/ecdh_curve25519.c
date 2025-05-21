@@ -20,6 +20,7 @@ int main ( void )
                    "not defined\n" );
   mbedtls_exit ( 0 );
 }
+
 #else
 
 #include "mbedtls/entropy.h"
@@ -48,9 +49,9 @@ int main ( int argc, char* argv[] )
   ( ( void ) argc );
   ( ( void ) argv );
 
-  mbedtls_ecdh_init ( &ctx_cli );
-  mbedtls_ecdh_init ( &ctx_srv );
-  mbedtls_ctr_drbg_init ( &ctr_drbg );
+  mbedtls_ecdh_init (&ctx_cli );
+  mbedtls_ecdh_init (&ctx_srv );
+  mbedtls_ctr_drbg_init (&ctr_drbg );
 
   /*
    * Initialize random number generation
@@ -58,12 +59,12 @@ int main ( int argc, char* argv[] )
   mbedtls_printf ( "  . Seed the random number generator..." );
   fflush ( stdout );
 
-  mbedtls_entropy_init ( &entropy );
+  mbedtls_entropy_init (&entropy );
 
-  if ( ( ret = mbedtls_ctr_drbg_seed ( &ctr_drbg, mbedtls_entropy_func,
-                                       &entropy,
-                                       ( const unsigned char* ) pers,
-                                       sizeof ( pers ) ) ) != 0 )
+  if ( ( ret = mbedtls_ctr_drbg_seed (&ctr_drbg, mbedtls_entropy_func,
+                                      &entropy,
+                                      ( const unsigned char* ) pers,
+                                      sizeof ( pers ) ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_ctr_drbg_seed returned %d\n",
                      ret );
@@ -78,7 +79,7 @@ int main ( int argc, char* argv[] )
   mbedtls_printf ( "  . Set up client context, generate EC key pair..." );
   fflush ( stdout );
 
-  ret = mbedtls_ecdh_setup ( &ctx_cli, MBEDTLS_ECP_DP_CURVE25519 );
+  ret = mbedtls_ecdh_setup (&ctx_cli, MBEDTLS_ECP_DP_CURVE25519 );
 
   if ( ret != 0 )
   {
@@ -86,9 +87,9 @@ int main ( int argc, char* argv[] )
     goto exit;
   }
 
-  ret = mbedtls_ecdh_make_params ( &ctx_cli, &cli_olen, cli_to_srv,
-                                   sizeof ( cli_to_srv ),
-                                   mbedtls_ctr_drbg_random, &ctr_drbg );
+  ret = mbedtls_ecdh_make_params (&ctx_cli, &cli_olen, cli_to_srv,
+                                  sizeof ( cli_to_srv ),
+                                  mbedtls_ctr_drbg_random, &ctr_drbg );
 
   if ( ret != 0 )
   {
@@ -105,8 +106,8 @@ int main ( int argc, char* argv[] )
   mbedtls_printf ( "  . Server: read params, generate public key..." );
   fflush ( stdout );
 
-  ret = mbedtls_ecdh_read_params ( &ctx_srv, &p_cli_to_srv,
-                                   p_cli_to_srv + sizeof ( cli_to_srv ) );
+  ret = mbedtls_ecdh_read_params (&ctx_srv, &p_cli_to_srv,
+                                  p_cli_to_srv + sizeof ( cli_to_srv ) );
 
   if ( ret != 0 )
   {
@@ -115,9 +116,9 @@ int main ( int argc, char* argv[] )
     goto exit;
   }
 
-  ret = mbedtls_ecdh_make_public ( &ctx_srv, &srv_olen, srv_to_cli,
-                                   sizeof ( srv_to_cli ),
-                                   mbedtls_ctr_drbg_random, &ctr_drbg );
+  ret = mbedtls_ecdh_make_public (&ctx_srv, &srv_olen, srv_to_cli,
+                                  sizeof ( srv_to_cli ),
+                                  mbedtls_ctr_drbg_random, &ctr_drbg );
 
   if ( ret != 0 )
   {
@@ -134,8 +135,8 @@ int main ( int argc, char* argv[] )
   mbedtls_printf ( "  . Client: read public key..." );
   fflush ( stdout );
 
-  ret = mbedtls_ecdh_read_public ( &ctx_cli, srv_to_cli,
-                                   sizeof ( srv_to_cli ) );
+  ret = mbedtls_ecdh_read_public (&ctx_cli, srv_to_cli,
+                                  sizeof ( srv_to_cli ) );
 
   if ( ret != 0 )
   {
@@ -152,9 +153,9 @@ int main ( int argc, char* argv[] )
   mbedtls_printf ( "  . Calculate secrets..." );
   fflush ( stdout );
 
-  ret = mbedtls_ecdh_calc_secret ( &ctx_cli, &cli_olen, secret_cli,
-                                   sizeof ( secret_cli ),
-                                   mbedtls_ctr_drbg_random, &ctr_drbg );
+  ret = mbedtls_ecdh_calc_secret (&ctx_cli, &cli_olen, secret_cli,
+                                  sizeof ( secret_cli ),
+                                  mbedtls_ctr_drbg_random, &ctr_drbg );
 
   if ( ret != 0 )
   {
@@ -163,9 +164,9 @@ int main ( int argc, char* argv[] )
     goto exit;
   }
 
-  ret = mbedtls_ecdh_calc_secret ( &ctx_srv, &srv_olen, secret_srv,
-                                   sizeof ( secret_srv ),
-                                   mbedtls_ctr_drbg_random, &ctr_drbg );
+  ret = mbedtls_ecdh_calc_secret (&ctx_srv, &srv_olen, secret_srv,
+                                  sizeof ( secret_srv ),
+                                  mbedtls_ctr_drbg_random, &ctr_drbg );
 
   if ( ret != 0 )
   {
@@ -196,12 +197,13 @@ int main ( int argc, char* argv[] )
 
 exit:
 
-  mbedtls_ecdh_free ( &ctx_srv );
-  mbedtls_ecdh_free ( &ctx_cli );
-  mbedtls_ctr_drbg_free ( &ctr_drbg );
-  mbedtls_entropy_free ( &entropy );
+  mbedtls_ecdh_free (&ctx_srv );
+  mbedtls_ecdh_free (&ctx_cli );
+  mbedtls_ctr_drbg_free (&ctr_drbg );
+  mbedtls_entropy_free (&entropy );
 
   mbedtls_exit ( exit_code );
 }
+
 #endif /* MBEDTLS_ECDH_C && MBEDTLS_ECP_DP_CURVE25519_ENABLED &&
           MBEDTLS_ENTROPY_C && MBEDTLS_CTR_DRBG_C */

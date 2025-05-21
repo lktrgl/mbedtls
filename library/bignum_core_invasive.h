@@ -15,8 +15,8 @@
 
 #if defined(MBEDTLS_TEST_HOOKS) && !defined(MBEDTLS_THREADING_C)
 
-  extern void ( *mbedtls_safe_codepath_hook ) ( void );
-  extern void ( *mbedtls_unsafe_codepath_hook ) ( void );
+  extern void (*mbedtls_safe_codepath_hook ) ( void );
+  extern void (*mbedtls_unsafe_codepath_hook ) ( void );
 
 #endif /* MBEDTLS_TEST_HOOKS && !MBEDTLS_THREADING_C */
 

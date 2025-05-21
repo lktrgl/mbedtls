@@ -35,6 +35,7 @@ static int local_err_translation ( psa_status_t status )
                                  ARRAY_LENGTH ( psa_to_ssl_errors ),
                                  psa_generic_status_to_mbedtls );
 }
+
 #define PSA_TO_MBEDTLS_ERR(status) local_err_translation(status)
 
 int mbedtls_ssl_tls13_crypto_init ( mbedtls_ssl_context* ssl )
@@ -51,7 +52,7 @@ int mbedtls_ssl_tls13_crypto_init ( mbedtls_ssl_context* ssl )
 }
 
 const uint8_t mbedtls_ssl_tls13_hello_retry_request_magic[
-   MBEDTLS_SERVER_HELLO_RANDOM_LEN] =
+  MBEDTLS_SERVER_HELLO_RANDOM_LEN] =
 {
   0xCF, 0x21, 0xAD, 0x74, 0xE5, 0x9A, 0x61, 0x11,
   0xBE, 0x1D, 0x8C, 0x02, 0x1E, 0x65, 0xB8, 0x91,
@@ -281,7 +282,7 @@ static int ssl_tls13_parse_certificate_verify ( mbedtls_ssl_context* ssl,
    *
    * Check if algorithm is an offered signature algorithm.
    */
-  if ( !mbedtls_ssl_sig_alg_is_offered ( ssl, algorithm ) )
+  if (!mbedtls_ssl_sig_alg_is_offered ( ssl, algorithm ) )
   {
     /* algorithm not in offered signature algorithms list */
     MBEDTLS_SSL_DEBUG_MSG ( 1, ( "Received signature algorithm(%04x) is not "
@@ -309,7 +310,7 @@ static int ssl_tls13_parse_certificate_verify ( mbedtls_ssl_context* ssl,
   /*
    * Check the certificate's key type matches the signature alg
    */
-  if ( !mbedtls_pk_can_do ( &ssl->session_negotiate->peer_cert->pk, sig_alg ) )
+  if (!mbedtls_pk_can_do (&ssl->session_negotiate->peer_cert->pk, sig_alg ) )
   {
     MBEDTLS_SSL_DEBUG_MSG ( 1, ( "signature algorithm doesn't match cert key" ) );
     goto error;
@@ -367,6 +368,7 @@ error:
   return MBEDTLS_ERR_SSL_HANDSHAKE_FAILURE;
 
 }
+
 #endif /* MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_EPHEMERAL_ENABLED */
 
 int mbedtls_ssl_tls13_process_certificate_verify ( mbedtls_ssl_context* ssl )
@@ -658,6 +660,7 @@ exit:
 
   return ret;
 }
+
 #else
 MBEDTLS_CHECK_RETURN_CRITICAL
 MBEDTLS_STATIC_TESTABLE
@@ -670,6 +673,7 @@ int mbedtls_ssl_tls13_parse_certificate ( mbedtls_ssl_context* ssl,
   ( ( void ) end );
   return MBEDTLS_ERR_SSL_FEATURE_UNAVAILABLE;
 }
+
 #endif /* MBEDTLS_SSL_KEEP_PEER_CERTIFICATE */
 #endif /* MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_EPHEMERAL_ENABLED */
 
@@ -745,6 +749,7 @@ static int ssl_tls13_validate_certificate ( mbedtls_ssl_context* ssl )
                                           ssl->session_negotiate->peer_cert,
                                           NULL, NULL );
 }
+
 #else /* MBEDTLS_SSL_KEEP_PEER_CERTIFICATE */
 MBEDTLS_CHECK_RETURN_CRITICAL
 static int ssl_tls13_validate_certificate ( mbedtls_ssl_context* ssl )
@@ -752,6 +757,7 @@ static int ssl_tls13_validate_certificate ( mbedtls_ssl_context* ssl )
   ( ( void ) ssl );
   return MBEDTLS_ERR_SSL_FEATURE_UNAVAILABLE;
 }
+
 #endif /* MBEDTLS_SSL_KEEP_PEER_CERTIFICATE */
 #endif /* MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_EPHEMERAL_ENABLED */
 
@@ -785,6 +791,7 @@ cleanup:
   MBEDTLS_SSL_DEBUG_MSG ( 2, ( "<= parse certificate" ) );
   return ret;
 }
+
 #if defined(MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_EPHEMERAL_ENABLED)
 /*
  *  enum {
@@ -1014,7 +1021,7 @@ static int ssl_tls13_write_certificate_verify_body ( mbedtls_ssl_context* ssl,
    */
   MBEDTLS_SSL_CHK_BUF_PTR ( p, end, 4 );
 
-  for ( ; *sig_alg != MBEDTLS_TLS1_3_SIG_NONE; sig_alg++ )
+  for (; *sig_alg != MBEDTLS_TLS1_3_SIG_NONE; sig_alg++ )
   {
     psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
     mbedtls_pk_type_t pk_type = MBEDTLS_PK_NONE;
@@ -1023,17 +1030,17 @@ static int ssl_tls13_write_certificate_verify_body ( mbedtls_ssl_context* ssl,
     unsigned char verify_hash[PSA_HASH_MAX_SIZE];
     size_t verify_hash_len;
 
-    if ( !mbedtls_ssl_sig_alg_is_offered ( ssl, *sig_alg ) )
+    if (!mbedtls_ssl_sig_alg_is_offered ( ssl, *sig_alg ) )
     {
       continue;
     }
 
-    if ( !mbedtls_ssl_tls13_sig_alg_for_cert_verify_is_supported ( *sig_alg ) )
+    if (!mbedtls_ssl_tls13_sig_alg_for_cert_verify_is_supported (*sig_alg ) )
     {
       continue;
     }
 
-    if ( !mbedtls_ssl_tls13_check_sig_alg_cert_key_match ( *sig_alg, own_key ) )
+    if (!mbedtls_ssl_tls13_check_sig_alg_cert_key_match (*sig_alg, own_key ) )
     {
       continue;
     }
@@ -1065,7 +1072,7 @@ static int ssl_tls13_write_certificate_verify_body ( mbedtls_ssl_context* ssl,
                                        ssl->conf->f_rng, ssl->conf->p_rng ) ) != 0 )
     {
       MBEDTLS_SSL_DEBUG_MSG ( 2, ( "CertificateVerify signature failed with %s",
-                                   mbedtls_ssl_sig_alg_to_str ( *sig_alg ) ) );
+                                   mbedtls_ssl_sig_alg_to_str (*sig_alg ) ) );
       MBEDTLS_SSL_DEBUG_RET ( 2, "mbedtls_pk_sign_ext", ret );
 
       /* The signature failed. This is possible if the private key
@@ -1077,12 +1084,12 @@ static int ssl_tls13_write_certificate_verify_body ( mbedtls_ssl_context* ssl,
     }
 
     MBEDTLS_SSL_DEBUG_MSG ( 2, ( "CertificateVerify signature with %s",
-                                 mbedtls_ssl_sig_alg_to_str ( *sig_alg ) ) );
+                                 mbedtls_ssl_sig_alg_to_str (*sig_alg ) ) );
 
     break;
   }
 
-  if ( *sig_alg == MBEDTLS_TLS1_3_SIG_NONE )
+  if (*sig_alg == MBEDTLS_TLS1_3_SIG_NONE )
   {
     MBEDTLS_SSL_DEBUG_MSG ( 1, ( "no suitable signature algorithm" ) );
     MBEDTLS_SSL_PEND_FATAL_ALERT ( MBEDTLS_SSL_ALERT_MSG_HANDSHAKE_FAILURE,
@@ -1090,7 +1097,7 @@ static int ssl_tls13_write_certificate_verify_body ( mbedtls_ssl_context* ssl,
     return MBEDTLS_ERR_SSL_HANDSHAKE_FAILURE;
   }
 
-  MBEDTLS_PUT_UINT16_BE ( *sig_alg, p, 0 );
+  MBEDTLS_PUT_UINT16_BE (*sig_alg, p, 0 );
   MBEDTLS_PUT_UINT16_BE ( signature_len, p, 2 );
 
   *out_len = 4 + signature_len;
@@ -1473,7 +1480,7 @@ int mbedtls_ssl_tls13_check_early_data_len ( mbedtls_ssl_context* ssl,
 
     MBEDTLS_SSL_DEBUG_MSG (
       2, ( "EarlyData: Too much early data received, "
-           "%lu + %" MBEDTLS_PRINTF_SIZET " > %lu",
+         "%lu + %" MBEDTLS_PRINTF_SIZET " > %lu",
            ( unsigned long ) ssl->total_early_data_size,
            early_data_len,
            ( unsigned long ) ssl->session_negotiate->max_early_data_size ) );
@@ -1493,6 +1500,7 @@ int mbedtls_ssl_tls13_check_early_data_len ( mbedtls_ssl_context* ssl,
 
   return 0;
 }
+
 #endif /* MBEDTLS_SSL_SRV_C */
 #endif /* MBEDTLS_SSL_EARLY_DATA */
 
@@ -1637,6 +1645,7 @@ static psa_status_t  mbedtls_ssl_get_psa_ffdh_info_from_tls_id (
     return PSA_ERROR_NOT_SUPPORTED;
   }
 }
+
 #endif /* PSA_WANT_ALG_FFDH */
 
 int mbedtls_ssl_tls13_generate_and_write_xxdh_key_exchange (
@@ -1692,14 +1701,14 @@ int mbedtls_ssl_tls13_generate_and_write_xxdh_key_exchange (
   ssl->handshake->xxdh_psa_bits = bits;
 
   key_attributes = psa_key_attributes_init();
-  psa_set_key_usage_flags ( &key_attributes, PSA_KEY_USAGE_DERIVE );
-  psa_set_key_algorithm ( &key_attributes, alg );
-  psa_set_key_type ( &key_attributes, handshake->xxdh_psa_type );
-  psa_set_key_bits ( &key_attributes, handshake->xxdh_psa_bits );
+  psa_set_key_usage_flags (&key_attributes, PSA_KEY_USAGE_DERIVE );
+  psa_set_key_algorithm (&key_attributes, alg );
+  psa_set_key_type (&key_attributes, handshake->xxdh_psa_type );
+  psa_set_key_bits (&key_attributes, handshake->xxdh_psa_bits );
 
   /* Generate ECDH/FFDH private key. */
-  status = psa_generate_key ( &key_attributes,
-                              &handshake->xxdh_psa_privkey );
+  status = psa_generate_key (&key_attributes,
+                             &handshake->xxdh_psa_privkey );
 
   if ( status != PSA_SUCCESS )
   {
@@ -1725,6 +1734,7 @@ int mbedtls_ssl_tls13_generate_and_write_xxdh_key_exchange (
 
   return 0;
 }
+
 #endif /* MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_SOME_EPHEMERAL_ENABLED */
 
 /* RFC 8446 section 4.2

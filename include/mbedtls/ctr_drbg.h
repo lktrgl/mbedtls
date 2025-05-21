@@ -178,6 +178,7 @@ typedef struct mbedtls_ctr_drbg_psa_context
   mbedtls_svc_key_id_t key_id;
   psa_cipher_operation_t operation;
 } mbedtls_ctr_drbg_psa_context;
+
 #endif
 
 /**
@@ -215,7 +216,7 @@ typedef struct mbedtls_ctr_drbg_context
   /*
    * Callbacks (Entropy)
    */
-  int ( *MBEDTLS_PRIVATE ( f_entropy ) ) ( void*, unsigned char*, size_t );
+  int (*MBEDTLS_PRIVATE ( f_entropy ) ) ( void*, unsigned char*, size_t );
   /*!< The entropy callback function. */
 
   void* MBEDTLS_PRIVATE ( p_entropy );         /*!< The context for the entropy function. */
@@ -231,6 +232,7 @@ typedef struct mbedtls_ctr_drbg_context
   mbedtls_threading_mutex_t MBEDTLS_PRIVATE ( mutex );
 #endif
 }
+
 mbedtls_ctr_drbg_context;
 
 /**
@@ -347,7 +349,7 @@ void mbedtls_ctr_drbg_init ( mbedtls_ctr_drbg_context* ctx );
  * \return              #MBEDTLS_ERR_CTR_DRBG_ENTROPY_SOURCE_FAILED on failure.
  */
 int mbedtls_ctr_drbg_seed ( mbedtls_ctr_drbg_context* ctx,
-                            int ( *f_entropy ) ( void*, unsigned char*, size_t ),
+                            int (*f_entropy ) ( void*, unsigned char*, size_t ),
                             void* p_entropy,
                             const unsigned char* custom,
                             size_t len );
@@ -594,6 +596,7 @@ int mbedtls_ctr_drbg_self_test ( int verbose );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* ctr_drbg.h */

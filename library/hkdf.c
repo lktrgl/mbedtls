@@ -111,9 +111,9 @@ int mbedtls_hkdf_expand ( const mbedtls_md_info_t* md, const unsigned char* prk,
     return MBEDTLS_ERR_HKDF_BAD_INPUT_DATA;
   }
 
-  mbedtls_md_init ( &ctx );
+  mbedtls_md_init (&ctx );
 
-  if ( ( ret = mbedtls_md_setup ( &ctx, md, 1 ) ) != 0 )
+  if ( ( ret = mbedtls_md_setup (&ctx, md, 1 ) ) != 0 )
   {
     goto exit;
   }
@@ -129,21 +129,21 @@ int mbedtls_hkdf_expand ( const mbedtls_md_info_t* md, const unsigned char* prk,
     size_t num_to_copy;
     unsigned char c = i & 0xff;
 
-    ret = mbedtls_md_hmac_starts ( &ctx, prk, prk_len );
+    ret = mbedtls_md_hmac_starts (&ctx, prk, prk_len );
 
     if ( ret != 0 )
     {
       goto exit;
     }
 
-    ret = mbedtls_md_hmac_update ( &ctx, t, t_len );
+    ret = mbedtls_md_hmac_update (&ctx, t, t_len );
 
     if ( ret != 0 )
     {
       goto exit;
     }
 
-    ret = mbedtls_md_hmac_update ( &ctx, info, info_len );
+    ret = mbedtls_md_hmac_update (&ctx, info, info_len );
 
     if ( ret != 0 )
     {
@@ -152,14 +152,14 @@ int mbedtls_hkdf_expand ( const mbedtls_md_info_t* md, const unsigned char* prk,
 
     /* The constant concatenated to the end of each T(n) is a single octet.
      * */
-    ret = mbedtls_md_hmac_update ( &ctx, &c, 1 );
+    ret = mbedtls_md_hmac_update (&ctx, &c, 1 );
 
     if ( ret != 0 )
     {
       goto exit;
     }
 
-    ret = mbedtls_md_hmac_finish ( &ctx, t );
+    ret = mbedtls_md_hmac_finish (&ctx, t );
 
     if ( ret != 0 )
     {
@@ -173,7 +173,7 @@ int mbedtls_hkdf_expand ( const mbedtls_md_info_t* md, const unsigned char* prk,
   }
 
 exit:
-  mbedtls_md_free ( &ctx );
+  mbedtls_md_free (&ctx );
   mbedtls_platform_zeroize ( t, sizeof ( t ) );
 
   return ret;

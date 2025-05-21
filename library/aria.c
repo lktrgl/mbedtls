@@ -45,6 +45,7 @@ static inline uint32_t aria_p1 ( uint32_t x )
   __asm ( "rev16 %0, %1" : "=l" ( r ) : "l" ( x ) );
   return r;
 }
+
 #define ARIA_P1 aria_p1
 #elif defined(__ARMCC_VERSION) && __ARMCC_VERSION < 6000000 && \
     (__TARGET_ARCH_ARM >= 6 || __TARGET_ARCH_THUMB >= 3)
@@ -54,6 +55,7 @@ static inline uint32_t aria_p1 ( uint32_t x )
   __asm ( "rev16 r, x" );
   return r;
 }
+
 #define ARIA_P1 aria_p1
 #endif
 #endif /* arm */
@@ -113,14 +115,14 @@ static inline void aria_a ( uint32_t* a, uint32_t* b,
   ta  =  *b;                      // 4567
   *b  =  *a;                      // 0123
   *a  =  ARIA_P2 ( ta );          // 6745
-  tb  =  ARIA_P2 ( *d );          // efcd
-  *d  =  ARIA_P1 ( *c );          // 98ba
+  tb  =  ARIA_P2 (*d );       // efcd
+  *d  =  ARIA_P1 (*c );       // 98ba
   *c  =  ARIA_P1 ( tb );          // fedc
   ta  ^= *d;                      // 4567+98ba
-  tc  =  ARIA_P2 ( *b );          // 2301
+  tc  =  ARIA_P2 (*b );       // 2301
   ta  =  ARIA_P1 ( ta ) ^ tc ^ *c; // 2301+5476+89ab+fedc
-  tb  ^= ARIA_P2 ( *d );          // ba98+efcd
-  tc  ^= ARIA_P1 ( *a );          // 2301+7654
+  tb  ^= ARIA_P2 (*d );       // ba98+efcd
+  tc  ^= ARIA_P1 (*a );       // 2301+7654
   *b  ^= ta ^ tb;                 // 0123+2301+5476+89ab+ba98+efcd+fedc OUT
   tb  =  ARIA_P2 ( tb ) ^ ta;     // 2301+5476+89ab+98ba+cdef+fedc
   *a  ^= ARIA_P1 ( tb );          // 3210+4567+6745+89ab+98ba+dcfe+efcd OUT
@@ -143,22 +145,22 @@ static inline void aria_sl ( uint32_t* a, uint32_t* b,
                              const uint8_t sa[256], const uint8_t sb[256],
                              const uint8_t sc[256], const uint8_t sd[256] )
 {
-  *a = ( ( uint32_t ) sa[MBEDTLS_BYTE_0 ( *a )] ) ^
-       ( ( ( uint32_t ) sb[MBEDTLS_BYTE_1 ( *a )] ) <<  8 ) ^
-       ( ( ( uint32_t ) sc[MBEDTLS_BYTE_2 ( *a )] ) << 16 ) ^
-       ( ( ( uint32_t ) sd[MBEDTLS_BYTE_3 ( *a )] ) << 24 );
-  *b = ( ( uint32_t ) sa[MBEDTLS_BYTE_0 ( *b )] ) ^
-       ( ( ( uint32_t ) sb[MBEDTLS_BYTE_1 ( *b )] ) <<  8 ) ^
-       ( ( ( uint32_t ) sc[MBEDTLS_BYTE_2 ( *b )] ) << 16 ) ^
-       ( ( ( uint32_t ) sd[MBEDTLS_BYTE_3 ( *b )] ) << 24 );
-  *c = ( ( uint32_t ) sa[MBEDTLS_BYTE_0 ( *c )] ) ^
-       ( ( ( uint32_t ) sb[MBEDTLS_BYTE_1 ( *c )] ) <<  8 ) ^
-       ( ( ( uint32_t ) sc[MBEDTLS_BYTE_2 ( *c )] ) << 16 ) ^
-       ( ( ( uint32_t ) sd[MBEDTLS_BYTE_3 ( *c )] ) << 24 );
-  *d = ( ( uint32_t ) sa[MBEDTLS_BYTE_0 ( *d )] ) ^
-       ( ( ( uint32_t ) sb[MBEDTLS_BYTE_1 ( *d )] ) <<  8 ) ^
-       ( ( ( uint32_t ) sc[MBEDTLS_BYTE_2 ( *d )] ) << 16 ) ^
-       ( ( ( uint32_t ) sd[MBEDTLS_BYTE_3 ( *d )] ) << 24 );
+  *a = ( ( uint32_t ) sa[MBEDTLS_BYTE_0 (*a )] ) ^
+       ( ( ( uint32_t ) sb[MBEDTLS_BYTE_1 (*a )] ) <<  8 ) ^
+       ( ( ( uint32_t ) sc[MBEDTLS_BYTE_2 (*a )] ) << 16 ) ^
+       ( ( ( uint32_t ) sd[MBEDTLS_BYTE_3 (*a )] ) << 24 );
+  *b = ( ( uint32_t ) sa[MBEDTLS_BYTE_0 (*b )] ) ^
+       ( ( ( uint32_t ) sb[MBEDTLS_BYTE_1 (*b )] ) <<  8 ) ^
+       ( ( ( uint32_t ) sc[MBEDTLS_BYTE_2 (*b )] ) << 16 ) ^
+       ( ( ( uint32_t ) sd[MBEDTLS_BYTE_3 (*b )] ) << 24 );
+  *c = ( ( uint32_t ) sa[MBEDTLS_BYTE_0 (*c )] ) ^
+       ( ( ( uint32_t ) sb[MBEDTLS_BYTE_1 (*c )] ) <<  8 ) ^
+       ( ( ( uint32_t ) sc[MBEDTLS_BYTE_2 (*c )] ) << 16 ) ^
+       ( ( ( uint32_t ) sd[MBEDTLS_BYTE_3 (*c )] ) << 24 );
+  *d = ( ( uint32_t ) sa[MBEDTLS_BYTE_0 (*d )] ) ^
+       ( ( ( uint32_t ) sb[MBEDTLS_BYTE_1 (*d )] ) <<  8 ) ^
+       ( ( ( uint32_t ) sc[MBEDTLS_BYTE_2 (*d )] ) << 16 ) ^
+       ( ( ( uint32_t ) sd[MBEDTLS_BYTE_3 (*d )] ) << 24 );
 }
 
 /*
@@ -281,8 +283,8 @@ static void aria_fo_xor ( uint32_t r[4], const uint32_t p[4],
   c = p[2] ^ k[2];
   d = p[3] ^ k[3];
 
-  aria_sl ( &a, &b, &c, &d, aria_sb1, aria_sb2, aria_is1, aria_is2 );
-  aria_a ( &a, &b, &c, &d );
+  aria_sl (&a, &b, &c, &d, aria_sb1, aria_sb2, aria_is1, aria_is2 );
+  aria_a (&a, &b, &c, &d );
 
   r[0] = a ^ x[0];
   r[1] = b ^ x[1];
@@ -303,8 +305,8 @@ static void aria_fe_xor ( uint32_t r[4], const uint32_t p[4],
   c = p[2] ^ k[2];
   d = p[3] ^ k[3];
 
-  aria_sl ( &a, &b, &c, &d, aria_is1, aria_is2, aria_sb1, aria_sb2 );
-  aria_a ( &a, &b, &c, &d );
+  aria_sl (&a, &b, &c, &d, aria_is1, aria_is2, aria_sb1, aria_sb2 );
+  aria_a (&a, &b, &c, &d );
 
   r[0] = a ^ x[0];
   r[1] = b ^ x[1];
@@ -358,7 +360,7 @@ int mbedtls_aria_setkey_enc ( mbedtls_aria_context* ctx,
   };
 
   int i;
-  uint32_t w[4][4], *w2;
+  uint32_t w[4][4], * w2;
 
   if ( keybits != 128 && keybits != 192 && keybits != 256 )
   {
@@ -441,12 +443,13 @@ int mbedtls_aria_setkey_dec ( mbedtls_aria_context* ctx,
   /* apply affine transform to middle keys */
   for ( i = 1; i < ctx->nr; i++ )
   {
-    aria_a ( &ctx->rk[i][0], &ctx->rk[i][1],
-             &ctx->rk[i][2], &ctx->rk[i][3] );
+    aria_a (&ctx->rk[i][0], &ctx->rk[i][1],
+            &ctx->rk[i][2], &ctx->rk[i][3] );
   }
 
   return 0;
 }
+
 #endif /* !MBEDTLS_BLOCK_CIPHER_NO_DECRYPT */
 
 /*
@@ -475,8 +478,8 @@ int mbedtls_aria_crypt_ecb ( mbedtls_aria_context* ctx,
     d ^= ctx->rk[i][3];
     i++;
 
-    aria_sl ( &a, &b, &c, &d, aria_sb1, aria_sb2, aria_is1, aria_is2 );
-    aria_a ( &a, &b, &c, &d );
+    aria_sl (&a, &b, &c, &d, aria_sb1, aria_sb2, aria_is1, aria_is2 );
+    aria_a (&a, &b, &c, &d );
 
     a ^= ctx->rk[i][0];
     b ^= ctx->rk[i][1];
@@ -484,14 +487,14 @@ int mbedtls_aria_crypt_ecb ( mbedtls_aria_context* ctx,
     d ^= ctx->rk[i][3];
     i++;
 
-    aria_sl ( &a, &b, &c, &d, aria_is1, aria_is2, aria_sb1, aria_sb2 );
+    aria_sl (&a, &b, &c, &d, aria_is1, aria_is2, aria_sb1, aria_sb2 );
 
     if ( i >= ctx->nr )
     {
       break;
     }
 
-    aria_a ( &a, &b, &c, &d );
+    aria_a (&a, &b, &c, &d );
   }
 
   /* final key mixing */
@@ -581,6 +584,7 @@ int mbedtls_aria_crypt_cbc ( mbedtls_aria_context* ctx,
 
   return 0;
 }
+
 #endif /* MBEDTLS_CIPHER_MODE_CBC */
 
 #if defined(MBEDTLS_CIPHER_MODE_CFB)
@@ -647,6 +651,7 @@ int mbedtls_aria_crypt_cfb128 ( mbedtls_aria_context* ctx,
 
   return 0;
 }
+
 #endif /* MBEDTLS_CIPHER_MODE_CFB */
 
 #if defined(MBEDTLS_CIPHER_MODE_CTR)
@@ -682,7 +687,7 @@ int mbedtls_aria_crypt_ctr ( mbedtls_aria_context* ctx,
 
       for ( i = MBEDTLS_ARIA_BLOCKSIZE; i > 0; i-- )
       {
-        if ( ++nonce_counter[i - 1] != 0 )
+        if (++nonce_counter[i - 1] != 0 )
         {
           break;
         }
@@ -699,6 +704,7 @@ int mbedtls_aria_crypt_ctr ( mbedtls_aria_context* ctx,
 
   return 0;
 }
+
 #endif /* MBEDTLS_CIPHER_MODE_CTR */
 #endif /* !MBEDTLS_ARIA_ALT */
 
@@ -892,7 +898,7 @@ int mbedtls_aria_self_test ( int verbose )
   uint8_t buf[48], iv[MBEDTLS_ARIA_BLOCKSIZE];
 #endif
 
-  mbedtls_aria_init ( &ctx );
+  mbedtls_aria_init (&ctx );
 
   /*
    * Test set 1
@@ -905,8 +911,8 @@ int mbedtls_aria_self_test ( int verbose )
       mbedtls_printf ( "  ARIA-ECB-%d (enc): ", 128 + 64 * i );
     }
 
-    mbedtls_aria_setkey_enc ( &ctx, aria_test1_ecb_key, 128 + 64 * i );
-    mbedtls_aria_crypt_ecb ( &ctx, aria_test1_ecb_pt, blk );
+    mbedtls_aria_setkey_enc (&ctx, aria_test1_ecb_key, 128 + 64 * i );
+    mbedtls_aria_crypt_ecb (&ctx, aria_test1_ecb_pt, blk );
     ARIA_SELF_TEST_ASSERT (
       memcmp ( blk, aria_test1_ecb_ct[i], MBEDTLS_ARIA_BLOCKSIZE )
       != 0 );
@@ -921,8 +927,8 @@ int mbedtls_aria_self_test ( int verbose )
     }
 
 #if !defined(MBEDTLS_BLOCK_CIPHER_NO_DECRYPT)
-    mbedtls_aria_setkey_dec ( &ctx, aria_test1_ecb_key, 128 + 64 * i );
-    mbedtls_aria_crypt_ecb ( &ctx, aria_test1_ecb_ct[i], blk );
+    mbedtls_aria_setkey_dec (&ctx, aria_test1_ecb_key, 128 + 64 * i );
+    mbedtls_aria_crypt_ecb (&ctx, aria_test1_ecb_ct[i], blk );
     ARIA_SELF_TEST_ASSERT (
       memcmp ( blk, aria_test1_ecb_pt, MBEDTLS_ARIA_BLOCKSIZE )
       != 0 );
@@ -947,11 +953,11 @@ int mbedtls_aria_self_test ( int verbose )
       mbedtls_printf ( "  ARIA-CBC-%d (enc): ", 128 + 64 * i );
     }
 
-    mbedtls_aria_setkey_enc ( &ctx, aria_test2_key, 128 + 64 * i );
+    mbedtls_aria_setkey_enc (&ctx, aria_test2_key, 128 + 64 * i );
     memcpy ( iv, aria_test2_iv, MBEDTLS_ARIA_BLOCKSIZE );
     memset ( buf, 0x55, sizeof ( buf ) );
-    mbedtls_aria_crypt_cbc ( &ctx, MBEDTLS_ARIA_ENCRYPT, 48, iv,
-                             aria_test2_pt, buf );
+    mbedtls_aria_crypt_cbc (&ctx, MBEDTLS_ARIA_ENCRYPT, 48, iv,
+                            aria_test2_pt, buf );
     ARIA_SELF_TEST_ASSERT ( memcmp ( buf, aria_test2_cbc_ct[i], 48 )
                             != 0 );
 
@@ -961,11 +967,11 @@ int mbedtls_aria_self_test ( int verbose )
       mbedtls_printf ( "  ARIA-CBC-%d (dec): ", 128 + 64 * i );
     }
 
-    mbedtls_aria_setkey_dec ( &ctx, aria_test2_key, 128 + 64 * i );
+    mbedtls_aria_setkey_dec (&ctx, aria_test2_key, 128 + 64 * i );
     memcpy ( iv, aria_test2_iv, MBEDTLS_ARIA_BLOCKSIZE );
     memset ( buf, 0xAA, sizeof ( buf ) );
-    mbedtls_aria_crypt_cbc ( &ctx, MBEDTLS_ARIA_DECRYPT, 48, iv,
-                             aria_test2_cbc_ct[i], buf );
+    mbedtls_aria_crypt_cbc (&ctx, MBEDTLS_ARIA_DECRYPT, 48, iv,
+                            aria_test2_cbc_ct[i], buf );
     ARIA_SELF_TEST_ASSERT ( memcmp ( buf, aria_test2_pt, 48 ) != 0 );
   }
 
@@ -986,12 +992,12 @@ int mbedtls_aria_self_test ( int verbose )
       mbedtls_printf ( "  ARIA-CFB-%d (enc): ", 128 + 64 * i );
     }
 
-    mbedtls_aria_setkey_enc ( &ctx, aria_test2_key, 128 + 64 * i );
+    mbedtls_aria_setkey_enc (&ctx, aria_test2_key, 128 + 64 * i );
     memcpy ( iv, aria_test2_iv, MBEDTLS_ARIA_BLOCKSIZE );
     memset ( buf, 0x55, sizeof ( buf ) );
     j = 0;
-    mbedtls_aria_crypt_cfb128 ( &ctx, MBEDTLS_ARIA_ENCRYPT, 48, &j, iv,
-                                aria_test2_pt, buf );
+    mbedtls_aria_crypt_cfb128 (&ctx, MBEDTLS_ARIA_ENCRYPT, 48, &j, iv,
+                               aria_test2_pt, buf );
     ARIA_SELF_TEST_ASSERT ( memcmp ( buf, aria_test2_cfb_ct[i], 48 ) != 0 );
 
     /* Test CFB decryption */
@@ -1000,12 +1006,12 @@ int mbedtls_aria_self_test ( int verbose )
       mbedtls_printf ( "  ARIA-CFB-%d (dec): ", 128 + 64 * i );
     }
 
-    mbedtls_aria_setkey_enc ( &ctx, aria_test2_key, 128 + 64 * i );
+    mbedtls_aria_setkey_enc (&ctx, aria_test2_key, 128 + 64 * i );
     memcpy ( iv, aria_test2_iv, MBEDTLS_ARIA_BLOCKSIZE );
     memset ( buf, 0xAA, sizeof ( buf ) );
     j = 0;
-    mbedtls_aria_crypt_cfb128 ( &ctx, MBEDTLS_ARIA_DECRYPT, 48, &j,
-                                iv, aria_test2_cfb_ct[i], buf );
+    mbedtls_aria_crypt_cfb128 (&ctx, MBEDTLS_ARIA_DECRYPT, 48, &j,
+                               iv, aria_test2_cfb_ct[i], buf );
     ARIA_SELF_TEST_ASSERT ( memcmp ( buf, aria_test2_pt, 48 ) != 0 );
   }
 
@@ -1026,12 +1032,12 @@ int mbedtls_aria_self_test ( int verbose )
       mbedtls_printf ( "  ARIA-CTR-%d (enc): ", 128 + 64 * i );
     }
 
-    mbedtls_aria_setkey_enc ( &ctx, aria_test2_key, 128 + 64 * i );
+    mbedtls_aria_setkey_enc (&ctx, aria_test2_key, 128 + 64 * i );
     memset ( iv, 0, MBEDTLS_ARIA_BLOCKSIZE );                   // IV = 0
     memset ( buf, 0x55, sizeof ( buf ) );
     j = 0;
-    mbedtls_aria_crypt_ctr ( &ctx, 48, &j, iv, blk,
-                             aria_test2_pt, buf );
+    mbedtls_aria_crypt_ctr (&ctx, 48, &j, iv, blk,
+                            aria_test2_pt, buf );
     ARIA_SELF_TEST_ASSERT ( memcmp ( buf, aria_test2_ctr_ct[i], 48 ) != 0 );
 
     /* Test CTR decryption */
@@ -1040,12 +1046,12 @@ int mbedtls_aria_self_test ( int verbose )
       mbedtls_printf ( "  ARIA-CTR-%d (dec): ", 128 + 64 * i );
     }
 
-    mbedtls_aria_setkey_enc ( &ctx, aria_test2_key, 128 + 64 * i );
+    mbedtls_aria_setkey_enc (&ctx, aria_test2_key, 128 + 64 * i );
     memset ( iv, 0, MBEDTLS_ARIA_BLOCKSIZE );                   // IV = 0
     memset ( buf, 0xAA, sizeof ( buf ) );
     j = 0;
-    mbedtls_aria_crypt_ctr ( &ctx, 48, &j, iv, blk,
-                             aria_test2_ctr_ct[i], buf );
+    mbedtls_aria_crypt_ctr (&ctx, 48, &j, iv, blk,
+                            aria_test2_ctr_ct[i], buf );
     ARIA_SELF_TEST_ASSERT ( memcmp ( buf, aria_test2_pt, 48 ) != 0 );
   }
 
@@ -1059,7 +1065,7 @@ int mbedtls_aria_self_test ( int verbose )
   ret = 0;
 
 exit:
-  mbedtls_aria_free ( &ctx );
+  mbedtls_aria_free (&ctx );
   return ret;
 }
 

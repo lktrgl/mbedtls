@@ -68,53 +68,53 @@ FStar_UInt128_uint128 FStar_UInt128_uint64_to_uint128 ( uint64_t a );
 uint64_t FStar_UInt128_uint128_to_uint64 ( FStar_UInt128_uint128 a );
 
 extern FStar_UInt128_uint128
-( *FStar_UInt128_op_Plus_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
+(*FStar_UInt128_op_Plus_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
 
 extern FStar_UInt128_uint128
-( *FStar_UInt128_op_Plus_Question_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
+(*FStar_UInt128_op_Plus_Question_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
 
 extern FStar_UInt128_uint128
-( *FStar_UInt128_op_Plus_Percent_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
+(*FStar_UInt128_op_Plus_Percent_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
 
 extern FStar_UInt128_uint128
-( *FStar_UInt128_op_Subtraction_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
+(*FStar_UInt128_op_Subtraction_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
 
 extern FStar_UInt128_uint128
-( *FStar_UInt128_op_Subtraction_Question_Hat ) (
+(*FStar_UInt128_op_Subtraction_Question_Hat ) (
   FStar_UInt128_uint128 x0,
   FStar_UInt128_uint128 x1
 );
 
 extern FStar_UInt128_uint128
-( *FStar_UInt128_op_Subtraction_Percent_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
+(*FStar_UInt128_op_Subtraction_Percent_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
 
 extern FStar_UInt128_uint128
-( *FStar_UInt128_op_Amp_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
+(*FStar_UInt128_op_Amp_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
 
 extern FStar_UInt128_uint128
-( *FStar_UInt128_op_Hat_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
+(*FStar_UInt128_op_Hat_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
 
 extern FStar_UInt128_uint128
-( *FStar_UInt128_op_Bar_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
+(*FStar_UInt128_op_Bar_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
 
 extern FStar_UInt128_uint128
-( *FStar_UInt128_op_Less_Less_Hat ) ( FStar_UInt128_uint128 x0, uint32_t x1 );
+(*FStar_UInt128_op_Less_Less_Hat ) ( FStar_UInt128_uint128 x0, uint32_t x1 );
 
 extern FStar_UInt128_uint128
-( *FStar_UInt128_op_Greater_Greater_Hat ) ( FStar_UInt128_uint128 x0, uint32_t x1 );
+(*FStar_UInt128_op_Greater_Greater_Hat ) ( FStar_UInt128_uint128 x0, uint32_t x1 );
 
-extern bool ( *FStar_UInt128_op_Equals_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
+extern bool (*FStar_UInt128_op_Equals_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
 
 extern bool
-( *FStar_UInt128_op_Greater_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
+(*FStar_UInt128_op_Greater_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
 
-extern bool ( *FStar_UInt128_op_Less_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
-
-extern bool
-( *FStar_UInt128_op_Greater_Equals_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
+extern bool (*FStar_UInt128_op_Less_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
 
 extern bool
-( *FStar_UInt128_op_Less_Equals_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
+(*FStar_UInt128_op_Greater_Equals_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
+
+extern bool
+(*FStar_UInt128_op_Less_Equals_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 );
 
 FStar_UInt128_uint128 FStar_UInt128_mul32 ( uint64_t x, uint32_t y );
 

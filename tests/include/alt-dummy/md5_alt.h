@@ -11,6 +11,7 @@ typedef struct mbedtls_md5_context
 {
   int dummy;
 }
+
 mbedtls_md5_context;
 
 

@@ -21,6 +21,7 @@ int main ( void )
                    "MBEDTLS_MD_CAN_SHA256 and/or MBEDTLS_FS_IO not defined.\n" );
   mbedtls_exit ( 0 );
 }
+
 #else
 
 #include "mbedtls/rsa.h"
@@ -41,16 +42,16 @@ int main ( int argc, char* argv[] )
   char filename[512];
   mbedtls_mpi N, P, Q, D, E, DP, DQ, QP;
 
-  mbedtls_rsa_init ( &rsa );
+  mbedtls_rsa_init (&rsa );
 
-  mbedtls_mpi_init ( &N );
-  mbedtls_mpi_init ( &P );
-  mbedtls_mpi_init ( &Q );
-  mbedtls_mpi_init ( &D );
-  mbedtls_mpi_init ( &E );
-  mbedtls_mpi_init ( &DP );
-  mbedtls_mpi_init ( &DQ );
-  mbedtls_mpi_init ( &QP );
+  mbedtls_mpi_init (&N );
+  mbedtls_mpi_init (&P );
+  mbedtls_mpi_init (&Q );
+  mbedtls_mpi_init (&D );
+  mbedtls_mpi_init (&E );
+  mbedtls_mpi_init (&DP );
+  mbedtls_mpi_init (&DQ );
+  mbedtls_mpi_init (&QP );
 
   if ( argc != 2 )
   {
@@ -73,14 +74,14 @@ int main ( int argc, char* argv[] )
     goto exit;
   }
 
-  if ( ( ret = mbedtls_mpi_read_file ( &N, 16, f ) ) != 0 ||
-       ( ret = mbedtls_mpi_read_file ( &E, 16, f ) ) != 0 ||
-       ( ret = mbedtls_mpi_read_file ( &D, 16, f ) ) != 0 ||
-       ( ret = mbedtls_mpi_read_file ( &P, 16, f ) ) != 0 ||
-       ( ret = mbedtls_mpi_read_file ( &Q, 16, f ) ) != 0 ||
-       ( ret = mbedtls_mpi_read_file ( &DP, 16, f ) ) != 0 ||
-       ( ret = mbedtls_mpi_read_file ( &DQ, 16, f ) ) != 0 ||
-       ( ret = mbedtls_mpi_read_file ( &QP, 16, f ) ) != 0 )
+  if ( ( ret = mbedtls_mpi_read_file (&N, 16, f ) ) != 0 ||
+       ( ret = mbedtls_mpi_read_file (&E, 16, f ) ) != 0 ||
+       ( ret = mbedtls_mpi_read_file (&D, 16, f ) ) != 0 ||
+       ( ret = mbedtls_mpi_read_file (&P, 16, f ) ) != 0 ||
+       ( ret = mbedtls_mpi_read_file (&Q, 16, f ) ) != 0 ||
+       ( ret = mbedtls_mpi_read_file (&DP, 16, f ) ) != 0 ||
+       ( ret = mbedtls_mpi_read_file (&DQ, 16, f ) ) != 0 ||
+       ( ret = mbedtls_mpi_read_file (&QP, 16, f ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_mpi_read_file returned %d\n\n", ret );
     fclose ( f );
@@ -89,14 +90,14 @@ int main ( int argc, char* argv[] )
 
   fclose ( f );
 
-  if ( ( ret = mbedtls_rsa_import ( &rsa, &N, &P, &Q, &D, &E ) ) != 0 )
+  if ( ( ret = mbedtls_rsa_import (&rsa, &N, &P, &Q, &D, &E ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_rsa_import returned %d\n\n",
                      ret );
     goto exit;
   }
 
-  if ( ( ret = mbedtls_rsa_complete ( &rsa ) ) != 0 )
+  if ( ( ret = mbedtls_rsa_complete (&rsa ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_rsa_complete returned %d\n\n",
                      ret );
@@ -106,7 +107,7 @@ int main ( int argc, char* argv[] )
   mbedtls_printf ( "\n  . Checking the private key" );
   fflush ( stdout );
 
-  if ( ( ret = mbedtls_rsa_check_privkey ( &rsa ) ) != 0 )
+  if ( ( ret = mbedtls_rsa_check_privkey (&rsa ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_rsa_check_privkey failed with -0x%0x\n",
                      ( unsigned int ) - ret );
@@ -128,8 +129,8 @@ int main ( int argc, char* argv[] )
     goto exit;
   }
 
-  if ( ( ret = mbedtls_rsa_pkcs1_sign ( &rsa, NULL, NULL, MBEDTLS_MD_SHA256,
-                                        32, hash, buf ) ) != 0 )
+  if ( ( ret = mbedtls_rsa_pkcs1_sign (&rsa, NULL, NULL, MBEDTLS_MD_SHA256,
+                                       32, hash, buf ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_rsa_pkcs1_sign returned -0x%0x\n\n",
                      ( unsigned int ) - ret );
@@ -147,7 +148,7 @@ int main ( int argc, char* argv[] )
     goto exit;
   }
 
-  for ( i = 0; i < mbedtls_rsa_get_len ( &rsa ); i++ )
+  for ( i = 0; i < mbedtls_rsa_get_len (&rsa ); i++ )
   {
     mbedtls_fprintf ( f, "%02X%s", buf[i],
                       ( i + 1 ) % 16 == 0 ? "\r\n" : " " );
@@ -161,17 +162,18 @@ int main ( int argc, char* argv[] )
 
 exit:
 
-  mbedtls_rsa_free ( &rsa );
-  mbedtls_mpi_free ( &N );
-  mbedtls_mpi_free ( &P );
-  mbedtls_mpi_free ( &Q );
-  mbedtls_mpi_free ( &D );
-  mbedtls_mpi_free ( &E );
-  mbedtls_mpi_free ( &DP );
-  mbedtls_mpi_free ( &DQ );
-  mbedtls_mpi_free ( &QP );
+  mbedtls_rsa_free (&rsa );
+  mbedtls_mpi_free (&N );
+  mbedtls_mpi_free (&P );
+  mbedtls_mpi_free (&Q );
+  mbedtls_mpi_free (&D );
+  mbedtls_mpi_free (&E );
+  mbedtls_mpi_free (&DP );
+  mbedtls_mpi_free (&DQ );
+  mbedtls_mpi_free (&QP );
 
   mbedtls_exit ( exit_code );
 }
+
 #endif /* MBEDTLS_BIGNUM_C && MBEDTLS_RSA_C && MBEDTLS_MD_CAN_SHA256 &&
           MBEDTLS_FS_IO */

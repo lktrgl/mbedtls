@@ -228,6 +228,7 @@ static inline psa_status_t MBEDTLS_DEPRECATED psa_get_key_domain_parameters (
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* PSA_CRYPTO_COMPAT_H */

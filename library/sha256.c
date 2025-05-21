@@ -66,10 +66,10 @@
     defined(MBEDTLS_SHA256_USE_ARMV8_A_CRYPTO_ONLY)
     #if !defined(MBEDTLS_HAVE_NEON_INTRINSICS)
       #if defined(MBEDTLS_SHA256_USE_ARMV8_A_CRYPTO_IF_PRESENT)
-        #               warning "Target does not support NEON instructions"
+        #warning "Target does not support NEON instructions"
         #undef MBEDTLS_SHA256_USE_ARMV8_A_CRYPTO_IF_PRESENT
       #else
-        #               error "Target does not support NEON instructions"
+        #error "Target does not support NEON instructions"
       #endif
     #endif
   #endif
@@ -141,16 +141,19 @@ static int mbedtls_a64_crypto_sha256_determine_support ( void )
 {
 return ( getauxval ( AT_HWCAP ) & HWCAP_SHA2 ) ? 1 : 0;
 }
+
 #elif defined(MBEDTLS_ARCH_IS_ARM32) && defined(HWCAP2_SHA2)
 static int mbedtls_a64_crypto_sha256_determine_support ( void )
 {
 return ( getauxval ( AT_HWCAP2 ) & HWCAP2_SHA2 ) ? 1 : 0;
 }
+
 #elif defined(__APPLE__)
 static int mbedtls_a64_crypto_sha256_determine_support ( void )
 {
 return 1;
 }
+
 #elif defined(MBEDTLS_PLATFORM_IS_WINDOWS_ON_ARM64)
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -163,6 +166,7 @@ static int mbedtls_a64_crypto_sha256_determine_support ( void )
 return IsProcessorFeaturePresent ( PF_ARM_V8_CRYPTO_INSTRUCTIONS_AVAILABLE ) ?
 1 : 0;
 }
+
 #elif defined(__unix__) && defined(SIG_SETMASK)
 /* Detection with SIGILL, setjmp() and longjmp() */
 #include <signal.h>
@@ -190,7 +194,7 @@ if ( sigprocmask ( 0, NULL, &old_mask ) )
 return 0;
 }
 
-sigemptyset ( &new_action.sa_mask );
+sigemptyset (&new_action.sa_mask );
 new_action.sa_flags = 0;
 new_action.sa_handler = sigill_handler;
 
@@ -214,6 +218,7 @@ sigprocmask ( SIG_SETMASK, &old_mask, NULL );
 
 return ret;
 }
+
 #else
 #warning "No mechanism to detect ARMV8_CRYPTO found, using C code only"
 #undef MBEDTLS_SHA256_USE_ARMV8_A_CRYPTO_IF_PRESENT
@@ -345,12 +350,12 @@ static const uint32_t K[] =
 static size_t mbedtls_internal_sha256_process_many_a64_crypto (
 mbedtls_sha256_context* ctx, const uint8_t* msg, size_t len )
 {
-uint32x4_t abcd = vld1q_u32 ( &ctx->state[0] );
-uint32x4_t efgh = vld1q_u32 ( &ctx->state[4] );
+uint32x4_t abcd = vld1q_u32 (&ctx->state[0] );
+uint32x4_t efgh = vld1q_u32 (&ctx->state[4] );
 
 size_t processed = 0;
 
-for ( ;
+for (;
 len >= SHA256_BLOCK_SIZE;
 processed += SHA256_BLOCK_SIZE,
 msg += SHA256_BLOCK_SIZE,
@@ -375,25 +380,25 @@ sched3 = vreinterpretq_u32_u8 ( vrev32q_u8 ( vreinterpretq_u8_u32 ( sched3 ) ) )
 #endif
 
 /* Rounds 0 to 3 */
-tmp = vaddq_u32 ( sched0, vld1q_u32 ( &K[0] ) );
+tmp = vaddq_u32 ( sched0, vld1q_u32 (&K[0] ) );
 abcd_prev = abcd;
 abcd = vsha256hq_u32 ( abcd_prev, efgh, tmp );
 efgh = vsha256h2q_u32 ( efgh, abcd_prev, tmp );
 
 /* Rounds 4 to 7 */
-tmp = vaddq_u32 ( sched1, vld1q_u32 ( &K[4] ) );
+tmp = vaddq_u32 ( sched1, vld1q_u32 (&K[4] ) );
 abcd_prev = abcd;
 abcd = vsha256hq_u32 ( abcd_prev, efgh, tmp );
 efgh = vsha256h2q_u32 ( efgh, abcd_prev, tmp );
 
 /* Rounds 8 to 11 */
-tmp = vaddq_u32 ( sched2, vld1q_u32 ( &K[8] ) );
+tmp = vaddq_u32 ( sched2, vld1q_u32 (&K[8] ) );
 abcd_prev = abcd;
 abcd = vsha256hq_u32 ( abcd_prev, efgh, tmp );
 efgh = vsha256h2q_u32 ( efgh, abcd_prev, tmp );
 
 /* Rounds 12 to 15 */
-tmp = vaddq_u32 ( sched3, vld1q_u32 ( &K[12] ) );
+tmp = vaddq_u32 ( sched3, vld1q_u32 (&K[12] ) );
 abcd_prev = abcd;
 abcd = vsha256hq_u32 ( abcd_prev, efgh, tmp );
 efgh = vsha256h2q_u32 ( efgh, abcd_prev, tmp );
@@ -402,28 +407,28 @@ for ( int t = 16; t < 64; t += 16 )
 {
 /* Rounds t to t + 3 */
 sched0 = vsha256su1q_u32 ( vsha256su0q_u32 ( sched0, sched1 ), sched2, sched3 );
-tmp = vaddq_u32 ( sched0, vld1q_u32 ( &K[t] ) );
+tmp = vaddq_u32 ( sched0, vld1q_u32 (&K[t] ) );
 abcd_prev = abcd;
 abcd = vsha256hq_u32 ( abcd_prev, efgh, tmp );
 efgh = vsha256h2q_u32 ( efgh, abcd_prev, tmp );
 
 /* Rounds t + 4 to t + 7 */
 sched1 = vsha256su1q_u32 ( vsha256su0q_u32 ( sched1, sched2 ), sched3, sched0 );
-tmp = vaddq_u32 ( sched1, vld1q_u32 ( &K[t + 4] ) );
+tmp = vaddq_u32 ( sched1, vld1q_u32 (&K[t + 4] ) );
 abcd_prev = abcd;
 abcd = vsha256hq_u32 ( abcd_prev, efgh, tmp );
 efgh = vsha256h2q_u32 ( efgh, abcd_prev, tmp );
 
 /* Rounds t + 8 to t + 11 */
 sched2 = vsha256su1q_u32 ( vsha256su0q_u32 ( sched2, sched3 ), sched0, sched1 );
-tmp = vaddq_u32 ( sched2, vld1q_u32 ( &K[t + 8] ) );
+tmp = vaddq_u32 ( sched2, vld1q_u32 (&K[t + 8] ) );
 abcd_prev = abcd;
 abcd = vsha256hq_u32 ( abcd_prev, efgh, tmp );
 efgh = vsha256h2q_u32 ( efgh, abcd_prev, tmp );
 
 /* Rounds t + 12 to t + 15 */
 sched3 = vsha256su1q_u32 ( vsha256su0q_u32 ( sched3, sched0 ), sched1, sched2 );
-tmp = vaddq_u32 ( sched3, vld1q_u32 ( &K[t + 12] ) );
+tmp = vaddq_u32 ( sched3, vld1q_u32 (&K[t + 12] ) );
 abcd_prev = abcd;
 abcd = vsha256hq_u32 ( abcd_prev, efgh, tmp );
 efgh = vsha256h2q_u32 ( efgh, abcd_prev, tmp );
@@ -433,8 +438,8 @@ abcd = vaddq_u32 ( abcd, abcd_orig );
 efgh = vaddq_u32 ( efgh, efgh_orig );
 }
 
-vst1q_u32 ( &ctx->state[0], abcd );
-vst1q_u32 ( &ctx->state[4], efgh );
+vst1q_u32 (&ctx->state[0], abcd );
+vst1q_u32 (&ctx->state[4], efgh );
 
 return processed;
 }
@@ -605,7 +610,7 @@ ctx->state[i] += local.A[i];
 }
 
 /* Zeroise buffers and variables to clear sensitive data from memory. */
-mbedtls_platform_zeroize ( &local, sizeof ( local ) );
+mbedtls_platform_zeroize (&local, sizeof ( local ) );
 
 return 0;
 }
@@ -646,7 +651,7 @@ static int mbedtls_a64_crypto_sha256_has_support ( void )
 static int done = 0;
 static int supported = 0;
 
-if ( !done )
+if (!done )
 {
 supported = mbedtls_a64_crypto_sha256_determine_support();
 done = 1;
@@ -813,7 +818,7 @@ MBEDTLS_PUT_UINT32_BE ( ctx->state[6], output, 24 );
 truncated = ctx->is224;
 #endif
 
-if ( !truncated )
+if (!truncated )
 {
 MBEDTLS_PUT_UINT32_BE ( ctx->state[7], output, 28 );
 }
@@ -861,25 +866,25 @@ return MBEDTLS_ERR_SHA256_BAD_INPUT_DATA;
 
 #endif
 
-mbedtls_sha256_init ( &ctx );
+mbedtls_sha256_init (&ctx );
 
-if ( ( ret = mbedtls_sha256_starts ( &ctx, is224 ) ) != 0 )
+if ( ( ret = mbedtls_sha256_starts (&ctx, is224 ) ) != 0 )
 {
 goto exit;
 }
 
-if ( ( ret = mbedtls_sha256_update ( &ctx, input, ilen ) ) != 0 )
+if ( ( ret = mbedtls_sha256_update (&ctx, input, ilen ) ) != 0 )
 {
 goto exit;
 }
 
-if ( ( ret = mbedtls_sha256_finish ( &ctx, output ) ) != 0 )
+if ( ( ret = mbedtls_sha256_finish (&ctx, output ) ) != 0 )
 {
 goto exit;
 }
 
 exit:
-mbedtls_sha256_free ( &ctx );
+mbedtls_sha256_free (&ctx );
 
 return ret;
 }
@@ -986,7 +991,7 @@ mbedtls_printf ( "Buffer allocation failed\n" );
 return 1;
 }
 
-mbedtls_sha256_init ( &ctx );
+mbedtls_sha256_init (&ctx );
 
 for ( i = 0; i < 3; i++ )
 {
@@ -995,7 +1000,7 @@ if ( verbose != 0 )
 mbedtls_printf ( "  SHA-%d test #%d: ", 256 - is224 * 32, i + 1 );
 }
 
-if ( ( ret = mbedtls_sha256_starts ( &ctx, is224 ) ) != 0 )
+if ( ( ret = mbedtls_sha256_starts (&ctx, is224 ) ) != 0 )
 {
 goto fail;
 }
@@ -1006,7 +1011,7 @@ memset ( buf, 'a', buflen = 1000 );
 
 for ( int j = 0; j < 1000; j++ )
 {
-ret = mbedtls_sha256_update ( &ctx, buf, buflen );
+ret = mbedtls_sha256_update (&ctx, buf, buflen );
 
 if ( ret != 0 )
 {
@@ -1017,7 +1022,7 @@ goto fail;
 }
 else
 {
-ret = mbedtls_sha256_update ( &ctx, sha_test_buf[i],
+ret = mbedtls_sha256_update (&ctx, sha_test_buf[i],
 sha_test_buflen[i] );
 
 if ( ret != 0 )
@@ -1026,7 +1031,7 @@ goto fail;
 }
 }
 
-if ( ( ret = mbedtls_sha256_finish ( &ctx, sha256sum ) ) != 0 )
+if ( ( ret = mbedtls_sha256_finish (&ctx, sha256sum ) ) != 0 )
 {
 goto fail;
 }
@@ -1059,7 +1064,7 @@ mbedtls_printf ( "failed\n" );
 }
 
 exit:
-mbedtls_sha256_free ( &ctx );
+mbedtls_sha256_free (&ctx );
 mbedtls_free ( buf );
 
 return ret;
@@ -1070,6 +1075,7 @@ int mbedtls_sha256_self_test ( int verbose )
 {
 return mbedtls_sha256_common_self_test ( verbose, 0 );
 }
+
 #endif /* MBEDTLS_SHA256_C */
 
 #if defined(MBEDTLS_SHA224_C)
@@ -1077,6 +1083,7 @@ int mbedtls_sha224_self_test ( int verbose )
 {
 return mbedtls_sha256_common_self_test ( verbose, 1 );
 }
+
 #endif /* MBEDTLS_SHA224_C */
 
 #endif /* MBEDTLS_SELF_TEST */

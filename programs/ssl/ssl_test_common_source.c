@@ -141,6 +141,7 @@ static void dtls_srtp_key_derivation ( void* p_expkey,
   memcpy ( keys->randbytes + 32, server_random, 32 );
   keys->tls_prf_type = tls_prf_type;
 }
+
 #endif /* MBEDTLS_SSL_DTLS_SRTP */
 
 static int ssl_check_record ( mbedtls_ssl_context const* ssl,
@@ -385,7 +386,7 @@ static int x509_crt_verify_info ( char* buf, size_t size, const char* prefix,
   if ( flags != 0 )
   {
     ret = mbedtls_snprintf ( p, n, "%sUnknown reason "
-                             "(this should not happen)\n", prefix );
+                                   "(this should not happen)\n", prefix );
     MBEDTLS_X509_SAFE_SNPRINTF;
   }
 
@@ -414,4 +415,5 @@ static void mbedtls_print_supported_sig_algs ( void )
   mbedtls_printf ( "ecdsa_sha1\n" );
   mbedtls_printf ( "\n" );
 }
+
 #endif /* MBEDTLS_SSL_HANDSHAKE_WITH_CERT_ENABLED */

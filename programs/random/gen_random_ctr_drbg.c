@@ -24,6 +24,7 @@ int main ( void )
   mbedtls_printf ( "MBEDTLS_CTR_DRBG_C and/or MBEDTLS_ENTROPY_C and/or MBEDTLS_FS_IO not defined.\n" );
   mbedtls_exit ( 0 );
 }
+
 #else
 
 
@@ -36,7 +37,7 @@ int main ( int argc, char* argv[] )
   mbedtls_entropy_context entropy;
   unsigned char buf[1024];
 
-  mbedtls_ctr_drbg_init ( &ctr_drbg );
+  mbedtls_ctr_drbg_init (&ctr_drbg );
 
   if ( argc < 2 )
   {
@@ -50,12 +51,12 @@ int main ( int argc, char* argv[] )
     mbedtls_exit ( exit_code );
   }
 
-  mbedtls_entropy_init ( &entropy );
-  ret = mbedtls_ctr_drbg_seed ( &ctr_drbg,
-                                mbedtls_entropy_func,
-                                &entropy,
-                                ( const unsigned char* ) "RANDOM_GEN",
-                                10 );
+  mbedtls_entropy_init (&entropy );
+  ret = mbedtls_ctr_drbg_seed (&ctr_drbg,
+                               mbedtls_entropy_func,
+                               &entropy,
+                               ( const unsigned char* ) "RANDOM_GEN",
+                               10 );
 
   if ( ret != 0 )
   {
@@ -63,15 +64,15 @@ int main ( int argc, char* argv[] )
     goto cleanup;
   }
 
-  mbedtls_ctr_drbg_set_prediction_resistance ( &ctr_drbg, MBEDTLS_CTR_DRBG_PR_OFF );
+  mbedtls_ctr_drbg_set_prediction_resistance (&ctr_drbg, MBEDTLS_CTR_DRBG_PR_OFF );
 
 #if defined(MBEDTLS_FS_IO)
-  ret = mbedtls_ctr_drbg_update_seed_file ( &ctr_drbg, "seedfile" );
+  ret = mbedtls_ctr_drbg_update_seed_file (&ctr_drbg, "seedfile" );
 
   if ( ret == MBEDTLS_ERR_CTR_DRBG_FILE_IO_ERROR )
   {
     mbedtls_printf ( "Failed to open seedfile. Generating one.\n" );
-    ret = mbedtls_ctr_drbg_write_seed_file ( &ctr_drbg, "seedfile" );
+    ret = mbedtls_ctr_drbg_write_seed_file (&ctr_drbg, "seedfile" );
 
     if ( ret != 0 )
     {
@@ -89,7 +90,7 @@ int main ( int argc, char* argv[] )
 
   for ( i = 0, k = 768; i < k; i++ )
   {
-    ret = mbedtls_ctr_drbg_random ( &ctr_drbg, buf, sizeof ( buf ) );
+    ret = mbedtls_ctr_drbg_random (&ctr_drbg, buf, sizeof ( buf ) );
 
     if ( ret != 0 )
     {
@@ -113,9 +114,10 @@ cleanup:
   mbedtls_printf ( "\n" );
 
   fclose ( f );
-  mbedtls_ctr_drbg_free ( &ctr_drbg );
-  mbedtls_entropy_free ( &entropy );
+  mbedtls_ctr_drbg_free (&ctr_drbg );
+  mbedtls_entropy_free (&entropy );
 
   mbedtls_exit ( exit_code );
 }
+
 #endif /* MBEDTLS_CTR_DRBG_C && MBEDTLS_ENTROPY_C */

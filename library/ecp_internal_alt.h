@@ -106,7 +106,7 @@ void mbedtls_internal_ecp_free ( const mbedtls_ecp_group* grp );
  * \return          0 if successful.
  */
 int mbedtls_internal_ecp_randomize_jac ( const mbedtls_ecp_group* grp,
-    mbedtls_ecp_point* pt, int ( *f_rng ) ( void*,
+    mbedtls_ecp_point* pt, int (*f_rng ) ( void*,
         unsigned char*,
         size_t ),
     void* p_rng );
@@ -259,7 +259,7 @@ int mbedtls_internal_ecp_double_add_mxz ( const mbedtls_ecp_group* grp,
  */
 #if defined(MBEDTLS_ECP_RANDOMIZE_MXZ_ALT)
 int mbedtls_internal_ecp_randomize_mxz ( const mbedtls_ecp_group* grp,
-    mbedtls_ecp_point* P, int ( *f_rng ) ( void*,
+    mbedtls_ecp_point* P, int (*f_rng ) ( void*,
         unsigned char*,
         size_t ),
     void* p_rng );

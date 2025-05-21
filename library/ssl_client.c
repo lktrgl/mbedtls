@@ -96,6 +96,7 @@ static int ssl_write_hostname_ext ( mbedtls_ssl_context* ssl,
 #endif /* MBEDTLS_SSL_PROTO_TLS1_3 */
   return 0;
 }
+
 #endif /* MBEDTLS_SSL_SERVER_NAME_INDICATION */
 
 #if defined(MBEDTLS_SSL_ALPN)
@@ -151,7 +152,7 @@ static int ssl_write_alpn_ext ( mbedtls_ssl_context* ssl,
      * mbedtls_ssl_conf_set_alpn_protocols() checked that the length of
      * protocol names is less than 255.
      */
-    size_t protocol_name_len = strlen ( *cur );
+    size_t protocol_name_len = strlen (*cur );
 
     MBEDTLS_SSL_CHK_BUF_PTR ( p, end, 1 + protocol_name_len );
     *p++ = ( unsigned char ) protocol_name_len;
@@ -162,16 +163,17 @@ static int ssl_write_alpn_ext ( mbedtls_ssl_context* ssl,
   *out_len = ( size_t ) ( p - buf );
 
   /* List length = *out_len - 2 (ext_type) - 2 (ext_len) - 2 (list_len) */
-  MBEDTLS_PUT_UINT16_BE ( *out_len - 6, buf, 4 );
+  MBEDTLS_PUT_UINT16_BE (*out_len - 6, buf, 4 );
 
   /* Extension length = *out_len - 2 (ext_type) - 2 (ext_len) */
-  MBEDTLS_PUT_UINT16_BE ( *out_len - 4, buf, 2 );
+  MBEDTLS_PUT_UINT16_BE (*out_len - 4, buf, 2 );
 
 #if defined(MBEDTLS_SSL_PROTO_TLS1_3)
   mbedtls_ssl_tls13_set_hs_sent_ext_mask ( ssl, MBEDTLS_TLS_EXT_ALPN );
 #endif /* MBEDTLS_SSL_PROTO_TLS1_3 */
   return 0;
 }
+
 #endif /* MBEDTLS_SSL_ALPN */
 
 #if defined(MBEDTLS_SSL_TLS1_2_SOME_ECC) || \
@@ -248,7 +250,7 @@ static int ssl_write_supported_groups_ext ( mbedtls_ssl_context* ssl,
     return MBEDTLS_ERR_SSL_BAD_CONFIG;
   }
 
-  for ( ; *group_list != 0; group_list++ )
+  for (; *group_list != 0; group_list++ )
   {
     int propose_group = 0;
 
@@ -260,8 +262,8 @@ static int ssl_write_supported_groups_ext ( mbedtls_ssl_context* ssl,
     {
 #if defined(PSA_WANT_ALG_ECDH)
 
-      if ( mbedtls_ssl_tls13_named_group_is_ecdhe ( *group_list ) &&
-           ( mbedtls_ssl_get_ecp_group_id_from_tls_id ( *group_list ) !=
+      if ( mbedtls_ssl_tls13_named_group_is_ecdhe (*group_list ) &&
+           ( mbedtls_ssl_get_ecp_group_id_from_tls_id (*group_list ) !=
              MBEDTLS_ECP_DP_NONE ) )
       {
         propose_group = 1;
@@ -270,7 +272,7 @@ static int ssl_write_supported_groups_ext ( mbedtls_ssl_context* ssl,
 #endif
 #if defined(PSA_WANT_ALG_FFDH)
 
-      if ( mbedtls_ssl_tls13_named_group_is_ffdh ( *group_list ) )
+      if ( mbedtls_ssl_tls13_named_group_is_ffdh (*group_list ) )
       {
         propose_group = 1;
       }
@@ -283,8 +285,8 @@ static int ssl_write_supported_groups_ext ( mbedtls_ssl_context* ssl,
 #if defined(MBEDTLS_SSL_TLS1_2_SOME_ECC)
 
     if ( ( flags & SSL_WRITE_SUPPORTED_GROUPS_EXT_TLS1_2_FLAG ) &&
-         mbedtls_ssl_tls12_named_group_is_ecdhe ( *group_list ) &&
-         ( mbedtls_ssl_get_ecp_group_id_from_tls_id ( *group_list ) !=
+         mbedtls_ssl_tls12_named_group_is_ecdhe (*group_list ) &&
+         ( mbedtls_ssl_get_ecp_group_id_from_tls_id (*group_list ) !=
            MBEDTLS_ECP_DP_NONE ) )
     {
       propose_group = 1;
@@ -295,10 +297,10 @@ static int ssl_write_supported_groups_ext ( mbedtls_ssl_context* ssl,
     if ( propose_group )
     {
       MBEDTLS_SSL_CHK_BUF_PTR ( p, end, 2 );
-      MBEDTLS_PUT_UINT16_BE ( *group_list, p, 0 );
+      MBEDTLS_PUT_UINT16_BE (*group_list, p, 0 );
       p += 2;
       MBEDTLS_SSL_DEBUG_MSG ( 3, ( "NamedGroup: %s ( %x )",
-                                   mbedtls_ssl_named_group_to_str ( *group_list ),
+                                   mbedtls_ssl_named_group_to_str (*group_list ),
                                    *group_list ) );
     }
   }
@@ -331,6 +333,7 @@ static int ssl_write_supported_groups_ext ( mbedtls_ssl_context* ssl,
 
   return 0;
 }
+
 #endif /* MBEDTLS_SSL_TLS1_2_SOME_ECC ||
           MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_SOME_EPHEMERAL_ENABLED */
 
@@ -408,7 +411,7 @@ static int ssl_write_client_hello_cipher_suites (
   renegotiating = ( ssl->renego_status != MBEDTLS_SSL_INITIAL_HANDSHAKE );
 #endif
 
-  if ( !renegotiating )
+  if (!renegotiating )
   {
     MBEDTLS_SSL_DEBUG_MSG ( 3, ( "adding EMPTY_RENEGOTIATION_INFO_SCSV" ) );
     MBEDTLS_SSL_CHK_BUF_PTR ( p, end, 2 );
@@ -688,6 +691,7 @@ static int ssl_write_client_hello_body ( mbedtls_ssl_context* ssl,
       p += output_len;
     }
   }
+
 #endif /* MBEDTLS_SSL_TLS1_2_SOME_ECC ||
           MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_SOME_EPHEMERAL_ENABLED */
 
@@ -885,7 +889,7 @@ static int ssl_prepare_client_hello ( mbedtls_ssl_context* ssl )
   {
 #if defined(MBEDTLS_SSL_PROTO_TLS1_3)
 
-    if ( !ssl->handshake->hello_retry_request_flag )
+    if (!ssl->handshake->hello_retry_request_flag )
 #endif
     {
       ret = ssl_generate_random ( ssl );
@@ -934,7 +938,7 @@ static int ssl_prepare_client_hello ( mbedtls_ssl_context* ssl )
 
 #endif
 
-    if ( !renegotiating )
+    if (!renegotiating )
     {
       if ( ( session_negotiate->ticket != NULL ) &&
            ( session_negotiate->ticket_len != 0 ) )
@@ -1012,7 +1016,7 @@ static int ssl_prepare_client_hello ( mbedtls_ssl_context* ssl )
     {
       MBEDTLS_SSL_DEBUG_MSG (
         1, ( "Hostname mismatch the session ticket, "
-             "disable session resumption." ) );
+           "disable session resumption." ) );
       return MBEDTLS_ERR_SSL_BAD_INPUT_DATA;
     }
   }
@@ -1028,6 +1032,7 @@ static int ssl_prepare_client_hello ( mbedtls_ssl_context* ssl )
 
   return 0;
 }
+
 /*
  * Write ClientHello handshake message.
  * Handler for MBEDTLS_SSL_CLIENT_HELLO

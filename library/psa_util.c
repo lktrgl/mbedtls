@@ -148,7 +148,7 @@ int psa_generic_status_to_mbedtls ( psa_status_t status )
 int psa_status_to_mbedtls ( psa_status_t status,
                             const mbedtls_error_pair_t* local_translations,
                             size_t local_errors_num,
-                            int ( *fallback_f ) ( psa_status_t ) )
+                            int (*fallback_f ) ( psa_status_t ) )
 {
   for ( size_t i = 0; i < local_errors_num; i++ )
   {
@@ -196,6 +196,7 @@ int psa_pk_status_to_mbedtls ( psa_status_t status )
     return psa_generic_status_to_mbedtls ( status );
   }
 }
+
 #endif /* MBEDTLS_PK_C */
 
 /****************************************************************/
@@ -389,6 +390,7 @@ mbedtls_ecp_group_id mbedtls_ecc_group_from_psa ( psa_ecc_family_t family,
 
   return MBEDTLS_ECP_DP_NONE;
 }
+
 #endif /* PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY */
 
 /* Wrapper function allowing the classic API to use the PSA RNG.
@@ -454,7 +456,7 @@ static int convert_raw_to_der_single_int ( const unsigned char* raw_buf, size_t 
   /* ASN.1 DER encoding requires minimal length, so skip leading 0s.
    * Provided input MPIs should not be 0, but as a failsafe measure, still
    * detect that and return error in case. */
-  while ( *raw_buf == 0x00 )
+  while (*raw_buf == 0x00 )
   {
     ++raw_buf;
     --raw_len;
@@ -477,7 +479,7 @@ static int convert_raw_to_der_single_int ( const unsigned char* raw_buf, size_t 
   memcpy ( p, raw_buf, len );
 
   /* If MSb is 1, ASN.1 requires that we prepend a 0. */
-  if ( *p & 0x80 )
+  if (*p & 0x80 )
   {
     if ( ( p - der_buf_start ) < 1 )
     {
@@ -489,8 +491,8 @@ static int convert_raw_to_der_single_int ( const unsigned char* raw_buf, size_t 
     ++len;
   }
 
-  MBEDTLS_ASN1_CHK_ADD ( len, mbedtls_asn1_write_len ( &p, der_buf_start, len ) );
-  MBEDTLS_ASN1_CHK_ADD ( len, mbedtls_asn1_write_tag ( &p, der_buf_start, MBEDTLS_ASN1_INTEGER ) );
+  MBEDTLS_ASN1_CHK_ADD ( len, mbedtls_asn1_write_len (&p, der_buf_start, len ) );
+  MBEDTLS_ASN1_CHK_ADD ( len, mbedtls_asn1_write_tag (&p, der_buf_start, MBEDTLS_ASN1_INTEGER ) );
 
   return len;
 }
@@ -548,8 +550,8 @@ int mbedtls_ecdsa_raw_to_der ( size_t bits, const unsigned char* raw, size_t raw
   len += ret;
 
   /* Add ASN.1 header (len + tag). */
-  MBEDTLS_ASN1_CHK_ADD ( len, mbedtls_asn1_write_len ( &p, der, len ) );
-  MBEDTLS_ASN1_CHK_ADD ( len, mbedtls_asn1_write_tag ( &p, der,
+  MBEDTLS_ASN1_CHK_ADD ( len, mbedtls_asn1_write_len (&p, der, len ) );
+  MBEDTLS_ASN1_CHK_ADD ( len, mbedtls_asn1_write_tag (&p, der,
                          MBEDTLS_ASN1_CONSTRUCTED |
                          MBEDTLS_ASN1_SEQUENCE ) );
 
@@ -591,8 +593,8 @@ static int convert_der_to_raw_single_int ( unsigned char* der, size_t der_len,
   size_t unpadded_len, padding_len = 0;
 
   /* Get the length of ASN.1 element (i.e. the integer we need to parse). */
-  ret = mbedtls_asn1_get_tag ( &p, p + der_len, &unpadded_len,
-                               MBEDTLS_ASN1_INTEGER );
+  ret = mbedtls_asn1_get_tag (&p, p + der_len, &unpadded_len,
+                              MBEDTLS_ASN1_INTEGER );
 
   if ( ret != 0 )
   {
@@ -602,13 +604,13 @@ static int convert_der_to_raw_single_int ( unsigned char* der, size_t der_len,
   /* It's invalid to have:
    * - unpadded_len == 0.
    * - MSb set without a leading 0x00 (leading 0x00 is checked below). */
-  if ( ( ( unpadded_len == 0 ) || ( *p & 0x80 ) != 0 ) )
+  if ( ( ( unpadded_len == 0 ) || (*p & 0x80 ) != 0 ) )
   {
     return MBEDTLS_ERR_ASN1_INVALID_DATA;
   }
 
   /* Skip possible leading zero */
-  if ( *p == 0x00 )
+  if (*p == 0x00 )
   {
     p++;
     unpadded_len--;
@@ -616,7 +618,7 @@ static int convert_der_to_raw_single_int ( unsigned char* der, size_t der_len,
     /* It is not allowed to have more than 1 leading zero.
      * Ignore the case in which unpadded_len = 0 because that's a 0 encoded
      * in ASN.1 format (i.e. 020100). */
-    if ( ( unpadded_len > 0 ) && ( *p == 0x00 ) )
+    if ( ( unpadded_len > 0 ) && (*p == 0x00 ) )
     {
       return MBEDTLS_ERR_ASN1_INVALID_DATA;
     }
@@ -664,8 +666,8 @@ int mbedtls_ecdsa_der_to_raw ( size_t bits, const unsigned char* der, size_t der
   }
 
   /* Check that the provided input DER buffer has the right header. */
-  ret = mbedtls_asn1_get_tag ( &p, der + der_len, &data_len,
-                               MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE );
+  ret = mbedtls_asn1_get_tag (&p, der + der_len, &data_len,
+                              MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE );
 
   if ( ret != 0 )
   {

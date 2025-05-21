@@ -91,6 +91,7 @@ uint32_t mbedtls_timing_get_final_delay (
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* timing.h */

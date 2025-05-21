@@ -60,7 +60,7 @@ void mbedtls_x25519_free ( mbedtls_x25519_context* ctx )
 
 int mbedtls_x25519_make_params ( mbedtls_x25519_context* ctx, size_t* olen,
                                  unsigned char* buf, size_t blen,
-                                 int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                 int (*f_rng ) ( void*, unsigned char*, size_t ),
                                  void* p_rng )
 {
   int ret = 0;
@@ -105,7 +105,7 @@ int mbedtls_x25519_read_params ( mbedtls_x25519_context* ctx,
     return ( MBEDTLS_ERR_ECP_BAD_INPUT_DATA );
   }
 
-  if ( ( * ( *buf )++ != MBEDTLS_X25519_KEY_SIZE_BYTES ) )
+  if ( (* (*buf )++ != MBEDTLS_X25519_KEY_SIZE_BYTES ) )
   {
     return ( MBEDTLS_ERR_ECP_BAD_INPUT_DATA );
   }
@@ -123,11 +123,11 @@ int mbedtls_x25519_get_params ( mbedtls_x25519_context* ctx, const mbedtls_ecp_k
   switch ( side )
   {
   case MBEDTLS_X25519_ECDH_THEIRS:
-    return mbedtls_ecp_point_write_binary ( &key->grp, &key->Q, MBEDTLS_ECP_PF_COMPRESSED, &olen, ctx->peer_point,
-                                            MBEDTLS_X25519_KEY_SIZE_BYTES );
+    return mbedtls_ecp_point_write_binary (&key->grp, &key->Q, MBEDTLS_ECP_PF_COMPRESSED, &olen, ctx->peer_point,
+                                           MBEDTLS_X25519_KEY_SIZE_BYTES );
 
   case MBEDTLS_X25519_ECDH_OURS:
-    return mbedtls_mpi_write_binary_le ( &key->d, ctx->our_secret, MBEDTLS_X25519_KEY_SIZE_BYTES );
+    return mbedtls_mpi_write_binary_le (&key->d, ctx->our_secret, MBEDTLS_X25519_KEY_SIZE_BYTES );
 
   default:
     return ( MBEDTLS_ERR_ECP_BAD_INPUT_DATA );
@@ -136,7 +136,7 @@ int mbedtls_x25519_get_params ( mbedtls_x25519_context* ctx, const mbedtls_ecp_k
 
 int mbedtls_x25519_calc_secret ( mbedtls_x25519_context* ctx, size_t* olen,
                                  unsigned char* buf, size_t blen,
-                                 int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                 int (*f_rng ) ( void*, unsigned char*, size_t ),
                                  void* p_rng )
 {
   /* f_rng and p_rng are not used here because this implementation does not
@@ -166,7 +166,7 @@ int mbedtls_x25519_calc_secret ( mbedtls_x25519_context* ctx, size_t* olen,
 
 int mbedtls_x25519_make_public ( mbedtls_x25519_context* ctx, size_t* olen,
                                  unsigned char* buf, size_t blen,
-                                 int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                 int (*f_rng ) ( void*, unsigned char*, size_t ),
                                  void* p_rng )
 {
   int ret = 0;
@@ -212,7 +212,7 @@ int mbedtls_x25519_read_public ( mbedtls_x25519_context* ctx,
     return ( MBEDTLS_ERR_ECP_BUFFER_TOO_SMALL );
   }
 
-  if ( ( *buf++ != MBEDTLS_X25519_KEY_SIZE_BYTES ) )
+  if ( (*buf++ != MBEDTLS_X25519_KEY_SIZE_BYTES ) )
   {
     return ( MBEDTLS_ERR_ECP_BAD_INPUT_DATA );
   }

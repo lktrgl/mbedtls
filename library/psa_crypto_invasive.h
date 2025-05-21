@@ -64,8 +64,8 @@
  *         The library has already been initialized.
  */
 psa_status_t mbedtls_psa_crypto_configure_entropy_sources (
-  void ( * entropy_init ) ( mbedtls_entropy_context* ctx ),
-  void ( * entropy_free ) ( mbedtls_entropy_context* ctx ) );
+  void (* entropy_init ) ( mbedtls_entropy_context* ctx ),
+  void (* entropy_free ) ( mbedtls_entropy_context* ctx ) );
 #endif /* !defined(MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG) */
 
 #if defined(MBEDTLS_TEST_HOOKS) && defined(MBEDTLS_PSA_CRYPTO_C)
@@ -82,10 +82,10 @@ psa_status_t psa_crypto_copy_output ( const uint8_t* output_copy, size_t output_
 /*
  * Test hooks to use for memory unpoisoning/poisoning in copy functions.
  */
-extern void ( *psa_input_pre_copy_hook ) ( const uint8_t* input, size_t input_len );
-extern void ( *psa_input_post_copy_hook ) ( const uint8_t* input, size_t input_len );
-extern void ( *psa_output_pre_copy_hook ) ( const uint8_t* output, size_t output_len );
-extern void ( *psa_output_post_copy_hook ) ( const uint8_t* output, size_t output_len );
+extern void (*psa_input_pre_copy_hook ) ( const uint8_t* input, size_t input_len );
+extern void (*psa_input_post_copy_hook ) ( const uint8_t* input, size_t input_len );
+extern void (*psa_output_pre_copy_hook ) ( const uint8_t* output, size_t output_len );
+extern void (*psa_output_post_copy_hook ) ( const uint8_t* output, size_t output_len );
 
 #endif /* MBEDTLS_TEST_HOOKS && MBEDTLS_PSA_CRYPTO_C */
 

@@ -34,6 +34,7 @@ int main ( void )
   mbedtls_printf ( "MBEDTLS_BASE64_C and/or MBEDTLS_FS_IO not defined.\n" );
   mbedtls_exit ( 0 );
 }
+
 #else
 
 
@@ -50,7 +51,7 @@ static int convert_pem_to_der ( const unsigned char* input, size_t ilen,
                                 unsigned char* output, size_t* olen )
 {
   int ret;
-  const unsigned char* s1, *s2, *end = input + ilen;
+  const unsigned char* s1, * s2, * end = input + ilen;
   size_t len = 0;
 
   s1 = ( unsigned char* ) strstr ( ( const char* ) input, "-----BEGIN" );
@@ -79,12 +80,12 @@ static int convert_pem_to_der ( const unsigned char* input, size_t ilen,
     s1++;
   }
 
-  if ( *s1 == '\r' )
+  if (*s1 == '\r' )
   {
     s1++;
   }
 
-  if ( *s1 == '\n' )
+  if (*s1 == '\n' )
   {
     s1++;
   }
@@ -142,24 +143,24 @@ static int load_file ( const char* path, unsigned char** buf, size_t* n )
 
   *n = ( size_t ) size;
 
-  if ( *n + 1 == 0 ||
-       ( *buf = mbedtls_calloc ( 1, *n + 1 ) ) == NULL )
+  if (*n + 1 == 0 ||
+      (*buf = mbedtls_calloc ( 1, *n + 1 ) ) == NULL )
   {
     fclose ( f );
     return -1;
   }
 
-  if ( fread ( *buf, 1, *n, f ) != *n )
+  if ( fread (*buf, 1, *n, f ) != *n )
   {
     fclose ( f );
-    free ( *buf );
+    free (*buf );
     *buf = NULL;
     return -1;
   }
 
   fclose ( f );
 
-  ( *buf ) [*n] = '\0';
+  (*buf ) [*n] = '\0';
 
   return 0;
 }
@@ -195,7 +196,7 @@ int main ( int argc, char* argv[] )
   char buf[1024];
   size_t pem_size, der_size = sizeof ( der_buffer );
   int i;
-  char* p, *q;
+  char* p, * q;
 
   /*
    * Set to sane values
@@ -301,4 +302,5 @@ exit:
 
   mbedtls_exit ( exit_code );
 }
+
 #endif /* MBEDTLS_BASE64_C && MBEDTLS_FS_IO */

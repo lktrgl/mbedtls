@@ -19,6 +19,7 @@ int main ( void )
                    "MBEDTLS_GENPRIME not defined.\n" );
   mbedtls_exit ( 0 );
 }
+
 #else
 
 #include "mbedtls/bignum.h"
@@ -53,13 +54,13 @@ int main ( int argc, char** argv )
   FILE* fout;
   int nbits = DFL_BITS;
   int i;
-  char* p, *q;
+  char* p, * q;
 
-  mbedtls_mpi_init ( &G );
-  mbedtls_mpi_init ( &P );
-  mbedtls_mpi_init ( &Q );
-  mbedtls_ctr_drbg_init ( &ctr_drbg );
-  mbedtls_entropy_init ( &entropy );
+  mbedtls_mpi_init (&G );
+  mbedtls_mpi_init (&P );
+  mbedtls_mpi_init (&Q );
+  mbedtls_ctr_drbg_init (&ctr_drbg );
+  mbedtls_entropy_init (&entropy );
 
   if ( argc < 2 )
   {
@@ -94,7 +95,7 @@ usage:
     }
   }
 
-  if ( ( ret = mbedtls_mpi_read_string ( &G, 10, GENERATOR ) ) != 0 )
+  if ( ( ret = mbedtls_mpi_read_string (&G, 10, GENERATOR ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_mpi_read_string returned %d\n", ret );
     goto exit;
@@ -105,9 +106,9 @@ usage:
   mbedtls_printf ( "\n  . Seeding the random number generator..." );
   fflush ( stdout );
 
-  if ( ( ret = mbedtls_ctr_drbg_seed ( &ctr_drbg, mbedtls_entropy_func, &entropy,
-                                       ( const unsigned char* ) pers,
-                                       strlen ( pers ) ) ) != 0 )
+  if ( ( ret = mbedtls_ctr_drbg_seed (&ctr_drbg, mbedtls_entropy_func, &entropy,
+                                      ( const unsigned char* ) pers,
+                                      strlen ( pers ) ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_ctr_drbg_seed returned %d\n", ret );
     goto exit;
@@ -119,8 +120,8 @@ usage:
   /*
    * This can take a long time...
    */
-  if ( ( ret = mbedtls_mpi_gen_prime ( &P, nbits, 1,
-                                       mbedtls_ctr_drbg_random, &ctr_drbg ) ) != 0 )
+  if ( ( ret = mbedtls_mpi_gen_prime (&P, nbits, 1,
+                                      mbedtls_ctr_drbg_random, &ctr_drbg ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_mpi_gen_prime returned %d\n\n", ret );
     goto exit;
@@ -129,19 +130,19 @@ usage:
   mbedtls_printf ( " ok\n  . Verifying that Q = (P-1)/2 is prime..." );
   fflush ( stdout );
 
-  if ( ( ret = mbedtls_mpi_sub_int ( &Q, &P, 1 ) ) != 0 )
+  if ( ( ret = mbedtls_mpi_sub_int (&Q, &P, 1 ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_mpi_sub_int returned %d\n\n", ret );
     goto exit;
   }
 
-  if ( ( ret = mbedtls_mpi_div_int ( &Q, NULL, &Q, 2 ) ) != 0 )
+  if ( ( ret = mbedtls_mpi_div_int (&Q, NULL, &Q, 2 ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_mpi_div_int returned %d\n\n", ret );
     goto exit;
   }
 
-  if ( ( ret = mbedtls_mpi_is_prime_ext ( &Q, 50, mbedtls_ctr_drbg_random, &ctr_drbg ) ) != 0 )
+  if ( ( ret = mbedtls_mpi_is_prime_ext (&Q, 50, mbedtls_ctr_drbg_random, &ctr_drbg ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_mpi_is_prime returned %d\n\n", ret );
     goto exit;
@@ -171,13 +172,14 @@ usage:
 
 exit:
 
-  mbedtls_mpi_free ( &G );
-  mbedtls_mpi_free ( &P );
-  mbedtls_mpi_free ( &Q );
-  mbedtls_ctr_drbg_free ( &ctr_drbg );
-  mbedtls_entropy_free ( &entropy );
+  mbedtls_mpi_free (&G );
+  mbedtls_mpi_free (&P );
+  mbedtls_mpi_free (&Q );
+  mbedtls_ctr_drbg_free (&ctr_drbg );
+  mbedtls_entropy_free (&entropy );
 
   mbedtls_exit ( exit_code );
 }
+
 #endif /* MBEDTLS_BIGNUM_C && MBEDTLS_ENTROPY_C && MBEDTLS_FS_IO &&
           MBEDTLS_CTR_DRBG_C && MBEDTLS_GENPRIME */

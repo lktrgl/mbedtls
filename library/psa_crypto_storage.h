@@ -288,6 +288,7 @@ typedef union
     uint64_t unused3;
     uint64_t unused4;
   } unknown;
+
   /* ::type is #PSA_CRYPTO_TRANSACTION_CREATE_KEY or
    * #PSA_CRYPTO_TRANSACTION_DESTROY_KEY. */
   struct psa_crypto_transaction_key_s
@@ -390,6 +391,7 @@ psa_status_t mbedtls_psa_storage_inject_entropy ( const unsigned char* seed,
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* PSA_CRYPTO_STORAGE_H */

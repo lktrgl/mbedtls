@@ -53,15 +53,15 @@ static int pem_get_iv ( const unsigned char* s, unsigned char* iv,
 
   for ( i = 0; i < iv_len * 2; i++, s++ )
   {
-    if ( *s >= '0' && *s <= '9' )
+    if (*s >= '0' && *s <= '9' )
     {
       j = *s - '0';
     }
-    else if ( *s >= 'A' && *s <= 'F' )
+    else if (*s >= 'A' && *s <= 'F' )
     {
       j = *s - '7';
     }
-    else if ( *s >= 'a' && *s <= 'f' )
+    else if (*s >= 'a' && *s <= 'f' )
     {
       j = *s - 'W';
     }
@@ -88,12 +88,12 @@ static int pem_pbkdf1 ( unsigned char* key, size_t keylen,
   size_t use_len;
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
 
-  mbedtls_md_init ( &md5_ctx );
+  mbedtls_md_init (&md5_ctx );
 
   /* Prepare the context. (setup() errors gracefully on NULL info.) */
   md5_info = mbedtls_md_info_from_type ( MBEDTLS_MD_MD5 );
 
-  if ( ( ret = mbedtls_md_setup ( &md5_ctx, md5_info, 0 ) ) != 0 )
+  if ( ( ret = mbedtls_md_setup (&md5_ctx, md5_info, 0 ) ) != 0 )
   {
     goto exit;
   }
@@ -101,22 +101,22 @@ static int pem_pbkdf1 ( unsigned char* key, size_t keylen,
   /*
    * key[ 0..15] = MD5(pwd || IV)
    */
-  if ( ( ret = mbedtls_md_starts ( &md5_ctx ) ) != 0 )
+  if ( ( ret = mbedtls_md_starts (&md5_ctx ) ) != 0 )
   {
     goto exit;
   }
 
-  if ( ( ret = mbedtls_md_update ( &md5_ctx, pwd, pwdlen ) ) != 0 )
+  if ( ( ret = mbedtls_md_update (&md5_ctx, pwd, pwdlen ) ) != 0 )
   {
     goto exit;
   }
 
-  if ( ( ret = mbedtls_md_update ( &md5_ctx, iv,  8 ) ) != 0 )
+  if ( ( ret = mbedtls_md_update (&md5_ctx, iv,  8 ) ) != 0 )
   {
     goto exit;
   }
 
-  if ( ( ret = mbedtls_md_finish ( &md5_ctx, md5sum ) ) != 0 )
+  if ( ( ret = mbedtls_md_finish (&md5_ctx, md5sum ) ) != 0 )
   {
     goto exit;
   }
@@ -132,27 +132,27 @@ static int pem_pbkdf1 ( unsigned char* key, size_t keylen,
   /*
    * key[16..23] = MD5(key[ 0..15] || pwd || IV])
    */
-  if ( ( ret = mbedtls_md_starts ( &md5_ctx ) ) != 0 )
+  if ( ( ret = mbedtls_md_starts (&md5_ctx ) ) != 0 )
   {
     goto exit;
   }
 
-  if ( ( ret = mbedtls_md_update ( &md5_ctx, md5sum, 16 ) ) != 0 )
+  if ( ( ret = mbedtls_md_update (&md5_ctx, md5sum, 16 ) ) != 0 )
   {
     goto exit;
   }
 
-  if ( ( ret = mbedtls_md_update ( &md5_ctx, pwd, pwdlen ) ) != 0 )
+  if ( ( ret = mbedtls_md_update (&md5_ctx, pwd, pwdlen ) ) != 0 )
   {
     goto exit;
   }
 
-  if ( ( ret = mbedtls_md_update ( &md5_ctx, iv, 8 ) ) != 0 )
+  if ( ( ret = mbedtls_md_update (&md5_ctx, iv, 8 ) ) != 0 )
   {
     goto exit;
   }
 
-  if ( ( ret = mbedtls_md_finish ( &md5_ctx, md5sum ) ) != 0 )
+  if ( ( ret = mbedtls_md_finish (&md5_ctx, md5sum ) ) != 0 )
   {
     goto exit;
   }
@@ -167,7 +167,7 @@ static int pem_pbkdf1 ( unsigned char* key, size_t keylen,
   memcpy ( key + 16, md5sum, use_len );
 
 exit:
-  mbedtls_md_free ( &md5_ctx );
+  mbedtls_md_free (&md5_ctx );
   mbedtls_platform_zeroize ( md5sum, 16 );
 
   return ret;
@@ -185,23 +185,23 @@ static int pem_des_decrypt ( unsigned char des_iv[8],
   unsigned char des_key[8];
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
 
-  mbedtls_des_init ( &des_ctx );
+  mbedtls_des_init (&des_ctx );
 
   if ( ( ret = pem_pbkdf1 ( des_key, 8, des_iv, pwd, pwdlen ) ) != 0 )
   {
     goto exit;
   }
 
-  if ( ( ret = mbedtls_des_setkey_dec ( &des_ctx, des_key ) ) != 0 )
+  if ( ( ret = mbedtls_des_setkey_dec (&des_ctx, des_key ) ) != 0 )
   {
     goto exit;
   }
 
-  ret = mbedtls_des_crypt_cbc ( &des_ctx, MBEDTLS_DES_DECRYPT, buflen,
-                                des_iv, buf, buf );
+  ret = mbedtls_des_crypt_cbc (&des_ctx, MBEDTLS_DES_DECRYPT, buflen,
+                               des_iv, buf, buf );
 
 exit:
-  mbedtls_des_free ( &des_ctx );
+  mbedtls_des_free (&des_ctx );
   mbedtls_platform_zeroize ( des_key, 8 );
 
   return ret;
@@ -218,27 +218,28 @@ static int pem_des3_decrypt ( unsigned char des3_iv[8],
   unsigned char des3_key[24];
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
 
-  mbedtls_des3_init ( &des3_ctx );
+  mbedtls_des3_init (&des3_ctx );
 
   if ( ( ret = pem_pbkdf1 ( des3_key, 24, des3_iv, pwd, pwdlen ) ) != 0 )
   {
     goto exit;
   }
 
-  if ( ( ret = mbedtls_des3_set3key_dec ( &des3_ctx, des3_key ) ) != 0 )
+  if ( ( ret = mbedtls_des3_set3key_dec (&des3_ctx, des3_key ) ) != 0 )
   {
     goto exit;
   }
 
-  ret = mbedtls_des3_crypt_cbc ( &des3_ctx, MBEDTLS_DES_DECRYPT, buflen,
-                                 des3_iv, buf, buf );
+  ret = mbedtls_des3_crypt_cbc (&des3_ctx, MBEDTLS_DES_DECRYPT, buflen,
+                                des3_iv, buf, buf );
 
 exit:
-  mbedtls_des3_free ( &des3_ctx );
+  mbedtls_des3_free (&des3_ctx );
   mbedtls_platform_zeroize ( des3_key, 24 );
 
   return ret;
 }
+
 #endif /* MBEDTLS_DES_C */
 
 #if defined(MBEDTLS_AES_C)
@@ -253,27 +254,28 @@ static int pem_aes_decrypt ( unsigned char aes_iv[16], unsigned int keylen,
   unsigned char aes_key[32];
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
 
-  mbedtls_aes_init ( &aes_ctx );
+  mbedtls_aes_init (&aes_ctx );
 
   if ( ( ret = pem_pbkdf1 ( aes_key, keylen, aes_iv, pwd, pwdlen ) ) != 0 )
   {
     goto exit;
   }
 
-  if ( ( ret = mbedtls_aes_setkey_dec ( &aes_ctx, aes_key, keylen * 8 ) ) != 0 )
+  if ( ( ret = mbedtls_aes_setkey_dec (&aes_ctx, aes_key, keylen * 8 ) ) != 0 )
   {
     goto exit;
   }
 
-  ret = mbedtls_aes_crypt_cbc ( &aes_ctx, MBEDTLS_AES_DECRYPT, buflen,
-                                aes_iv, buf, buf );
+  ret = mbedtls_aes_crypt_cbc (&aes_ctx, MBEDTLS_AES_DECRYPT, buflen,
+                               aes_iv, buf, buf );
 
 exit:
-  mbedtls_aes_free ( &aes_ctx );
+  mbedtls_aes_free (&aes_ctx );
   mbedtls_platform_zeroize ( aes_key, keylen );
 
   return ret;
 }
+
 #endif /* MBEDTLS_AES_C */
 
 #if defined(MBEDTLS_DES_C) || defined(MBEDTLS_AES_C)
@@ -300,6 +302,7 @@ static int pem_check_pkcs_padding ( unsigned char* input, size_t input_len, size
 
   return 0;
 }
+
 #endif /* MBEDTLS_DES_C || MBEDTLS_AES_C */
 
 #endif /* PEM_RFC1421 */
@@ -311,7 +314,7 @@ int mbedtls_pem_read_buffer ( mbedtls_pem_context* ctx, const char* header, cons
   int ret, enc;
   size_t len;
   unsigned char* buf;
-  const unsigned char* s1, *s2, *end;
+  const unsigned char* s1, * s2, * end;
 #if defined(PEM_RFC1421)
   unsigned char pem_iv[16];
   mbedtls_cipher_type_t enc_alg = MBEDTLS_CIPHER_NONE;
@@ -341,17 +344,17 @@ int mbedtls_pem_read_buffer ( mbedtls_pem_context* ctx, const char* header, cons
 
   s1 += strlen ( header );
 
-  if ( *s1 == ' ' )
+  if (*s1 == ' ' )
   {
     s1++;
   }
 
-  if ( *s1 == '\r' )
+  if (*s1 == '\r' )
   {
     s1++;
   }
 
-  if ( *s1 == '\n' )
+  if (*s1 == '\n' )
   {
     s1++;
   }
@@ -363,17 +366,17 @@ int mbedtls_pem_read_buffer ( mbedtls_pem_context* ctx, const char* header, cons
   end = s2;
   end += strlen ( footer );
 
-  if ( *end == ' ' )
+  if (*end == ' ' )
   {
     end++;
   }
 
-  if ( *end == '\r' )
+  if (*end == '\r' )
   {
     end++;
   }
 
-  if ( *end == '\n' )
+  if (*end == '\n' )
   {
     end++;
   }
@@ -389,12 +392,12 @@ int mbedtls_pem_read_buffer ( mbedtls_pem_context* ctx, const char* header, cons
 
     s1 += 22;
 
-    if ( *s1 == '\r' )
+    if (*s1 == '\r' )
     {
       s1++;
     }
 
-    if ( *s1 == '\n' )
+    if (*s1 == '\n' )
     {
       s1++;
     }
@@ -477,12 +480,12 @@ int mbedtls_pem_read_buffer ( mbedtls_pem_context* ctx, const char* header, cons
       return MBEDTLS_ERR_PEM_UNKNOWN_ENC_ALG;
     }
 
-    if ( *s1 == '\r' )
+    if (*s1 == '\r' )
     {
       s1++;
     }
 
-    if ( *s1 == '\n' )
+    if (*s1 == '\n' )
     {
       s1++;
     }
@@ -613,6 +616,7 @@ void mbedtls_pem_free ( mbedtls_pem_context* ctx )
 
   mbedtls_platform_zeroize ( ctx, sizeof ( mbedtls_pem_context ) );
 }
+
 #endif /* MBEDTLS_PEM_PARSE_C */
 
 #if defined(MBEDTLS_PEM_WRITE_C)
@@ -621,7 +625,7 @@ int mbedtls_pem_write_buffer ( const char* header, const char* footer,
                                unsigned char* buf, size_t buf_len, size_t* olen )
 {
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
-  unsigned char* encode_buf = NULL, *c, *p = buf;
+  unsigned char* encode_buf = NULL, * c, * p = buf;
   size_t len = 0, use_len, add_len = 0;
 
   mbedtls_base64_encode ( NULL, 0, &use_len, der_data, der_len );
@@ -672,5 +676,6 @@ int mbedtls_pem_write_buffer ( const char* header, const char* footer,
   mbedtls_free ( encode_buf );
   return 0;
 }
+
 #endif /* MBEDTLS_PEM_WRITE_C */
 #endif /* MBEDTLS_PEM_PARSE_C || MBEDTLS_PEM_WRITE_C */

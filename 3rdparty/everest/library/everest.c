@@ -39,18 +39,18 @@ int mbedtls_everest_setup ( mbedtls_ecdh_context_everest* ctx, int grp_id )
     return MBEDTLS_ERR_ECP_BAD_INPUT_DATA;
   }
 
-  mbedtls_x25519_init ( &ctx->ctx );
+  mbedtls_x25519_init (&ctx->ctx );
   return 0;
 }
 
 void mbedtls_everest_free ( mbedtls_ecdh_context_everest* ctx )
 {
-  mbedtls_x25519_free ( &ctx->ctx );
+  mbedtls_x25519_free (&ctx->ctx );
 }
 
 int mbedtls_everest_make_params ( mbedtls_ecdh_context_everest* ctx, size_t* olen,
                                   unsigned char* buf, size_t blen,
-                                  int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                  int (*f_rng ) ( void*, unsigned char*, size_t ),
                                   void* p_rng )
 {
   mbedtls_x25519_context* x25519_ctx = &ctx->ctx;
@@ -78,7 +78,7 @@ int mbedtls_everest_get_params ( mbedtls_ecdh_context_everest* ctx,
 
 int mbedtls_everest_make_public ( mbedtls_ecdh_context_everest* ctx, size_t* olen,
                                   unsigned char* buf, size_t blen,
-                                  int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                  int (*f_rng ) ( void*, unsigned char*, size_t ),
                                   void* p_rng )
 {
   mbedtls_x25519_context* x25519_ctx = &ctx->ctx;
@@ -94,7 +94,7 @@ int mbedtls_everest_read_public ( mbedtls_ecdh_context_everest* ctx,
 
 int mbedtls_everest_calc_secret ( mbedtls_ecdh_context_everest* ctx, size_t* olen,
                                   unsigned char* buf, size_t blen,
-                                  int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                  int (*f_rng ) ( void*, unsigned char*, size_t ),
                                   void* p_rng )
 {
   mbedtls_x25519_context* x25519_ctx = &ctx->ctx;

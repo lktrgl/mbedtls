@@ -48,6 +48,7 @@ typedef struct mbedtls_sha1_context
   uint32_t MBEDTLS_PRIVATE ( state ) [5];      /*!< The intermediate digest state.  */
   unsigned char MBEDTLS_PRIVATE ( buffer ) [64]; /*!< The data block being processed. */
 }
+
 mbedtls_sha1_context;
 
 #else  /* MBEDTLS_SHA1_ALT */
@@ -215,6 +216,7 @@ int mbedtls_sha1_self_test ( int verbose );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* mbedtls_sha1.h */

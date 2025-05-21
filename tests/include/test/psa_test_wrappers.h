@@ -782,6 +782,7 @@ psa_status_t mbedtls_test_wrap_psa_verify_message (
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* TEST_PSA_TEST_WRAPPERS_H */

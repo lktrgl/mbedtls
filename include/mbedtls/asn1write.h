@@ -383,6 +383,7 @@ mbedtls_asn1_named_data* mbedtls_asn1_store_named_data ( mbedtls_asn1_named_data
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* MBEDTLS_ASN1_WRITE_C */

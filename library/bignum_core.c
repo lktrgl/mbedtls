@@ -113,8 +113,8 @@ void mbedtls_mpi_core_bigendian_to_host ( mbedtls_mpi_uint* A,
     mbedtls_mpi_uint tmp;
     /* Note that if cur_limb_left == cur_limb_right,
      * this code effectively swaps the bytes only once. */
-    tmp             = mpi_bigendian_to_host ( *cur_limb_left );
-    *cur_limb_left  = mpi_bigendian_to_host ( *cur_limb_right );
+    tmp             = mpi_bigendian_to_host (*cur_limb_left );
+    *cur_limb_left  = mpi_bigendian_to_host (*cur_limb_right );
     *cur_limb_right = tmp;
   }
 }
@@ -389,7 +389,7 @@ void mbedtls_mpi_core_shift_r ( mbedtls_mpi_uint* X, size_t limbs,
       X[i] = X[i + v0];
     }
 
-    for ( ; i < limbs; i++ )
+    for (; i < limbs; i++ )
     {
       X[i] = 0;
     }
@@ -429,7 +429,7 @@ void mbedtls_mpi_core_shift_l ( mbedtls_mpi_uint* X, size_t limbs,
       X[i - 1] = X[i - v0 - 1];
     }
 
-    for ( ; i > 0; i-- )
+    for (; i > 0; i-- )
     {
       X[i - 1] = 0;
     }
@@ -546,7 +546,7 @@ mbedtls_mpi_uint mbedtls_mpi_core_mla ( mbedtls_mpi_uint* d, size_t d_len,
   while ( excess_len-- )
   {
     *d += c;
-    c = ( *d < c );
+    c = (*d < c );
     d++;
   }
 
@@ -676,7 +676,7 @@ void mbedtls_mpi_core_ct_uint_table_lookup ( mbedtls_mpi_uint* dest,
 int mbedtls_mpi_core_fill_random (
   mbedtls_mpi_uint* X, size_t X_limbs,
   size_t n_bytes,
-  int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
+  int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
 {
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
   const size_t limbs = CHARS_TO_LIMBS ( n_bytes );
@@ -700,7 +700,7 @@ int mbedtls_mpi_core_random ( mbedtls_mpi_uint* X,
                               mbedtls_mpi_uint min,
                               const mbedtls_mpi_uint* N,
                               size_t limbs,
-                              int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                              int (*f_rng ) ( void*, unsigned char*, size_t ),
                               void* p_rng )
 {
   mbedtls_ct_condition_t ge_lower = MBEDTLS_CT_TRUE, lt_upper = MBEDTLS_CT_FALSE;
@@ -742,7 +742,7 @@ int mbedtls_mpi_core_random ( mbedtls_mpi_uint* X,
                       f_rng, p_rng ) );
     mbedtls_mpi_core_shift_r ( X, limbs, 8 * n_bytes - n_bits );
 
-    if ( --count == 0 )
+    if (--count == 0 )
     {
       ret = MBEDTLS_ERR_MPI_NOT_ACCEPTABLE;
       goto cleanup;
@@ -814,8 +814,8 @@ static void exp_mod_precompute_window ( const mbedtls_mpi_uint* A,
 }
 
 #if defined(MBEDTLS_TEST_HOOKS) && !defined(MBEDTLS_THREADING_C)
-  void ( *mbedtls_safe_codepath_hook ) ( void ) = NULL;
-  void ( *mbedtls_unsafe_codepath_hook ) ( void ) = NULL;
+  void (*mbedtls_safe_codepath_hook ) ( void ) = NULL;
+  void (*mbedtls_unsafe_codepath_hook ) ( void ) = NULL;
 #endif
 
 /*
@@ -1023,7 +1023,7 @@ static void mbedtls_mpi_core_exp_mod_optionally_safe ( mbedtls_mpi_uint* X,
       window_bits = 0;
     }
   }
-  while ( ! ( E_bit_index == 0 && E_limb_index == 0 ) );
+  while (! ( E_bit_index == 0 && E_limb_index == 0 ) );
 }
 
 void mbedtls_mpi_core_exp_mod ( mbedtls_mpi_uint* X,

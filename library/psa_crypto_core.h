@@ -226,6 +226,7 @@ static inline psa_key_slot_number_t psa_key_slot_get_slot_number (
 {
   return * ( ( psa_key_slot_number_t* ) ( slot->key.data ) );
 }
+
 #endif
 
 /** Completely wipe a slot in memory, including its policy.

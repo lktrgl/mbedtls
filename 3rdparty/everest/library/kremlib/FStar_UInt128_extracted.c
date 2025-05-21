@@ -227,10 +227,10 @@ FStar_UInt128_uint128 FStar_UInt128_eq_mask ( FStar_UInt128_uint128 a, FStar_UIn
   flat =
   {
     FStar_UInt64_eq_mask ( a.low,
-                           b.low )
+    b.low )
     & FStar_UInt64_eq_mask ( a.high, b.high ),
     FStar_UInt64_eq_mask ( a.low,
-                           b.low )
+    b.low )
     & FStar_UInt64_eq_mask ( a.high, b.high )
   };
   return flat;
@@ -261,69 +261,69 @@ uint64_t FStar_UInt128_uint128_to_uint64 ( FStar_UInt128_uint128 a )
 }
 
 FStar_UInt128_uint128
-( *FStar_UInt128_op_Plus_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
+(*FStar_UInt128_op_Plus_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
   FStar_UInt128_add;
 
 FStar_UInt128_uint128
-( *FStar_UInt128_op_Plus_Question_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
+(*FStar_UInt128_op_Plus_Question_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
   FStar_UInt128_add_underspec;
 
 FStar_UInt128_uint128
-( *FStar_UInt128_op_Plus_Percent_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
+(*FStar_UInt128_op_Plus_Percent_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
   FStar_UInt128_add_mod;
 
 FStar_UInt128_uint128
-( *FStar_UInt128_op_Subtraction_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
+(*FStar_UInt128_op_Subtraction_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
   FStar_UInt128_sub;
 
 FStar_UInt128_uint128
-( *FStar_UInt128_op_Subtraction_Question_Hat ) (
+(*FStar_UInt128_op_Subtraction_Question_Hat ) (
   FStar_UInt128_uint128 x0,
   FStar_UInt128_uint128 x1
 ) = FStar_UInt128_sub_underspec;
 
 FStar_UInt128_uint128
-( *FStar_UInt128_op_Subtraction_Percent_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
+(*FStar_UInt128_op_Subtraction_Percent_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
   FStar_UInt128_sub_mod;
 
 FStar_UInt128_uint128
-( *FStar_UInt128_op_Amp_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
+(*FStar_UInt128_op_Amp_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
   FStar_UInt128_logand;
 
 FStar_UInt128_uint128
-( *FStar_UInt128_op_Hat_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
+(*FStar_UInt128_op_Hat_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
   FStar_UInt128_logxor;
 
 FStar_UInt128_uint128
-( *FStar_UInt128_op_Bar_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
+(*FStar_UInt128_op_Bar_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
   FStar_UInt128_logor;
 
 FStar_UInt128_uint128
-( *FStar_UInt128_op_Less_Less_Hat ) ( FStar_UInt128_uint128 x0, uint32_t x1 ) =
+(*FStar_UInt128_op_Less_Less_Hat ) ( FStar_UInt128_uint128 x0, uint32_t x1 ) =
   FStar_UInt128_shift_left;
 
 FStar_UInt128_uint128
-( *FStar_UInt128_op_Greater_Greater_Hat ) ( FStar_UInt128_uint128 x0, uint32_t x1 ) =
+(*FStar_UInt128_op_Greater_Greater_Hat ) ( FStar_UInt128_uint128 x0, uint32_t x1 ) =
   FStar_UInt128_shift_right;
 
 bool
-( *FStar_UInt128_op_Equals_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
+(*FStar_UInt128_op_Equals_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
   FStar_UInt128_eq;
 
 bool
-( *FStar_UInt128_op_Greater_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
+(*FStar_UInt128_op_Greater_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
   FStar_UInt128_gt;
 
 bool
-( *FStar_UInt128_op_Less_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
+(*FStar_UInt128_op_Less_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
   FStar_UInt128_lt;
 
 bool
-( *FStar_UInt128_op_Greater_Equals_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
+(*FStar_UInt128_op_Greater_Equals_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
   FStar_UInt128_gte;
 
 bool
-( *FStar_UInt128_op_Less_Equals_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
+(*FStar_UInt128_op_Less_Equals_Hat ) ( FStar_UInt128_uint128 x0, FStar_UInt128_uint128 x1 ) =
   FStar_UInt128_lte;
 
 static uint64_t FStar_UInt128_u64_mod_32 ( uint64_t a )
@@ -344,12 +344,12 @@ FStar_UInt128_uint128 FStar_UInt128_mul32 ( uint64_t x, uint32_t y )
   flat =
   {
     FStar_UInt128_u32_combine ( ( x >> FStar_UInt128_u32_32 )
-                                * ( uint64_t ) y
-                                + ( FStar_UInt128_u64_mod_32 ( x ) * ( uint64_t ) y >> FStar_UInt128_u32_32 ),
-                                FStar_UInt128_u64_mod_32 ( FStar_UInt128_u64_mod_32 ( x ) * ( uint64_t ) y ) ),
+    * ( uint64_t ) y
+    + ( FStar_UInt128_u64_mod_32 ( x ) * ( uint64_t ) y >> FStar_UInt128_u32_32 ),
+    FStar_UInt128_u64_mod_32 ( FStar_UInt128_u64_mod_32 ( x ) * ( uint64_t ) y ) ),
     ( ( x >> FStar_UInt128_u32_32 )
-      * ( uint64_t ) y
-      + ( FStar_UInt128_u64_mod_32 ( x ) * ( uint64_t ) y >> FStar_UInt128_u32_32 ) )
+    * ( uint64_t ) y
+    + ( FStar_UInt128_u64_mod_32 ( x ) * ( uint64_t ) y >> FStar_UInt128_u32_32 ) )
         >> FStar_UInt128_u32_32
   };
   return flat;
@@ -362,6 +362,7 @@ typedef struct K___uint64_t_uint64_t_uint64_t_uint64_t_s
   uint64_t thd;
   uint64_t f3;
 }
+
 K___uint64_t_uint64_t_uint64_t_uint64_t;
 
 static K___uint64_t_uint64_t_uint64_t_uint64_t
@@ -375,8 +376,8 @@ FStar_UInt128_mul_wide_impl_t_ ( uint64_t x, uint64_t y )
     x
         >> FStar_UInt128_u32_32,
         ( x >> FStar_UInt128_u32_32 )
-        * FStar_UInt128_u64_mod_32 ( y )
-        + ( FStar_UInt128_u64_mod_32 ( x ) * FStar_UInt128_u64_mod_32 ( y ) >> FStar_UInt128_u32_32 )
+    * FStar_UInt128_u64_mod_32 ( y )
+    + ( FStar_UInt128_u64_mod_32 ( x ) * FStar_UInt128_u64_mod_32 ( y ) >> FStar_UInt128_u32_32 )
   };
   return flat;
 }
@@ -397,7 +398,7 @@ static FStar_UInt128_uint128 FStar_UInt128_mul_wide_impl ( uint64_t x, uint64_t 
   flat =
   {
     FStar_UInt128_u32_combine_ ( u1 * ( y >> FStar_UInt128_u32_32 ) + FStar_UInt128_u64_mod_32 ( t_ ),
-                                 w3 ),
+    w3 ),
     x_
     * ( y >> FStar_UInt128_u32_32 )
     + ( t_ >> FStar_UInt128_u32_32 )

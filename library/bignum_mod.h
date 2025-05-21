@@ -116,7 +116,7 @@ typedef struct
   mbedtls_mpi_uint mm;         /* Montgomery const for -N^{-1} mod 2^{ciL} */
 } mbedtls_mpi_mont_struct;
 
-typedef int ( *mbedtls_mpi_modp_fn ) ( mbedtls_mpi_uint* X, size_t X_limbs );
+typedef int (*mbedtls_mpi_modp_fn ) ( mbedtls_mpi_uint* X, size_t X_limbs );
 
 typedef struct
 {
@@ -386,7 +386,7 @@ int mbedtls_mpi_mod_add ( mbedtls_mpi_mod_residue* X,
 int mbedtls_mpi_mod_random ( mbedtls_mpi_mod_residue* X,
                              mbedtls_mpi_uint min,
                              const mbedtls_mpi_mod_modulus* N,
-                             int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                             int (*f_rng ) ( void*, unsigned char*, size_t ),
                              void* p_rng );
 
 /** Read a residue from a byte buffer.

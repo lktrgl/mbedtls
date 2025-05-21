@@ -11,6 +11,7 @@ typedef struct mbedtls_ripemd160_context
 {
   int dummy;
 }
+
 mbedtls_ripemd160_context;
 
 

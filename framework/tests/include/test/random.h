@@ -23,7 +23,7 @@ typedef struct
   unsigned char* buf; /* Pointer to a buffer of length bytes. */
   size_t length;
   /* If fallback_f_rng is NULL, fail after delivering length bytes. */
-  int ( *fallback_f_rng ) ( void*, unsigned char*, size_t );
+  int (*fallback_f_rng ) ( void*, unsigned char*, size_t );
   void* fallback_p_rng;
 } mbedtls_test_rnd_buf_info;
 

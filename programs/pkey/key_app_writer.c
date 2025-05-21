@@ -22,6 +22,7 @@ int main ( void )
                    "MBEDTLS_FS_IO and/or MBEDTLS_BIGNUM_C not defined.\n" );
   mbedtls_exit ( 0 );
 }
+
 #else
 
 #include "mbedtls/error.h"
@@ -199,14 +200,14 @@ static int show_ecp_key ( const mbedtls_ecp_keypair* ecp, int has_private )
   mbedtls_printf ( "curve: %s\n", curve_info->name );
 
   mbedtls_ecp_group grp;
-  mbedtls_ecp_group_init ( &grp );
+  mbedtls_ecp_group_init (&grp );
   mbedtls_mpi D;
-  mbedtls_mpi_init ( &D );
+  mbedtls_mpi_init (&D );
   mbedtls_ecp_point pt;
-  mbedtls_ecp_point_init ( &pt );
+  mbedtls_ecp_point_init (&pt );
   mbedtls_mpi X, Y;
-  mbedtls_mpi_init ( &X );
-  mbedtls_mpi_init ( &Y );
+  mbedtls_mpi_init (&X );
+  mbedtls_mpi_init (&Y );
 
   MBEDTLS_MPI_CHK ( mbedtls_ecp_export ( ecp, &grp,
                                          ( has_private ? &D : NULL ),
@@ -218,7 +219,7 @@ static int show_ecp_key ( const mbedtls_ecp_keypair* ecp, int has_private )
                       &grp, &pt, MBEDTLS_ECP_PF_UNCOMPRESSED,
                       &len, point_bin, sizeof ( point_bin ) ) );
 
-  switch ( mbedtls_ecp_get_type ( &grp ) )
+  switch ( mbedtls_ecp_get_type (&grp ) )
   {
   case MBEDTLS_ECP_TYPE_SHORT_WEIERSTRASS:
     if ( ( len & 1 ) == 0 || point_bin[0] != 0x04 )
@@ -229,15 +230,15 @@ static int show_ecp_key ( const mbedtls_ecp_keypair* ecp, int has_private )
     }
 
     MBEDTLS_MPI_CHK (
-      mbedtls_mpi_read_binary ( &X, point_bin + 1, len / 2 ) );
+      mbedtls_mpi_read_binary (&X, point_bin + 1, len / 2 ) );
     MBEDTLS_MPI_CHK (
-      mbedtls_mpi_read_binary ( &Y, point_bin + 1 + len / 2, len / 2 ) );
+      mbedtls_mpi_read_binary (&Y, point_bin + 1 + len / 2, len / 2 ) );
     mbedtls_mpi_write_file ( "X_Q:   ", &X, 16, NULL );
     mbedtls_mpi_write_file ( "Y_Q:   ", &Y, 16, NULL );
     break;
 
   case MBEDTLS_ECP_TYPE_MONTGOMERY:
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_read_binary ( &X, point_bin, len ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_read_binary (&X, point_bin, len ) );
     mbedtls_mpi_write_file ( "X_Q:   ", &X, 16, NULL );
     break;
 
@@ -253,13 +254,14 @@ static int show_ecp_key ( const mbedtls_ecp_keypair* ecp, int has_private )
   }
 
 cleanup:
-  mbedtls_ecp_group_free ( &grp );
-  mbedtls_mpi_free ( &D );
-  mbedtls_ecp_point_free ( &pt );
-  mbedtls_mpi_free ( &X );
-  mbedtls_mpi_free ( &Y );
+  mbedtls_ecp_group_free (&grp );
+  mbedtls_mpi_free (&D );
+  mbedtls_ecp_point_free (&pt );
+  mbedtls_mpi_free (&X );
+  mbedtls_mpi_free (&Y );
   return ret;
 }
+
 #endif
 
 int main ( int argc, char* argv[] )
@@ -270,7 +272,7 @@ int main ( int argc, char* argv[] )
   char buf[200];
 #endif
   int i;
-  char* p, *q;
+  char* p, * q;
 
   const char* pers = "pkey/key_app";
   mbedtls_entropy_context entropy;
@@ -284,10 +286,10 @@ int main ( int argc, char* argv[] )
   /*
    * Set to sane values
    */
-  mbedtls_entropy_init ( &entropy );
-  mbedtls_ctr_drbg_init ( &ctr_drbg );
+  mbedtls_entropy_init (&entropy );
+  mbedtls_ctr_drbg_init (&ctr_drbg );
 
-  mbedtls_pk_init ( &key );
+  mbedtls_pk_init (&key );
 #if defined(MBEDTLS_ERROR_C)
   memset ( buf, 0, sizeof ( buf ) );
 #endif
@@ -305,14 +307,14 @@ int main ( int argc, char* argv[] )
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 
 #if defined(MBEDTLS_RSA_C)
-  mbedtls_mpi_init ( &N );
-  mbedtls_mpi_init ( &P );
-  mbedtls_mpi_init ( &Q );
-  mbedtls_mpi_init ( &D );
-  mbedtls_mpi_init ( &E );
-  mbedtls_mpi_init ( &DP );
-  mbedtls_mpi_init ( &DQ );
-  mbedtls_mpi_init ( &QP );
+  mbedtls_mpi_init (&N );
+  mbedtls_mpi_init (&P );
+  mbedtls_mpi_init (&Q );
+  mbedtls_mpi_init (&D );
+  mbedtls_mpi_init (&E );
+  mbedtls_mpi_init (&DP );
+  mbedtls_mpi_init (&DQ );
+  mbedtls_mpi_init (&QP );
 #endif /* MBEDTLS_RSA_C */
 
   if ( argc < 2 )
@@ -422,17 +424,17 @@ usage:
     mbedtls_printf ( "\n  . Loading the private key ..." );
     fflush ( stdout );
 
-    if ( ( ret = mbedtls_ctr_drbg_seed ( &ctr_drbg, mbedtls_entropy_func, &entropy,
-                                         ( const unsigned char* ) pers,
-                                         strlen ( pers ) ) ) != 0 )
+    if ( ( ret = mbedtls_ctr_drbg_seed (&ctr_drbg, mbedtls_entropy_func, &entropy,
+                                        ( const unsigned char* ) pers,
+                                        strlen ( pers ) ) ) != 0 )
     {
       mbedtls_printf ( " failed\n  !  mbedtls_ctr_drbg_seed returned -0x%04x\n",
                        ( unsigned int ) - ret );
       goto exit;
     }
 
-    ret = mbedtls_pk_parse_keyfile ( &key, opt.filename, NULL,
-                                     mbedtls_ctr_drbg_random, &ctr_drbg );
+    ret = mbedtls_pk_parse_keyfile (&key, opt.filename, NULL,
+                                    mbedtls_ctr_drbg_random, &ctr_drbg );
 
     if ( ret != 0 )
     {
@@ -450,7 +452,7 @@ usage:
 
 #if defined(MBEDTLS_RSA_C)
 
-    if ( mbedtls_pk_get_type ( &key ) == MBEDTLS_PK_RSA )
+    if ( mbedtls_pk_get_type (&key ) == MBEDTLS_PK_RSA )
     {
       mbedtls_rsa_context* rsa = mbedtls_pk_rsa ( key );
 
@@ -461,19 +463,19 @@ usage:
         goto exit;
       }
 
-      mbedtls_mpi_write_file ( "N:  ",  &N,  16, NULL );
-      mbedtls_mpi_write_file ( "E:  ",  &E,  16, NULL );
-      mbedtls_mpi_write_file ( "D:  ",  &D,  16, NULL );
-      mbedtls_mpi_write_file ( "P:  ",  &P,  16, NULL );
-      mbedtls_mpi_write_file ( "Q:  ",  &Q,  16, NULL );
-      mbedtls_mpi_write_file ( "DP: ",  &DP, 16, NULL );
+      mbedtls_mpi_write_file ( "N:  ", &N,  16, NULL );
+      mbedtls_mpi_write_file ( "E:  ", &E,  16, NULL );
+      mbedtls_mpi_write_file ( "D:  ", &D,  16, NULL );
+      mbedtls_mpi_write_file ( "P:  ", &P,  16, NULL );
+      mbedtls_mpi_write_file ( "Q:  ", &Q,  16, NULL );
+      mbedtls_mpi_write_file ( "DP: ", &DP, 16, NULL );
       mbedtls_mpi_write_file ( "DQ:  ", &DQ, 16, NULL );
       mbedtls_mpi_write_file ( "QP:  ", &QP, 16, NULL );
     }
     else
 #endif
 #if defined(MBEDTLS_ECP_C)
-      if ( mbedtls_pk_get_type ( &key ) == MBEDTLS_PK_ECKEY )
+      if ( mbedtls_pk_get_type (&key ) == MBEDTLS_PK_ECKEY )
       {
         if ( show_ecp_key ( mbedtls_pk_ec ( key ), 1 ) != 0 )
         {
@@ -494,7 +496,7 @@ usage:
     mbedtls_printf ( "\n  . Loading the public key ..." );
     fflush ( stdout );
 
-    ret = mbedtls_pk_parse_public_keyfile ( &key, opt.filename );
+    ret = mbedtls_pk_parse_public_keyfile (&key, opt.filename );
 
     if ( ret != 0 )
     {
@@ -512,7 +514,7 @@ usage:
 
 #if defined(MBEDTLS_RSA_C)
 
-    if ( mbedtls_pk_get_type ( &key ) == MBEDTLS_PK_RSA )
+    if ( mbedtls_pk_get_type (&key ) == MBEDTLS_PK_RSA )
     {
       mbedtls_rsa_context* rsa = mbedtls_pk_rsa ( key );
 
@@ -529,7 +531,7 @@ usage:
     else
 #endif
 #if defined(MBEDTLS_ECP_C)
-      if ( mbedtls_pk_get_type ( &key ) == MBEDTLS_PK_ECKEY )
+      if ( mbedtls_pk_get_type (&key ) == MBEDTLS_PK_ECKEY )
       {
         if ( show_ecp_key ( mbedtls_pk_ec ( key ), 0 ) != 0 )
         {
@@ -548,12 +550,12 @@ usage:
 
   if ( opt.output_mode == OUTPUT_MODE_PUBLIC )
   {
-    write_public_key ( &key, opt.output_file );
+    write_public_key (&key, opt.output_file );
   }
 
   if ( opt.output_mode == OUTPUT_MODE_PRIVATE )
   {
-    write_private_key ( &key, opt.output_file );
+    write_private_key (&key, opt.output_file );
   }
 
   exit_code = MBEDTLS_EXIT_SUCCESS;
@@ -571,24 +573,25 @@ exit:
   }
 
 #if defined(MBEDTLS_RSA_C)
-  mbedtls_mpi_free ( &N );
-  mbedtls_mpi_free ( &P );
-  mbedtls_mpi_free ( &Q );
-  mbedtls_mpi_free ( &D );
-  mbedtls_mpi_free ( &E );
-  mbedtls_mpi_free ( &DP );
-  mbedtls_mpi_free ( &DQ );
-  mbedtls_mpi_free ( &QP );
+  mbedtls_mpi_free (&N );
+  mbedtls_mpi_free (&P );
+  mbedtls_mpi_free (&Q );
+  mbedtls_mpi_free (&D );
+  mbedtls_mpi_free (&E );
+  mbedtls_mpi_free (&DP );
+  mbedtls_mpi_free (&DQ );
+  mbedtls_mpi_free (&QP );
 #endif /* MBEDTLS_RSA_C */
 
-  mbedtls_pk_free ( &key );
+  mbedtls_pk_free (&key );
 
-  mbedtls_ctr_drbg_free ( &ctr_drbg );
-  mbedtls_entropy_free ( &entropy );
+  mbedtls_ctr_drbg_free (&ctr_drbg );
+  mbedtls_entropy_free (&entropy );
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
   mbedtls_psa_crypto_free();
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 
   mbedtls_exit ( exit_code );
 }
+
 #endif /* program viability conditions */

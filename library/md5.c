@@ -192,7 +192,7 @@ int mbedtls_internal_md5_process ( mbedtls_md5_context* ctx,
   ctx->state[3] += local.D;
 
   /* Zeroise variables to clear sensitive data from memory. */
-  mbedtls_platform_zeroize ( &local, sizeof ( local ) );
+  mbedtls_platform_zeroize (&local, sizeof ( local ) );
 
   return 0;
 }
@@ -336,25 +336,25 @@ int mbedtls_md5 ( const unsigned char* input,
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
   mbedtls_md5_context ctx;
 
-  mbedtls_md5_init ( &ctx );
+  mbedtls_md5_init (&ctx );
 
-  if ( ( ret = mbedtls_md5_starts ( &ctx ) ) != 0 )
+  if ( ( ret = mbedtls_md5_starts (&ctx ) ) != 0 )
   {
     goto exit;
   }
 
-  if ( ( ret = mbedtls_md5_update ( &ctx, input, ilen ) ) != 0 )
+  if ( ( ret = mbedtls_md5_update (&ctx, input, ilen ) ) != 0 )
   {
     goto exit;
   }
 
-  if ( ( ret = mbedtls_md5_finish ( &ctx, output ) ) != 0 )
+  if ( ( ret = mbedtls_md5_finish (&ctx, output ) ) != 0 )
   {
     goto exit;
   }
 
 exit:
-  mbedtls_md5_free ( &ctx );
+  mbedtls_md5_free (&ctx );
 
   return ret;
 }

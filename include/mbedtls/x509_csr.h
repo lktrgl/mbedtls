@@ -63,6 +63,7 @@ typedef struct mbedtls_x509_csr
   void* MBEDTLS_PRIVATE (
     sig_opts );      /**< Signature options to be passed to mbedtls_pk_verify_ext(), e.g. for RSASSA-PSS */
 }
+
 mbedtls_x509_csr;
 
 /**
@@ -75,6 +76,7 @@ typedef struct mbedtls_x509write_csr
   mbedtls_md_type_t MBEDTLS_PRIVATE ( md_alg );
   mbedtls_asn1_named_data* MBEDTLS_PRIVATE ( extensions );
 }
+
 mbedtls_x509write_csr;
 
 #if defined(MBEDTLS_X509_CSR_PARSE_C)
@@ -126,7 +128,7 @@ int mbedtls_x509_csr_parse_der ( mbedtls_x509_csr* csr,
  * \return         \c 0 on success.
  * \return         A negative error code on failure.
  */
-typedef int ( *mbedtls_x509_csr_ext_cb_t ) ( void* p_ctx,
+typedef int (*mbedtls_x509_csr_ext_cb_t ) ( void* p_ctx,
     mbedtls_x509_csr const* csr,
     mbedtls_x509_buf const* oid,
     int critical,
@@ -355,7 +357,7 @@ void mbedtls_x509write_csr_free ( mbedtls_x509write_csr* ctx );
  * \note            \p f_rng is used for the signature operation.
  */
 int mbedtls_x509write_csr_der ( mbedtls_x509write_csr* ctx, unsigned char* buf, size_t size,
-                                int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                int (*f_rng ) ( void*, unsigned char*, size_t ),
                                 void* p_rng );
 
 #if defined(MBEDTLS_PEM_WRITE_C)
@@ -374,7 +376,7 @@ int mbedtls_x509write_csr_der ( mbedtls_x509write_csr* ctx, unsigned char* buf, 
  * \note            \p f_rng is used for the signature operation.
  */
 int mbedtls_x509write_csr_pem ( mbedtls_x509write_csr* ctx, unsigned char* buf, size_t size,
-                                int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                int (*f_rng ) ( void*, unsigned char*, size_t ),
                                 void* p_rng );
 #endif /* MBEDTLS_PEM_WRITE_C */
 #endif /* MBEDTLS_X509_CSR_WRITE_C */
@@ -383,6 +385,7 @@ int mbedtls_x509write_csr_pem ( mbedtls_x509write_csr* ctx, unsigned char* buf, 
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* mbedtls_x509_csr.h */

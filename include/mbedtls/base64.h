@@ -77,6 +77,7 @@ int mbedtls_base64_self_test ( int verbose );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* base64.h */

@@ -37,6 +37,7 @@ int main ( void )
                    "not defined.\r\n" );
   return EXIT_SUCCESS;
 }
+
 #else
 
 #define HASH_ALG PSA_ALG_SHA_256
@@ -75,7 +76,7 @@ int main ( void )
   }
 
   /* Compute hash using multi-part operation */
-  status = psa_hash_setup ( &hash_operation, HASH_ALG );
+  status = psa_hash_setup (&hash_operation, HASH_ALG );
 
   if ( status == PSA_ERROR_NOT_SUPPORTED )
   {
@@ -88,7 +89,7 @@ int main ( void )
     return EXIT_FAILURE;
   }
 
-  status = psa_hash_update ( &hash_operation, sample_message, sample_message_length );
+  status = psa_hash_update (&hash_operation, sample_message, sample_message_length );
 
   if ( status != PSA_SUCCESS )
   {
@@ -96,7 +97,7 @@ int main ( void )
     goto cleanup;
   }
 
-  status = psa_hash_clone ( &hash_operation, &cloned_hash_operation );
+  status = psa_hash_clone (&hash_operation, &cloned_hash_operation );
 
   if ( status != PSA_SUCCESS )
   {
@@ -104,7 +105,7 @@ int main ( void )
     goto cleanup;
   }
 
-  status = psa_hash_finish ( &hash_operation, hash, sizeof ( hash ), &hash_length );
+  status = psa_hash_finish (&hash_operation, hash, sizeof ( hash ), &hash_length );
 
   if ( status != PSA_SUCCESS )
   {
@@ -121,8 +122,8 @@ int main ( void )
   }
 
   status =
-    psa_hash_verify ( &cloned_hash_operation, expected_hash,
-                      expected_hash_len );
+    psa_hash_verify (&cloned_hash_operation, expected_hash,
+                     expected_hash_len );
 
   if ( status != PSA_SUCCESS )
   {
@@ -173,8 +174,9 @@ int main ( void )
   return EXIT_SUCCESS;
 
 cleanup:
-  psa_hash_abort ( &hash_operation );
-  psa_hash_abort ( &cloned_hash_operation );
+  psa_hash_abort (&hash_operation );
+  psa_hash_abort (&cloned_hash_operation );
   return EXIT_FAILURE;
 }
+
 #endif /* !MBEDTLS_PSA_CRYPTO_C || !PSA_WANT_ALG_SHA_256 */

@@ -56,6 +56,7 @@ typedef struct mbedtls_x509_crl_entry
    * Do not modify this field directly. */
   struct mbedtls_x509_crl_entry* next;
 }
+
 mbedtls_x509_crl_entry;
 
 /**
@@ -95,6 +96,7 @@ typedef struct mbedtls_x509_crl
    * Do not modify this field directly. */
   struct mbedtls_x509_crl* next;
 }
+
 mbedtls_x509_crl;
 
 /**
@@ -184,6 +186,7 @@ void mbedtls_x509_crl_free ( mbedtls_x509_crl* crl );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* mbedtls_x509_crl.h */

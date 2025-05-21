@@ -93,7 +93,7 @@ void mbedtls_everest_free ( mbedtls_ecdh_context_everest* ctx );
  */
 int mbedtls_everest_make_params ( mbedtls_ecdh_context_everest* ctx, size_t* olen,
                                   unsigned char* buf, size_t blen,
-                                  int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                  int (*f_rng ) ( void*, unsigned char*, size_t ),
                                   void* p_rng );
 
 /**
@@ -178,7 +178,7 @@ int mbedtls_everest_get_params ( mbedtls_ecdh_context_everest* ctx, const mbedtl
  */
 int mbedtls_everest_make_public ( mbedtls_ecdh_context_everest* ctx, size_t* olen,
                                   unsigned char* buf, size_t blen,
-                                  int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                  int (*f_rng ) ( void*, unsigned char*, size_t ),
                                   void* p_rng );
 
 /**
@@ -225,11 +225,12 @@ int mbedtls_everest_read_public ( mbedtls_ecdh_context_everest* ctx,
  */
 int mbedtls_everest_calc_secret ( mbedtls_ecdh_context_everest* ctx, size_t* olen,
                                   unsigned char* buf, size_t blen,
-                                  int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                  int (*f_rng ) ( void*, unsigned char*, size_t ),
                                   void* p_rng );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* MBEDTLS_EVEREST_H */

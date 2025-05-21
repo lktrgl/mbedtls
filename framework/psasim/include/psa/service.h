@@ -245,6 +245,7 @@ void psa_eoi ( psa_signal_t irq_signal );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* __PSA_SERVICE_H__ */

@@ -825,7 +825,7 @@ int mbedtls_version_check_feature ( const char* feature )
 {
   const char* const* idx = features;
 
-  if ( *idx == NULL )
+  if (*idx == NULL )
   {
     return -2;
   }
@@ -842,9 +842,9 @@ int mbedtls_version_check_feature ( const char* feature )
 
   feature += 8;
 
-  while ( *idx != NULL )
+  while (*idx != NULL )
   {
-    if ( !strcmp ( *idx, feature ) )
+    if (!strcmp (*idx, feature ) )
     {
       return 0;
     }

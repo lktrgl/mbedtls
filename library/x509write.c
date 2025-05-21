@@ -138,14 +138,14 @@ int mbedtls_x509_write_set_san_common ( mbedtls_asn1_named_data** extensions,
 
     case MBEDTLS_X509_SAN_DIRECTORY_NAME:
       MBEDTLS_ASN1_CHK_CLEANUP_ADD ( single_san_len,
-                                     mbedtls_x509_write_names ( &p, buf,
+                                     mbedtls_x509_write_names (&p, buf,
                                          ( mbedtls_asn1_named_data* ) &
                                          cur->node
                                          .san.directory_name ) );
       MBEDTLS_ASN1_CHK_CLEANUP_ADD ( single_san_len,
-                                     mbedtls_asn1_write_len ( &p, buf, single_san_len ) );
+                                     mbedtls_asn1_write_len (&p, buf, single_san_len ) );
       MBEDTLS_ASN1_CHK_CLEANUP_ADD ( single_san_len,
-                                     mbedtls_asn1_write_tag ( &p, buf,
+                                     mbedtls_asn1_write_tag (&p, buf,
                                          MBEDTLS_ASN1_CONTEXT_SPECIFIC |
                                          MBEDTLS_ASN1_CONSTRUCTED |
                                          MBEDTLS_X509_SAN_DIRECTORY_NAME ) );
@@ -169,9 +169,9 @@ int mbedtls_x509_write_set_san_common ( mbedtls_asn1_named_data** extensions,
     len += single_san_len;
   }
 
-  MBEDTLS_ASN1_CHK_CLEANUP_ADD ( len, mbedtls_asn1_write_len ( &p, buf, len ) );
+  MBEDTLS_ASN1_CHK_CLEANUP_ADD ( len, mbedtls_asn1_write_len (&p, buf, len ) );
   MBEDTLS_ASN1_CHK_CLEANUP_ADD ( len,
-                                 mbedtls_asn1_write_tag ( &p, buf,
+                                 mbedtls_asn1_write_tag (&p, buf,
                                      MBEDTLS_ASN1_CONSTRUCTED |
                                      MBEDTLS_ASN1_SEQUENCE ) );
 

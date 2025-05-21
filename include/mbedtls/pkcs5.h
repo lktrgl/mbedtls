@@ -193,6 +193,7 @@ int mbedtls_pkcs5_self_test ( int verbose );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* pkcs5.h */

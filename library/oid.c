@@ -47,7 +47,7 @@
   {                                                                   \
     const TYPE_T *p = (LIST);                                       \
     const mbedtls_oid_descriptor_t *cur =                           \
-        (const mbedtls_oid_descriptor_t *) p;                       \
+    (const mbedtls_oid_descriptor_t *) p;                       \
     if (p == NULL || oid == NULL) return NULL;                  \
     while (cur->asn1 != NULL) {                                    \
       if (cur->asn1_len == oid->len &&                            \
@@ -333,18 +333,18 @@ FN_OID_GET_ATTR1 ( mbedtls_oid_get_x509_ext_type, oid_x509_ext_t, x509_ext, int,
 static const mbedtls_oid_descriptor_t oid_ext_key_usage[] =
 {
   OID_DESCRIPTOR ( MBEDTLS_OID_SERVER_AUTH,
-                   "id-kp-serverAuth",
-                   "TLS Web Server Authentication" ),
+  "id-kp-serverAuth",
+  "TLS Web Server Authentication" ),
   OID_DESCRIPTOR ( MBEDTLS_OID_CLIENT_AUTH,
-                   "id-kp-clientAuth",
-                   "TLS Web Client Authentication" ),
+  "id-kp-clientAuth",
+  "TLS Web Client Authentication" ),
   OID_DESCRIPTOR ( MBEDTLS_OID_CODE_SIGNING,     "id-kp-codeSigning",     "Code Signing" ),
   OID_DESCRIPTOR ( MBEDTLS_OID_EMAIL_PROTECTION, "id-kp-emailProtection", "E-mail Protection" ),
   OID_DESCRIPTOR ( MBEDTLS_OID_TIME_STAMPING,    "id-kp-timeStamping",    "Time Stamping" ),
   OID_DESCRIPTOR ( MBEDTLS_OID_OCSP_SIGNING,     "id-kp-OCSPSigning",     "OCSP Signing" ),
   OID_DESCRIPTOR ( MBEDTLS_OID_WISUN_FAN,
-                   "id-kp-wisun-fan-device",
-                   "Wi-SUN Alliance Field Area Network (FAN)" ),
+  "id-kp-wisun-fan-device",
+  "Wi-SUN Alliance Field Area Network (FAN)" ),
   NULL_OID_DESCRIPTOR,
 };
 
@@ -966,7 +966,7 @@ int mbedtls_oid_get_numeric_string ( char* buf, size_t size,
     value <<= 7;
     value |= oid->p[i] & 0x7F;
 
-    if ( ! ( oid->p[i] & 0x80 ) )
+    if (! ( oid->p[i] & 0x80 ) )
     {
       /* Last byte */
       if ( n == size )
@@ -1024,18 +1024,18 @@ static int oid_parse_number ( unsigned int* num, const char** p, const char* bou
 
   *num = 0;
 
-  while ( *p < bound &&** p >= '0' &&** p <= '9' )
+  while (*p < bound &&** p >= '0' &&** p <= '9' )
   {
     ret = 0;
 
-    if ( *num > ( UINT_MAX / 10 ) )
+    if (*num > ( UINT_MAX / 10 ) )
     {
       return MBEDTLS_ERR_ASN1_INVALID_DATA;
     }
 
     *num *= 10;
     *num += **p - '0';
-    ( *p )++;
+    (*p )++;
   }
 
   return ret;
@@ -1066,12 +1066,12 @@ static int oid_subidentifier_encode_into ( unsigned char** p,
     return MBEDTLS_ERR_OID_BUF_TOO_SMALL;
   }
 
-  ( *p ) [num_bytes - 1] = ( unsigned char ) ( value & 0x7f );
+  (*p ) [num_bytes - 1] = ( unsigned char ) ( value & 0x7f );
   value >>= 7;
 
   for ( size_t i = 2; i <= num_bytes; i++ )
   {
-    ( *p ) [num_bytes - i] = 0x80 | ( unsigned char ) ( value & 0x7f );
+    (*p ) [num_bytes - i] = 0x80 | ( unsigned char ) ( value & 0x7f );
     value >>= 7;
   }
 
@@ -1129,7 +1129,7 @@ int mbedtls_oid_from_numeric_string ( mbedtls_asn1_buf* oid,
   unsigned char* out_ptr = oid->p;
   unsigned char* out_bound = oid->p + max_possible_bytes;
 
-  ret = oid_parse_number ( &component1, &str_ptr, str_bound );
+  ret = oid_parse_number (&component1, &str_ptr, str_bound );
 
   if ( ret != 0 )
   {
@@ -1151,7 +1151,7 @@ int mbedtls_oid_from_numeric_string ( mbedtls_asn1_buf* oid,
 
   str_ptr++;
 
-  ret = oid_parse_number ( &component2, &str_ptr, str_bound );
+  ret = oid_parse_number (&component2, &str_ptr, str_bound );
 
   if ( ret != 0 )
   {
@@ -1167,7 +1167,7 @@ int mbedtls_oid_from_numeric_string ( mbedtls_asn1_buf* oid,
 
   if ( str_ptr < str_bound )
   {
-    if ( *str_ptr == '.' )
+    if (*str_ptr == '.' )
     {
       str_ptr++;
     }
@@ -1184,8 +1184,8 @@ int mbedtls_oid_from_numeric_string ( mbedtls_asn1_buf* oid,
     goto error;
   }
 
-  ret = oid_subidentifier_encode_into ( &out_ptr, out_bound,
-                                        ( component1 * 40 ) + component2 );
+  ret = oid_subidentifier_encode_into (&out_ptr, out_bound,
+                                       ( component1 * 40 ) + component2 );
 
   if ( ret != 0 )
   {
@@ -1194,7 +1194,7 @@ int mbedtls_oid_from_numeric_string ( mbedtls_asn1_buf* oid,
 
   while ( str_ptr < str_bound )
   {
-    ret = oid_parse_number ( &val, &str_ptr, str_bound );
+    ret = oid_parse_number (&val, &str_ptr, str_bound );
 
     if ( ret != 0 )
     {
@@ -1203,7 +1203,7 @@ int mbedtls_oid_from_numeric_string ( mbedtls_asn1_buf* oid,
 
     if ( str_ptr < str_bound )
     {
-      if ( *str_ptr == '.' )
+      if (*str_ptr == '.' )
       {
         str_ptr++;
       }
@@ -1214,7 +1214,7 @@ int mbedtls_oid_from_numeric_string ( mbedtls_asn1_buf* oid,
       }
     }
 
-    ret = oid_subidentifier_encode_into ( &out_ptr, out_bound, val );
+    ret = oid_subidentifier_encode_into (&out_ptr, out_bound, val );
 
     if ( ret != 0 )
     {

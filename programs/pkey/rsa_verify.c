@@ -21,6 +21,7 @@ int main ( void )
                    "MBEDTLS_MD_CAN_SHA256 and/or MBEDTLS_FS_IO not defined.\n" );
   mbedtls_exit ( 0 );
 }
+
 #else
 
 #include "mbedtls/rsa.h"
@@ -42,9 +43,9 @@ int main ( int argc, char* argv[] )
   unsigned char buf[MBEDTLS_MPI_MAX_SIZE];
   char filename[512];
 
-  mbedtls_rsa_init ( &rsa );
-  mbedtls_mpi_init ( &N );
-  mbedtls_mpi_init ( &E );
+  mbedtls_rsa_init (&rsa );
+  mbedtls_mpi_init (&N );
+  mbedtls_mpi_init (&E );
 
   if ( argc != 2 )
   {
@@ -67,9 +68,9 @@ int main ( int argc, char* argv[] )
     goto exit;
   }
 
-  if ( ( ret = mbedtls_mpi_read_file ( &N, 16, f ) ) != 0 ||
-       ( ret = mbedtls_mpi_read_file ( &E, 16, f ) ) != 0 ||
-       ( ret = mbedtls_rsa_import ( &rsa, &N, NULL, NULL, NULL, &E ) != 0 ) )
+  if ( ( ret = mbedtls_mpi_read_file (&N, 16, f ) ) != 0 ||
+       ( ret = mbedtls_mpi_read_file (&E, 16, f ) ) != 0 ||
+       ( ret = mbedtls_rsa_import (&rsa, &N, NULL, NULL, NULL, &E ) != 0 ) )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_mpi_read_file returned %d\n\n", ret );
     fclose ( f );
@@ -99,7 +100,7 @@ int main ( int argc, char* argv[] )
 
   fclose ( f );
 
-  if ( i != mbedtls_rsa_get_len ( &rsa ) )
+  if ( i != mbedtls_rsa_get_len (&rsa ) )
   {
     mbedtls_printf ( "\n  ! Invalid RSA signature format\n\n" );
     goto exit;
@@ -120,8 +121,8 @@ int main ( int argc, char* argv[] )
     goto exit;
   }
 
-  if ( ( ret = mbedtls_rsa_pkcs1_verify ( &rsa, MBEDTLS_MD_SHA256,
-                                          32, hash, buf ) ) != 0 )
+  if ( ( ret = mbedtls_rsa_pkcs1_verify (&rsa, MBEDTLS_MD_SHA256,
+                                         32, hash, buf ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_rsa_pkcs1_verify returned -0x%0x\n\n",
                      ( unsigned int ) - ret );
@@ -134,11 +135,12 @@ int main ( int argc, char* argv[] )
 
 exit:
 
-  mbedtls_rsa_free ( &rsa );
-  mbedtls_mpi_free ( &N );
-  mbedtls_mpi_free ( &E );
+  mbedtls_rsa_free (&rsa );
+  mbedtls_mpi_free (&N );
+  mbedtls_mpi_free (&E );
 
   mbedtls_exit ( exit_code );
 }
+
 #endif /* MBEDTLS_BIGNUM_C && MBEDTLS_RSA_C && MBEDTLS_MD_CAN_SHA256 &&
           MBEDTLS_FS_IO */

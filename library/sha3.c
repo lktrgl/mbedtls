@@ -251,11 +251,11 @@ static void keccak_f1600 ( mbedtls_sha3_context* ctx )
       lane[2] = s[i + 2];
       lane[3] = s[i + 3];
       lane[4] = s[i + 4];
-      s[i + 0] ^= ( ~lane[1] ) & lane[2];
-      s[i + 1] ^= ( ~lane[2] ) & lane[3];
-      s[i + 2] ^= ( ~lane[3] ) & lane[4];
-      s[i + 3] ^= ( ~lane[4] ) & lane[0];
-      s[i + 4] ^= ( ~lane[0] ) & lane[1];
+      s[i + 0] ^= (~lane[1] ) & lane[2];
+      s[i + 1] ^= (~lane[2] ) & lane[3];
+      s[i + 2] ^= (~lane[3] ) & lane[4];
+      s[i + 3] ^= (~lane[4] ) & lane[0];
+      s[i + 4] ^= (~lane[0] ) & lane[1];
     }
 
 #else
@@ -264,55 +264,55 @@ static void keccak_f1600 ( mbedtls_sha3_context* ctx )
     lane[2] = s[2];
     lane[3] = s[3];
     lane[4] = s[4];
-    s[0] ^= ( ~lane[1] ) & lane[2];
-    s[1] ^= ( ~lane[2] ) & lane[3];
-    s[2] ^= ( ~lane[3] ) & lane[4];
-    s[3] ^= ( ~lane[4] ) & lane[0];
-    s[4] ^= ( ~lane[0] ) & lane[1];
+    s[0] ^= (~lane[1] ) & lane[2];
+    s[1] ^= (~lane[2] ) & lane[3];
+    s[2] ^= (~lane[3] ) & lane[4];
+    s[3] ^= (~lane[4] ) & lane[0];
+    s[4] ^= (~lane[0] ) & lane[1];
 
     lane[0] = s[5];
     lane[1] = s[6];
     lane[2] = s[7];
     lane[3] = s[8];
     lane[4] = s[9];
-    s[5] ^= ( ~lane[1] ) & lane[2];
-    s[6] ^= ( ~lane[2] ) & lane[3];
-    s[7] ^= ( ~lane[3] ) & lane[4];
-    s[8] ^= ( ~lane[4] ) & lane[0];
-    s[9] ^= ( ~lane[0] ) & lane[1];
+    s[5] ^= (~lane[1] ) & lane[2];
+    s[6] ^= (~lane[2] ) & lane[3];
+    s[7] ^= (~lane[3] ) & lane[4];
+    s[8] ^= (~lane[4] ) & lane[0];
+    s[9] ^= (~lane[0] ) & lane[1];
 
     lane[0] = s[10];
     lane[1] = s[11];
     lane[2] = s[12];
     lane[3] = s[13];
     lane[4] = s[14];
-    s[10] ^= ( ~lane[1] ) & lane[2];
-    s[11] ^= ( ~lane[2] ) & lane[3];
-    s[12] ^= ( ~lane[3] ) & lane[4];
-    s[13] ^= ( ~lane[4] ) & lane[0];
-    s[14] ^= ( ~lane[0] ) & lane[1];
+    s[10] ^= (~lane[1] ) & lane[2];
+    s[11] ^= (~lane[2] ) & lane[3];
+    s[12] ^= (~lane[3] ) & lane[4];
+    s[13] ^= (~lane[4] ) & lane[0];
+    s[14] ^= (~lane[0] ) & lane[1];
 
     lane[0] = s[15];
     lane[1] = s[16];
     lane[2] = s[17];
     lane[3] = s[18];
     lane[4] = s[19];
-    s[15] ^= ( ~lane[1] ) & lane[2];
-    s[16] ^= ( ~lane[2] ) & lane[3];
-    s[17] ^= ( ~lane[3] ) & lane[4];
-    s[18] ^= ( ~lane[4] ) & lane[0];
-    s[19] ^= ( ~lane[0] ) & lane[1];
+    s[15] ^= (~lane[1] ) & lane[2];
+    s[16] ^= (~lane[2] ) & lane[3];
+    s[17] ^= (~lane[3] ) & lane[4];
+    s[18] ^= (~lane[4] ) & lane[0];
+    s[19] ^= (~lane[0] ) & lane[1];
 
     lane[0] = s[20];
     lane[1] = s[21];
     lane[2] = s[22];
     lane[3] = s[23];
     lane[4] = s[24];
-    s[20] ^= ( ~lane[1] ) & lane[2];
-    s[21] ^= ( ~lane[2] ) & lane[3];
-    s[22] ^= ( ~lane[3] ) & lane[4];
-    s[23] ^= ( ~lane[4] ) & lane[0];
-    s[24] ^= ( ~lane[0] ) & lane[1];
+    s[20] ^= (~lane[1] ) & lane[2];
+    s[21] ^= (~lane[2] ) & lane[3];
+    s[22] ^= (~lane[3] ) & lane[4];
+    s[23] ^= (~lane[4] ) & lane[0];
+    s[24] ^= (~lane[0] ) & lane[1];
 #endif
 
     /* Iota */
@@ -396,7 +396,7 @@ int mbedtls_sha3_update ( mbedtls_sha3_context* ctx,
 
     if ( align_bytes )
     {
-      for ( ; align_bytes > 0; align_bytes-- )
+      for (; align_bytes > 0; align_bytes-- )
       {
         ABSORB ( ctx, ctx->index, *input++ );
         ilen--;
@@ -485,26 +485,26 @@ int mbedtls_sha3 ( mbedtls_sha3_id id, const uint8_t* input,
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
   mbedtls_sha3_context ctx;
 
-  mbedtls_sha3_init ( &ctx );
+  mbedtls_sha3_init (&ctx );
 
   /* Sanity checks are performed in every mbedtls_sha3_xxx() */
-  if ( ( ret = mbedtls_sha3_starts ( &ctx, id ) ) != 0 )
+  if ( ( ret = mbedtls_sha3_starts (&ctx, id ) ) != 0 )
   {
     goto exit;
   }
 
-  if ( ( ret = mbedtls_sha3_update ( &ctx, input, ilen ) ) != 0 )
+  if ( ( ret = mbedtls_sha3_update (&ctx, input, ilen ) ) != 0 )
   {
     goto exit;
   }
 
-  if ( ( ret = mbedtls_sha3_finish ( &ctx, output, olen ) ) != 0 )
+  if ( ( ret = mbedtls_sha3_finish (&ctx, output, olen ) ) != 0 )
   {
     goto exit;
   }
 
 exit:
-  mbedtls_sha3_free ( &ctx );
+  mbedtls_sha3_free (&ctx );
 
   return ret;
 }
@@ -718,9 +718,9 @@ static int mbedtls_sha3_long_kat_test ( int verbose,
     mbedtls_printf ( "  %s long KAT test ", type_name );
   }
 
-  mbedtls_sha3_init ( &ctx );
+  mbedtls_sha3_init (&ctx );
 
-  result = mbedtls_sha3_starts ( &ctx, id );
+  result = mbedtls_sha3_starts (&ctx, id );
 
   if ( result != 0 )
   {
@@ -733,7 +733,7 @@ static int mbedtls_sha3_long_kat_test ( int verbose,
   /* Process 1,000,000 (one million) 'a' characters */
   for ( int i = 0; i < 1000; i++ )
   {
-    result = mbedtls_sha3_update ( &ctx, buffer, 1000 );
+    result = mbedtls_sha3_update (&ctx, buffer, 1000 );
 
     if ( result != 0 )
     {
@@ -746,7 +746,7 @@ static int mbedtls_sha3_long_kat_test ( int verbose,
     }
   }
 
-  result = mbedtls_sha3_finish ( &ctx, hash, sizeof ( hash ) );
+  result = mbedtls_sha3_finish (&ctx, hash, sizeof ( hash ) );
 
   if ( result != 0 )
   {
@@ -794,7 +794,7 @@ static int mbedtls_sha3_long_kat_test ( int verbose,
   }
 
 cleanup:
-  mbedtls_sha3_free ( &ctx );
+  mbedtls_sha3_free (&ctx );
   return result;
 }
 
@@ -862,6 +862,7 @@ int mbedtls_sha3_self_test ( int verbose )
 
   return 0;
 }
+
 #endif /* MBEDTLS_SELF_TEST */
 
 #endif /* MBEDTLS_SHA3_C */

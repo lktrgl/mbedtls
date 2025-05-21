@@ -11,6 +11,7 @@ typedef struct mbedtls_aria_context
 {
   int dummy;
 }
+
 mbedtls_aria_context;
 
 

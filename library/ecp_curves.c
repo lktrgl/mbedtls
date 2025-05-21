@@ -5072,22 +5072,22 @@ static int ecp_group_load ( mbedtls_ecp_group* grp,
                             const mbedtls_mpi_uint* n,  size_t nlen,
                             const mbedtls_ecp_point* T )
 {
-  ecp_mpi_load ( &grp->P, p, plen );
+  ecp_mpi_load (&grp->P, p, plen );
 
   if ( a != NULL )
   {
-    ecp_mpi_load ( &grp->A, a, alen );
+    ecp_mpi_load (&grp->A, a, alen );
   }
 
-  ecp_mpi_load ( &grp->B, b, blen );
-  ecp_mpi_load ( &grp->N, n, nlen );
+  ecp_mpi_load (&grp->B, b, blen );
+  ecp_mpi_load (&grp->N, n, nlen );
 
-  ecp_mpi_load ( &grp->G.X, gx, gxlen );
-  ecp_mpi_load ( &grp->G.Y, gy, gylen );
-  ecp_mpi_set1 ( &grp->G.Z );
+  ecp_mpi_load (&grp->G.X, gx, gxlen );
+  ecp_mpi_load (&grp->G.Y, gy, gylen );
+  ecp_mpi_set1 (&grp->G.Z );
 
-  grp->pbits = mbedtls_mpi_bitlen ( &grp->P );
-  grp->nbits = mbedtls_mpi_bitlen ( &grp->N );
+  grp->pbits = mbedtls_mpi_bitlen (&grp->P );
+  grp->nbits = mbedtls_mpi_bitlen (&grp->N );
 
   grp->h = 1;
 
@@ -5099,6 +5099,7 @@ static int ecp_group_load ( mbedtls_ecp_group* grp,
 
   return 0;
 }
+
 #endif /* ECP_LOAD_GROUP */
 
 #if defined(MBEDTLS_ECP_NIST_OPTIM)
@@ -5180,24 +5181,24 @@ static int ecp_use_curve25519 ( mbedtls_ecp_group* grp )
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
 
   /* Actually ( A + 2 ) / 4 */
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset ( &grp->A, curve25519_a24 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset (&grp->A, curve25519_a24 ) );
 
   /* P = 2^255 - 19 */
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset ( &grp->P, 1 ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_shift_l ( &grp->P, 255 ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int ( &grp->P, &grp->P, 19 ) );
-  grp->pbits = mbedtls_mpi_bitlen ( &grp->P );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset (&grp->P, 1 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_shift_l (&grp->P, 255 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int (&grp->P, &grp->P, 19 ) );
+  grp->pbits = mbedtls_mpi_bitlen (&grp->P );
 
   /* N = 2^252 + 27742317777372353535851937790883648493 */
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_read_binary ( &grp->N,
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_read_binary (&grp->N,
                     curve25519_part_of_n, sizeof ( curve25519_part_of_n ) ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_set_bit ( &grp->N, 252, 1 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_set_bit (&grp->N, 252, 1 ) );
 
   /* Y intentionally not set, since we use x/z coordinates.
    * This is used as a marker to identify Montgomery curves! */
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset ( &grp->G.X, 9 ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset ( &grp->G.Z, 1 ) );
-  mbedtls_mpi_free ( &grp->G.Y );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset (&grp->G.X, 9 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset (&grp->G.Z, 1 ) );
+  mbedtls_mpi_free (&grp->G.Y );
 
   /* Actually, the required msb for private keys */
   grp->nbits = 254;
@@ -5211,6 +5212,7 @@ cleanup:
 
   return ret;
 }
+
 #endif /* MBEDTLS_ECP_DP_CURVE25519_ENABLED */
 
 #if defined(MBEDTLS_ECP_DP_CURVE448_ENABLED)
@@ -5232,36 +5234,36 @@ static int ecp_use_curve448 ( mbedtls_ecp_group* grp )
   mbedtls_mpi Ns;
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
 
-  mbedtls_mpi_init ( &Ns );
+  mbedtls_mpi_init (&Ns );
 
   /* Actually ( A + 2 ) / 4 */
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset ( &grp->A, curve448_a24 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset (&grp->A, curve448_a24 ) );
 
   /* P = 2^448 - 2^224 - 1 */
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset ( &grp->P, 1 ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_shift_l ( &grp->P, 224 ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int ( &grp->P, &grp->P, 1 ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_shift_l ( &grp->P, 224 ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int ( &grp->P, &grp->P, 1 ) );
-  grp->pbits = mbedtls_mpi_bitlen ( &grp->P );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset (&grp->P, 1 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_shift_l (&grp->P, 224 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int (&grp->P, &grp->P, 1 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_shift_l (&grp->P, 224 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int (&grp->P, &grp->P, 1 ) );
+  grp->pbits = mbedtls_mpi_bitlen (&grp->P );
 
   /* Y intentionally not set, since we use x/z coordinates.
    * This is used as a marker to identify Montgomery curves! */
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset ( &grp->G.X, 5 ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset ( &grp->G.Z, 1 ) );
-  mbedtls_mpi_free ( &grp->G.Y );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset (&grp->G.X, 5 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset (&grp->G.Z, 1 ) );
+  mbedtls_mpi_free (&grp->G.Y );
 
   /* N = 2^446 - 13818066809895115352007386748515426880336692474882178609894547503885 */
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_set_bit ( &grp->N, 446, 1 ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_read_binary ( &Ns,
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_set_bit (&grp->N, 446, 1 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_read_binary (&Ns,
                     curve448_part_of_n, sizeof ( curve448_part_of_n ) ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_mpi ( &grp->N, &grp->N, &Ns ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_mpi (&grp->N, &grp->N, &Ns ) );
 
   /* Actually, the required msb for private keys */
   grp->nbits = 447;
 
 cleanup:
-  mbedtls_mpi_free ( &Ns );
+  mbedtls_mpi_free (&Ns );
 
   if ( ret != 0 )
   {
@@ -5270,6 +5272,7 @@ cleanup:
 
   return ret;
 }
+
 #endif /* MBEDTLS_ECP_DP_CURVE448_ENABLED */
 
 /*
@@ -5412,9 +5415,9 @@ static inline void add64 ( mbedtls_mpi_uint* dst, mbedtls_mpi_uint* src, mbedtls
   for ( i = 0; i < 8 / sizeof ( mbedtls_mpi_uint ); i++, dst++, src++ )
   {
     *dst += c;
-    c  = ( *dst < c );
+    c  = (*dst < c );
     *dst += *src;
-    c += ( *dst < *src );
+    c += (*dst < *src );
   }
 
   *carry += c;
@@ -5428,7 +5431,7 @@ static inline void carry64 ( mbedtls_mpi_uint* dst, mbedtls_mpi_uint* carry )
   for ( i = 0; i < 8 / sizeof ( mbedtls_mpi_uint ); i++, dst++ )
   {
     *dst += *carry;
-    *carry  = ( *dst < *carry );
+    *carry  = (*dst < *carry );
   }
 }
 
@@ -5445,7 +5448,7 @@ static int ecp_mod_p192 ( mbedtls_mpi* N )
 {
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
   mbedtls_mpi_uint c = 0;
-  mbedtls_mpi_uint* p, *end;
+  mbedtls_mpi_uint* p, * end;
 
   /* Make sure we have enough blocks so that A(5) is legal */
   MBEDTLS_MPI_CHK ( mbedtls_mpi_grow ( N, 6 * WIDTH ) );
@@ -5524,12 +5527,12 @@ cleanup:
 static inline void add32 ( uint32_t* dst, uint32_t src, signed char* carry )
 {
   *dst += src;
-  *carry += ( *dst < src );
+  *carry += (*dst < src );
 }
 
 static inline void sub32 ( uint32_t* dst, uint32_t src, signed char* carry )
 {
-  *carry -= ( *dst < src );
+  *carry -= (*dst < src );
   *dst -= src;
 }
 
@@ -5642,6 +5645,7 @@ static int ecp_mod_p224 ( mbedtls_mpi* N )
 cleanup:
   return ret;
 }
+
 #endif /* MBEDTLS_ECP_DP_SECP224R1_ENABLED */
 
 #if defined(MBEDTLS_ECP_DP_SECP256R1_ENABLED)
@@ -5726,6 +5730,7 @@ static int ecp_mod_p256 ( mbedtls_mpi* N )
 cleanup:
   return ret;
 }
+
 #endif /* MBEDTLS_ECP_DP_SECP256R1_ENABLED */
 
 #if defined(MBEDTLS_ECP_DP_SECP384R1_ENABLED)
@@ -5829,6 +5834,7 @@ static int ecp_mod_p384 ( mbedtls_mpi* N )
 cleanup:
   return ret;
 }
+
 #endif /* MBEDTLS_ECP_DP_SECP384R1_ENABLED */
 
 #undef A
@@ -5885,7 +5891,7 @@ static int ecp_mod_p521 ( mbedtls_mpi* N )
 
   M.p = Mp;
   memcpy ( Mp, N->p + P521_WIDTH - 1, M.n * sizeof ( mbedtls_mpi_uint ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_shift_r ( &M, 521 % ( 8 * sizeof ( mbedtls_mpi_uint ) ) ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_shift_r (&M, 521 % ( 8 * sizeof ( mbedtls_mpi_uint ) ) ) );
 
   /* N = A0 */
   N->p[P521_WIDTH - 1] &= P521_MASK;
@@ -5946,6 +5952,7 @@ static int ecp_mod_p255 ( mbedtls_mpi* N )
 
   return 0;
 }
+
 #endif /* MBEDTLS_ECP_DP_CURVE25519_ENABLED */
 
 #if defined(MBEDTLS_ECP_DP_CURVE448_ENABLED)
@@ -6010,7 +6017,7 @@ static int ecp_mod_p448 ( mbedtls_mpi* N )
   Q = M;
   Q.p = Qp;
   memcpy ( Qp, Mp, sizeof ( Qp ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_shift_r ( &Q, 224 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_shift_r (&Q, 224 ) );
   MBEDTLS_MPI_CHK ( mbedtls_mpi_add_mpi ( N, N, &Q ) );
 
   /* M = (B0 + B1) * 2^224, N += M */
@@ -6024,14 +6031,15 @@ static int ecp_mod_p448 ( mbedtls_mpi* N )
     Mp[i] = 0;
   }
 
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_add_mpi ( &M, &M, &Q ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_add_mpi (&M, &M, &Q ) );
   M.n = P448_WIDTH + 1; /* Make room for shifted carry bit from the addition */
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_shift_l ( &M, 224 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_shift_l (&M, 224 ) );
   MBEDTLS_MPI_CHK ( mbedtls_mpi_add_mpi ( N, N, &M ) );
 
 cleanup:
   return ret;
 }
+
 #endif /* MBEDTLS_ECP_DP_CURVE448_ENABLED */
 
 #if defined(MBEDTLS_ECP_DP_SECP192K1_ENABLED) ||   \
@@ -6081,7 +6089,7 @@ static inline int ecp_mod_koblitz ( mbedtls_mpi* N, const mbedtls_mpi_uint* Rp, 
 
   if ( shift != 0 )
   {
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_shift_r ( &M, shift ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_shift_r (&M, shift ) );
   }
 
   M.n += R.n; /* Make room for multiplication by R */
@@ -6098,7 +6106,7 @@ static inline int ecp_mod_koblitz ( mbedtls_mpi* N, const mbedtls_mpi_uint* Rp, 
   }
 
   /* N = A0 + R * A1 */
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_mul_mpi ( &M, &M, &R ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_mul_mpi (&M, &M, &R ) );
   MBEDTLS_MPI_CHK ( mbedtls_mpi_add_abs ( N, N, &M ) );
 
   /* Second pass */
@@ -6116,7 +6124,7 @@ static inline int ecp_mod_koblitz ( mbedtls_mpi* N, const mbedtls_mpi_uint* Rp, 
 
   if ( shift != 0 )
   {
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_shift_r ( &M, shift ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_shift_r (&M, shift ) );
   }
 
   M.n += R.n; /* Make room for multiplication by R */
@@ -6133,12 +6141,13 @@ static inline int ecp_mod_koblitz ( mbedtls_mpi* N, const mbedtls_mpi_uint* Rp, 
   }
 
   /* N = A0 + R * A1 */
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_mul_mpi ( &M, &M, &R ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_mul_mpi (&M, &M, &R ) );
   MBEDTLS_MPI_CHK ( mbedtls_mpi_add_abs ( N, N, &M ) );
 
 cleanup:
   return ret;
 }
+
 #endif /* MBEDTLS_ECP_DP_SECP192K1_ENABLED) ||
           MBEDTLS_ECP_DP_SECP224K1_ENABLED) ||
           MBEDTLS_ECP_DP_SECP256K1_ENABLED) */
@@ -6153,12 +6162,13 @@ static int ecp_mod_p192k1 ( mbedtls_mpi* N )
   static const mbedtls_mpi_uint Rp[] =
   {
     MBEDTLS_BYTES_TO_T_UINT_8 ( 0xC9, 0x11, 0x00, 0x00, 0x01, 0x00, 0x00,
-                                0x00 )
+    0x00 )
   };
 
   return ecp_mod_koblitz ( N, Rp, 192 / 8 / sizeof ( mbedtls_mpi_uint ), 0, 0,
                            0 );
 }
+
 #endif /* MBEDTLS_ECP_DP_SECP192K1_ENABLED */
 
 #if defined(MBEDTLS_ECP_DP_SECP224K1_ENABLED)
@@ -6171,7 +6181,7 @@ static int ecp_mod_p224k1 ( mbedtls_mpi* N )
   static const mbedtls_mpi_uint Rp[] =
   {
     MBEDTLS_BYTES_TO_T_UINT_8 ( 0x93, 0x1A, 0x00, 0x00, 0x01, 0x00, 0x00,
-                                0x00 )
+    0x00 )
   };
 
 #if defined(MBEDTLS_HAVE_INT64)
@@ -6194,11 +6204,12 @@ static int ecp_mod_p256k1 ( mbedtls_mpi* N )
   static const mbedtls_mpi_uint Rp[] =
   {
     MBEDTLS_BYTES_TO_T_UINT_8 ( 0xD1, 0x03, 0x00, 0x00, 0x01, 0x00, 0x00,
-                                0x00 )
+    0x00 )
   };
   return ecp_mod_koblitz ( N, Rp, 256 / 8 / sizeof ( mbedtls_mpi_uint ), 0, 0,
                            0 );
 }
+
 #endif /* MBEDTLS_ECP_DP_SECP256K1_ENABLED */
 
 #if defined(MBEDTLS_TEST_HOOKS)

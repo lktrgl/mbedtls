@@ -52,6 +52,7 @@ static int mbedtls_cipher_error_from_psa ( psa_status_t status )
   return PSA_TO_MBEDTLS_ERR_LIST ( status, psa_to_cipher_errors,
                                    psa_generic_status_to_mbedtls );
 }
+
 #endif /* MBEDTLS_BLOCK_CIPHER_SOME_PSA */
 
 void mbedtls_block_cipher_free ( mbedtls_block_cipher_context_t* ctx )
@@ -76,19 +77,19 @@ void mbedtls_block_cipher_free ( mbedtls_block_cipher_context_t* ctx )
 #if defined(MBEDTLS_AES_C)
 
   case MBEDTLS_BLOCK_CIPHER_ID_AES:
-    mbedtls_aes_free ( &ctx->ctx.aes );
+    mbedtls_aes_free (&ctx->ctx.aes );
     break;
 #endif
 #if defined(MBEDTLS_ARIA_C)
 
   case MBEDTLS_BLOCK_CIPHER_ID_ARIA:
-    mbedtls_aria_free ( &ctx->ctx.aria );
+    mbedtls_aria_free (&ctx->ctx.aria );
     break;
 #endif
 #if defined(MBEDTLS_CAMELLIA_C)
 
   case MBEDTLS_BLOCK_CIPHER_ID_CAMELLIA:
-    mbedtls_camellia_free ( &ctx->ctx.camellia );
+    mbedtls_camellia_free (&ctx->ctx.camellia );
     break;
 #endif
 
@@ -125,19 +126,19 @@ int mbedtls_block_cipher_setup ( mbedtls_block_cipher_context_t* ctx,
 #if defined(MBEDTLS_AES_C)
 
   case MBEDTLS_BLOCK_CIPHER_ID_AES:
-    mbedtls_aes_init ( &ctx->ctx.aes );
+    mbedtls_aes_init (&ctx->ctx.aes );
     return 0;
 #endif
 #if defined(MBEDTLS_ARIA_C)
 
   case MBEDTLS_BLOCK_CIPHER_ID_ARIA:
-    mbedtls_aria_init ( &ctx->ctx.aria );
+    mbedtls_aria_init (&ctx->ctx.aria );
     return 0;
 #endif
 #if defined(MBEDTLS_CAMELLIA_C)
 
   case MBEDTLS_BLOCK_CIPHER_ID_CAMELLIA:
-    mbedtls_camellia_init ( &ctx->ctx.camellia );
+    mbedtls_camellia_init (&ctx->ctx.camellia );
     return 0;
 #endif
 
@@ -158,19 +159,19 @@ int mbedtls_block_cipher_setkey ( mbedtls_block_cipher_context_t* ctx,
     psa_key_attributes_t key_attr = PSA_KEY_ATTRIBUTES_INIT;
     psa_status_t status;
 
-    psa_set_key_type ( &key_attr, psa_key_type_from_block_cipher_id ( ctx->id ) );
-    psa_set_key_bits ( &key_attr, key_bitlen );
-    psa_set_key_algorithm ( &key_attr, PSA_ALG_ECB_NO_PADDING );
-    psa_set_key_usage_flags ( &key_attr, PSA_KEY_USAGE_ENCRYPT );
+    psa_set_key_type (&key_attr, psa_key_type_from_block_cipher_id ( ctx->id ) );
+    psa_set_key_bits (&key_attr, key_bitlen );
+    psa_set_key_algorithm (&key_attr, PSA_ALG_ECB_NO_PADDING );
+    psa_set_key_usage_flags (&key_attr, PSA_KEY_USAGE_ENCRYPT );
 
-    status = psa_import_key ( &key_attr, key, PSA_BITS_TO_BYTES ( key_bitlen ), &ctx->psa_key_id );
+    status = psa_import_key (&key_attr, key, PSA_BITS_TO_BYTES ( key_bitlen ), &ctx->psa_key_id );
 
     if ( status != PSA_SUCCESS )
     {
       return mbedtls_cipher_error_from_psa ( status );
     }
 
-    psa_reset_key_attributes ( &key_attr );
+    psa_reset_key_attributes (&key_attr );
 
     return 0;
   }
@@ -182,17 +183,17 @@ int mbedtls_block_cipher_setkey ( mbedtls_block_cipher_context_t* ctx,
 #if defined(MBEDTLS_AES_C)
 
   case MBEDTLS_BLOCK_CIPHER_ID_AES:
-    return mbedtls_aes_setkey_enc ( &ctx->ctx.aes, key, key_bitlen );
+    return mbedtls_aes_setkey_enc (&ctx->ctx.aes, key, key_bitlen );
 #endif
 #if defined(MBEDTLS_ARIA_C)
 
   case MBEDTLS_BLOCK_CIPHER_ID_ARIA:
-    return mbedtls_aria_setkey_enc ( &ctx->ctx.aria, key, key_bitlen );
+    return mbedtls_aria_setkey_enc (&ctx->ctx.aria, key, key_bitlen );
 #endif
 #if defined(MBEDTLS_CAMELLIA_C)
 
   case MBEDTLS_BLOCK_CIPHER_ID_CAMELLIA:
-    return mbedtls_camellia_setkey_enc ( &ctx->ctx.camellia, key, key_bitlen );
+    return mbedtls_camellia_setkey_enc (&ctx->ctx.camellia, key, key_bitlen );
 #endif
 
   default:
@@ -229,20 +230,20 @@ int mbedtls_block_cipher_encrypt ( mbedtls_block_cipher_context_t* ctx,
 #if defined(MBEDTLS_AES_C)
 
   case MBEDTLS_BLOCK_CIPHER_ID_AES:
-    return mbedtls_aes_crypt_ecb ( &ctx->ctx.aes, MBEDTLS_AES_ENCRYPT,
-                                   input, output );
+    return mbedtls_aes_crypt_ecb (&ctx->ctx.aes, MBEDTLS_AES_ENCRYPT,
+                                  input, output );
 #endif
 #if defined(MBEDTLS_ARIA_C)
 
   case MBEDTLS_BLOCK_CIPHER_ID_ARIA:
-    return mbedtls_aria_crypt_ecb ( &ctx->ctx.aria, input, output );
+    return mbedtls_aria_crypt_ecb (&ctx->ctx.aria, input, output );
 #endif
 #if defined(MBEDTLS_CAMELLIA_C)
 
   case MBEDTLS_BLOCK_CIPHER_ID_CAMELLIA:
-    return mbedtls_camellia_crypt_ecb ( &ctx->ctx.camellia,
-                                        MBEDTLS_CAMELLIA_ENCRYPT,
-                                        input, output );
+    return mbedtls_camellia_crypt_ecb (&ctx->ctx.camellia,
+                                       MBEDTLS_CAMELLIA_ENCRYPT,
+                                       input, output );
 #endif
 
   default:

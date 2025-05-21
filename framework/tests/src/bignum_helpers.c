@@ -30,7 +30,7 @@ int mbedtls_test_read_mpi_core ( mbedtls_mpi_uint** pX, size_t* plimbs,
                                  const char* input )
 {
   /* Sanity check */
-  if ( *pX != NULL )
+  if (*pX != NULL )
   {
     return MBEDTLS_ERR_MPI_BAD_INPUT_DATA;
   }
@@ -42,14 +42,14 @@ int mbedtls_test_read_mpi_core ( mbedtls_mpi_uint** pX, size_t* plimbs,
   /* A core bignum is not allowed to be empty. Forbid it as test data,
    * this way static analyzers have a chance of knowing we don't expect
    * the bignum functions to support empty inputs. */
-  if ( *plimbs == 0 )
+  if (*plimbs == 0 )
   {
     return MBEDTLS_ERR_MPI_BAD_INPUT_DATA;
   }
 
-  *pX = mbedtls_calloc ( *plimbs, sizeof ( **pX ) );
+  *pX = mbedtls_calloc (*plimbs, sizeof (**pX ) );
 
-  if ( *pX == NULL )
+  if (*pX == NULL )
   {
     return MBEDTLS_ERR_MPI_ALLOC_FAILED;
   }
@@ -64,7 +64,7 @@ int mbedtls_test_read_mpi_core ( mbedtls_mpi_uint** pX, size_t* plimbs,
   if ( ( hex_len & 1 ) != 0 )
   {
     /* mbedtls_test_unhexify wants an even number of hex digits */
-    TEST_ASSERT ( mbedtls_test_ascii2uc ( *input, byte_start ) == 0 );
+    TEST_ASSERT ( mbedtls_test_ascii2uc (*input, byte_start ) == 0 );
     ++byte_start;
     ++input;
     --byte_len;
@@ -75,11 +75,11 @@ int mbedtls_test_read_mpi_core ( mbedtls_mpi_uint** pX, size_t* plimbs,
                                         input,
                                         &byte_len ) == 0 );
 
-  mbedtls_mpi_core_bigendian_to_host ( *pX, *plimbs );
+  mbedtls_mpi_core_bigendian_to_host (*pX, *plimbs );
   return 0;
 
 exit:
-  mbedtls_free ( *pX );
+  mbedtls_free (*pX );
   return MBEDTLS_ERR_MPI_BAD_INPUT_DATA;
 }
 
@@ -96,7 +96,7 @@ int mbedtls_test_read_mpi_modulus ( mbedtls_mpi_mod_modulus* N,
     return MBEDTLS_ERR_MPI_BAD_INPUT_DATA;
   }
 
-  int ret = mbedtls_test_read_mpi_core ( &p, &limbs, s );
+  int ret = mbedtls_test_read_mpi_core (&p, &limbs, s );
 
   if ( ret != 0 )
   {
@@ -131,6 +131,7 @@ void mbedtls_test_mpi_mod_modulus_free_with_limbs ( mbedtls_mpi_mod_modulus* N )
   mbedtls_free ( ( mbedtls_mpi_uint* ) N->p );
   mbedtls_mpi_mod_modulus_free ( N );
 }
+
 #endif /* MBEDTLS_ECP_WITH_MPI_UINT */
 
 int mbedtls_test_read_mpi ( mbedtls_mpi* X, const char* s )

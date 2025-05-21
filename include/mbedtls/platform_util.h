@@ -192,6 +192,7 @@ struct tm* mbedtls_platform_gmtime_r ( const mbedtls_time_t* tt,
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* MBEDTLS_PLATFORM_UTIL_H */

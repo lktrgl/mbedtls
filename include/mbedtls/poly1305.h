@@ -43,6 +43,7 @@ typedef struct mbedtls_poly1305_context
   uint8_t MBEDTLS_PRIVATE ( queue ) [16]; /** The current partial block of data. */
   size_t MBEDTLS_PRIVATE ( queue_len ); /** The number of bytes stored in 'queue'. */
 }
+
 mbedtls_poly1305_context;
 
 #else  /* MBEDTLS_POLY1305_ALT */
@@ -164,6 +165,7 @@ int mbedtls_poly1305_self_test ( int verbose );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* MBEDTLS_POLY1305_H */

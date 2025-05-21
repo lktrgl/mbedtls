@@ -57,14 +57,14 @@ int mbedtls_ccm_setkey ( mbedtls_ccm_context* ctx,
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
 
 #if defined(MBEDTLS_BLOCK_CIPHER_C)
-  mbedtls_block_cipher_free ( &ctx->block_cipher_ctx );
+  mbedtls_block_cipher_free (&ctx->block_cipher_ctx );
 
-  if ( ( ret = mbedtls_block_cipher_setup ( &ctx->block_cipher_ctx, cipher ) ) != 0 )
+  if ( ( ret = mbedtls_block_cipher_setup (&ctx->block_cipher_ctx, cipher ) ) != 0 )
   {
     return MBEDTLS_ERR_CCM_BAD_INPUT;
   }
 
-  if ( ( ret = mbedtls_block_cipher_setkey ( &ctx->block_cipher_ctx, key, keybits ) ) != 0 )
+  if ( ( ret = mbedtls_block_cipher_setkey (&ctx->block_cipher_ctx, key, keybits ) ) != 0 )
   {
     return MBEDTLS_ERR_CCM_BAD_INPUT;
   }
@@ -85,15 +85,15 @@ int mbedtls_ccm_setkey ( mbedtls_ccm_context* ctx,
     return MBEDTLS_ERR_CCM_BAD_INPUT;
   }
 
-  mbedtls_cipher_free ( &ctx->cipher_ctx );
+  mbedtls_cipher_free (&ctx->cipher_ctx );
 
-  if ( ( ret = mbedtls_cipher_setup ( &ctx->cipher_ctx, cipher_info ) ) != 0 )
+  if ( ( ret = mbedtls_cipher_setup (&ctx->cipher_ctx, cipher_info ) ) != 0 )
   {
     return ret;
   }
 
-  if ( ( ret = mbedtls_cipher_setkey ( &ctx->cipher_ctx, key, keybits,
-                                       MBEDTLS_ENCRYPT ) ) != 0 )
+  if ( ( ret = mbedtls_cipher_setkey (&ctx->cipher_ctx, key, keybits,
+                                      MBEDTLS_ENCRYPT ) ) != 0 )
   {
     return ret;
   }
@@ -114,9 +114,9 @@ void mbedtls_ccm_free ( mbedtls_ccm_context* ctx )
   }
 
 #if defined(MBEDTLS_BLOCK_CIPHER_C)
-  mbedtls_block_cipher_free ( &ctx->block_cipher_ctx );
+  mbedtls_block_cipher_free (&ctx->block_cipher_ctx );
 #else
-  mbedtls_cipher_free ( &ctx->cipher_ctx );
+  mbedtls_cipher_free (&ctx->cipher_ctx );
 #endif
   mbedtls_platform_zeroize ( ctx, sizeof ( mbedtls_ccm_context ) );
 }
@@ -140,10 +140,10 @@ static int mbedtls_ccm_crypt ( mbedtls_ccm_context* ctx,
   unsigned char tmp_buf[16] = { 0 };
 
 #if defined(MBEDTLS_BLOCK_CIPHER_C)
-  ret = mbedtls_block_cipher_encrypt ( &ctx->block_cipher_ctx, ctx->ctr, tmp_buf );
+  ret = mbedtls_block_cipher_encrypt (&ctx->block_cipher_ctx, ctx->ctr, tmp_buf );
 #else
   size_t olen = 0;
-  ret = mbedtls_cipher_update ( &ctx->cipher_ctx, ctx->ctr, 16, tmp_buf, &olen );
+  ret = mbedtls_cipher_update (&ctx->cipher_ctx, ctx->ctr, 16, tmp_buf, &olen );
 #endif
 
   if ( ret != 0 )
@@ -178,7 +178,7 @@ static int ccm_calculate_first_block_if_ready ( mbedtls_ccm_context* ctx )
   /* length calculation can be done only after both
    * mbedtls_ccm_starts() and mbedtls_ccm_set_lengths() have been executed
    */
-  if ( ! ( ctx->state & CCM_STATE__STARTED ) || ! ( ctx->state & CCM_STATE__LENGTHS_SET ) )
+  if (! ( ctx->state & CCM_STATE__STARTED ) || ! ( ctx->state & CCM_STATE__LENGTHS_SET ) )
   {
     return 0;
   }
@@ -228,9 +228,9 @@ static int ccm_calculate_first_block_if_ready ( mbedtls_ccm_context* ctx )
 
   /* Start CBC-MAC with first block*/
 #if defined(MBEDTLS_BLOCK_CIPHER_C)
-  ret = mbedtls_block_cipher_encrypt ( &ctx->block_cipher_ctx, ctx->y, ctx->y );
+  ret = mbedtls_block_cipher_encrypt (&ctx->block_cipher_ctx, ctx->y, ctx->y );
 #else
-  ret = mbedtls_cipher_update ( &ctx->cipher_ctx, ctx->y, 16, ctx->y, &olen );
+  ret = mbedtls_cipher_update (&ctx->cipher_ctx, ctx->y, 16, ctx->y, &olen );
 #endif
 
   if ( ret != 0 )
@@ -334,7 +334,7 @@ int mbedtls_ccm_update_ad ( mbedtls_ccm_context* ctx,
       return MBEDTLS_ERR_CCM_BAD_INPUT;
     }
 
-    if ( ! ( ctx->state & CCM_STATE__AUTH_DATA_STARTED ) )
+    if (! ( ctx->state & CCM_STATE__AUTH_DATA_STARTED ) )
     {
       if ( add_len > ctx->add_len )
       {
@@ -371,9 +371,9 @@ int mbedtls_ccm_update_ad ( mbedtls_ccm_context* ctx,
       if ( use_len + offset == 16 || ctx->processed == ctx->add_len )
       {
 #if defined(MBEDTLS_BLOCK_CIPHER_C)
-        ret = mbedtls_block_cipher_encrypt ( &ctx->block_cipher_ctx, ctx->y, ctx->y );
+        ret = mbedtls_block_cipher_encrypt (&ctx->block_cipher_ctx, ctx->y, ctx->y );
 #else
-        ret = mbedtls_cipher_update ( &ctx->cipher_ctx, ctx->y, 16, ctx->y, &olen );
+        ret = mbedtls_cipher_update (&ctx->cipher_ctx, ctx->y, 16, ctx->y, &olen );
 #endif
 
         if ( ret != 0 )
@@ -451,9 +451,9 @@ int mbedtls_ccm_update ( mbedtls_ccm_context* ctx,
       if ( use_len + offset == 16 || ctx->processed == ctx->plaintext_len )
       {
 #if defined(MBEDTLS_BLOCK_CIPHER_C)
-        ret = mbedtls_block_cipher_encrypt ( &ctx->block_cipher_ctx, ctx->y, ctx->y );
+        ret = mbedtls_block_cipher_encrypt (&ctx->block_cipher_ctx, ctx->y, ctx->y );
 #else
-        ret = mbedtls_cipher_update ( &ctx->cipher_ctx, ctx->y, 16, ctx->y, &olen );
+        ret = mbedtls_cipher_update (&ctx->cipher_ctx, ctx->y, 16, ctx->y, &olen );
 #endif
 
         if ( ret != 0 )
@@ -494,9 +494,9 @@ int mbedtls_ccm_update ( mbedtls_ccm_context* ctx,
       if ( use_len + offset == 16 || ctx->processed == ctx->plaintext_len )
       {
 #if defined(MBEDTLS_BLOCK_CIPHER_C)
-        ret = mbedtls_block_cipher_encrypt ( &ctx->block_cipher_ctx, ctx->y, ctx->y );
+        ret = mbedtls_block_cipher_encrypt (&ctx->block_cipher_ctx, ctx->y, ctx->y );
 #else
-        ret = mbedtls_cipher_update ( &ctx->cipher_ctx, ctx->y, 16, ctx->y, &olen );
+        ret = mbedtls_cipher_update (&ctx->cipher_ctx, ctx->y, 16, ctx->y, &olen );
 #endif
 
         if ( ret != 0 )
@@ -511,7 +511,7 @@ int mbedtls_ccm_update ( mbedtls_ccm_context* ctx,
     {
       for ( i = 0; i < ctx->q; i++ )
       {
-        if ( ++ ( ctx->ctr ) [15 - i] != 0 )
+        if (++ ( ctx->ctr ) [15 - i] != 0 )
         {
           break;
         }
@@ -703,6 +703,7 @@ int mbedtls_ccm_auth_decrypt ( mbedtls_ccm_context* ctx, size_t length,
                             iv, iv_len, add, add_len,
                             input, output, tag, tag_len );
 }
+
 #endif /* !MBEDTLS_CCM_ALT */
 
 #if defined(MBEDTLS_SELF_TEST) && defined(MBEDTLS_CCM_GCM_CAN_AES)
@@ -776,10 +777,10 @@ int mbedtls_ccm_self_test ( int verbose )
   size_t i;
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
 
-  mbedtls_ccm_init ( &ctx );
+  mbedtls_ccm_init (&ctx );
 
-  if ( mbedtls_ccm_setkey ( &ctx, MBEDTLS_CIPHER_ID_AES, key_test_data,
-                            8 * sizeof ( key_test_data ) ) != 0 )
+  if ( mbedtls_ccm_setkey (&ctx, MBEDTLS_CIPHER_ID_AES, key_test_data,
+                           8 * sizeof ( key_test_data ) ) != 0 )
   {
     if ( verbose != 0 )
     {
@@ -800,12 +801,12 @@ int mbedtls_ccm_self_test ( int verbose )
     memset ( ciphertext, 0, CCM_SELFTEST_CT_MAX_LEN );
     memcpy ( plaintext, msg_test_data, msg_len_test_data[i] );
 
-    ret = mbedtls_ccm_encrypt_and_tag ( &ctx, msg_len_test_data[i],
-                                        iv_test_data, iv_len_test_data[i],
-                                        ad_test_data, add_len_test_data[i],
-                                        plaintext, ciphertext,
-                                        ciphertext + msg_len_test_data[i],
-                                        tag_len_test_data[i] );
+    ret = mbedtls_ccm_encrypt_and_tag (&ctx, msg_len_test_data[i],
+                                       iv_test_data, iv_len_test_data[i],
+                                       ad_test_data, add_len_test_data[i],
+                                       plaintext, ciphertext,
+                                       ciphertext + msg_len_test_data[i],
+                                       tag_len_test_data[i] );
 
     if ( ret != 0 ||
          memcmp ( ciphertext, res_test_data[i],
@@ -821,12 +822,12 @@ int mbedtls_ccm_self_test ( int verbose )
 
     memset ( plaintext, 0, CCM_SELFTEST_PT_MAX_LEN );
 
-    ret = mbedtls_ccm_auth_decrypt ( &ctx, msg_len_test_data[i],
-                                     iv_test_data, iv_len_test_data[i],
-                                     ad_test_data, add_len_test_data[i],
-                                     ciphertext, plaintext,
-                                     ciphertext + msg_len_test_data[i],
-                                     tag_len_test_data[i] );
+    ret = mbedtls_ccm_auth_decrypt (&ctx, msg_len_test_data[i],
+                                    iv_test_data, iv_len_test_data[i],
+                                    ad_test_data, add_len_test_data[i],
+                                    ciphertext, plaintext,
+                                    ciphertext + msg_len_test_data[i],
+                                    tag_len_test_data[i] );
 
     if ( ret != 0 ||
          memcmp ( plaintext, msg_test_data, msg_len_test_data[i] ) != 0 )
@@ -845,7 +846,7 @@ int mbedtls_ccm_self_test ( int verbose )
     }
   }
 
-  mbedtls_ccm_free ( &ctx );
+  mbedtls_ccm_free (&ctx );
 
   if ( verbose != 0 )
   {

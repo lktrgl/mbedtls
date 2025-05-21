@@ -47,10 +47,12 @@ union mbedtls_ssl_tls13_labels_union
 {
   MBEDTLS_SSL_TLS1_3_LABEL_LIST
 };
+
 struct mbedtls_ssl_tls13_labels_struct
 {
   MBEDTLS_SSL_TLS1_3_LABEL_LIST
 };
+
 #undef MBEDTLS_SSL_TLS1_3_LABEL
 
 extern const struct mbedtls_ssl_tls13_labels_struct mbedtls_ssl_tls13_labels;

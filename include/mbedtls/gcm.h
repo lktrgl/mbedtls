@@ -73,6 +73,7 @@ typedef struct mbedtls_gcm_context
                                                               #MBEDTLS_GCM_DECRYPT. */
   unsigned char MBEDTLS_PRIVATE ( acceleration );          /*!< The acceleration to use. */
 }
+
 mbedtls_gcm_context;
 
 #else  /* !MBEDTLS_GCM_ALT */
@@ -382,6 +383,7 @@ int mbedtls_gcm_self_test ( int verbose );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 

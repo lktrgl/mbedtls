@@ -47,11 +47,11 @@
  * \param thread_join       The thread join function implementation.
 
  */
-void mbedtls_test_thread_set_alt ( int ( *thread_create ) ( mbedtls_test_thread_t* thread,
-                                   void* ( *thread_func ) (
+void mbedtls_test_thread_set_alt ( int (*thread_create ) ( mbedtls_test_thread_t* thread,
+                                   void* (*thread_func ) (
                                      void* ),
                                    void* thread_data ),
-                                   int ( *thread_join ) ( mbedtls_test_thread_t* thread ) );
+                                   int (*thread_join ) ( mbedtls_test_thread_t* thread ) );
 
 #else /* MBEDTLS_THREADING_ALT*/
 
@@ -80,9 +80,9 @@ typedef struct mbedtls_test_thread_t
  * \note                    All these functions are expected to work or
  *                          the result will be undefined.
  */
-extern int ( *mbedtls_test_thread_create ) ( mbedtls_test_thread_t* thread,
-    void* ( *thread_func ) ( void* ), void* thread_data );
-extern int ( *mbedtls_test_thread_join ) ( mbedtls_test_thread_t* thread );
+extern int (*mbedtls_test_thread_create ) ( mbedtls_test_thread_t* thread,
+    void* (*thread_func ) ( void* ), void* thread_data );
+extern int (*mbedtls_test_thread_join ) ( mbedtls_test_thread_t* thread );
 
 #if defined(MBEDTLS_THREADING_PTHREAD) && defined(MBEDTLS_TEST_HOOKS)
   #define MBEDTLS_TEST_MUTEX_USAGE

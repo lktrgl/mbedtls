@@ -151,6 +151,7 @@ void mbedtls_debug_set_threshold ( int threshold );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* MBEDTLS_DEBUG_H */

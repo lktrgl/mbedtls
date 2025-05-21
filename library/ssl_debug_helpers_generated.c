@@ -79,6 +79,7 @@ const char* mbedtls_ssl_named_group_to_str ( uint16_t in )
 
   return "UNKNOWN";
 }
+
 const char* mbedtls_ssl_sig_alg_to_str ( uint16_t in )
 {
   switch ( in )
@@ -137,6 +138,7 @@ const char* mbedtls_ssl_sig_alg_to_str ( uint16_t in )
 
   return "UNKNOWN";
 }
+
 const char* mbedtls_ssl_states_str ( mbedtls_ssl_states in )
 {
   switch ( in )

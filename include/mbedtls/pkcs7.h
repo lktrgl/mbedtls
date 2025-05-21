@@ -117,6 +117,7 @@ typedef struct mbedtls_pkcs7_signer_info
   mbedtls_x509_buf MBEDTLS_PRIVATE ( sig );
   struct mbedtls_pkcs7_signer_info* MBEDTLS_PRIVATE ( next );
 }
+
 mbedtls_pkcs7_signer_info;
 
 /**
@@ -133,6 +134,7 @@ typedef struct mbedtls_pkcs7_signed_data
   int MBEDTLS_PRIVATE ( no_of_signers );
   mbedtls_pkcs7_signer_info MBEDTLS_PRIVATE ( signers );
 }
+
 mbedtls_pkcs7_signed_data;
 
 /**
@@ -143,6 +145,7 @@ typedef struct mbedtls_pkcs7
   mbedtls_pkcs7_buf MBEDTLS_PRIVATE ( raw );
   mbedtls_pkcs7_signed_data MBEDTLS_PRIVATE ( signed_data );
 }
+
 mbedtls_pkcs7;
 
 /**
@@ -239,6 +242,7 @@ void mbedtls_pkcs7_free ( mbedtls_pkcs7* pkcs7 );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* pkcs7.h */

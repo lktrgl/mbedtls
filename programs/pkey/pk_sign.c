@@ -23,6 +23,7 @@ int main ( void )
                    "MBEDTLS_CTR_DRBG_C not defined.\n" );
   mbedtls_exit ( 0 );
 }
+
 #else
 
 #include "mbedtls/error.h"
@@ -47,9 +48,9 @@ int main ( int argc, char* argv[] )
   const char* pers = "mbedtls_pk_sign";
   size_t olen = 0;
 
-  mbedtls_entropy_init ( &entropy );
-  mbedtls_ctr_drbg_init ( &ctr_drbg );
-  mbedtls_pk_init ( &pk );
+  mbedtls_entropy_init (&entropy );
+  mbedtls_ctr_drbg_init (&ctr_drbg );
+  mbedtls_pk_init (&pk );
 
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
   psa_status_t status = psa_crypto_init();
@@ -77,9 +78,9 @@ int main ( int argc, char* argv[] )
   mbedtls_printf ( "\n  . Seeding the random number generator..." );
   fflush ( stdout );
 
-  if ( ( ret = mbedtls_ctr_drbg_seed ( &ctr_drbg, mbedtls_entropy_func, &entropy,
-                                       ( const unsigned char* ) pers,
-                                       strlen ( pers ) ) ) != 0 )
+  if ( ( ret = mbedtls_ctr_drbg_seed (&ctr_drbg, mbedtls_entropy_func, &entropy,
+                                      ( const unsigned char* ) pers,
+                                      strlen ( pers ) ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_ctr_drbg_seed returned -0x%04x\n",
                      ( unsigned int ) - ret );
@@ -89,8 +90,8 @@ int main ( int argc, char* argv[] )
   mbedtls_printf ( "\n  . Reading private key from '%s'", argv[1] );
   fflush ( stdout );
 
-  if ( ( ret = mbedtls_pk_parse_keyfile ( &pk, argv[1], "",
-                                          mbedtls_ctr_drbg_random, &ctr_drbg ) ) != 0 )
+  if ( ( ret = mbedtls_pk_parse_keyfile (&pk, argv[1], "",
+                                         mbedtls_ctr_drbg_random, &ctr_drbg ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! Could not parse '%s'\n", argv[1] );
     goto exit;
@@ -111,9 +112,9 @@ int main ( int argc, char* argv[] )
     goto exit;
   }
 
-  if ( ( ret = mbedtls_pk_sign ( &pk, MBEDTLS_MD_SHA256, hash, 0,
-                                 buf, sizeof ( buf ), &olen,
-                                 mbedtls_ctr_drbg_random, &ctr_drbg ) ) != 0 )
+  if ( ( ret = mbedtls_pk_sign (&pk, MBEDTLS_MD_SHA256, hash, 0,
+                                buf, sizeof ( buf ), &olen,
+                                mbedtls_ctr_drbg_random, &ctr_drbg ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_pk_sign returned -0x%04x\n", ( unsigned int ) - ret );
     goto exit;
@@ -144,9 +145,9 @@ int main ( int argc, char* argv[] )
   exit_code = MBEDTLS_EXIT_SUCCESS;
 
 exit:
-  mbedtls_pk_free ( &pk );
-  mbedtls_ctr_drbg_free ( &ctr_drbg );
-  mbedtls_entropy_free ( &entropy );
+  mbedtls_pk_free (&pk );
+  mbedtls_ctr_drbg_free (&ctr_drbg );
+  mbedtls_entropy_free (&entropy );
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
   mbedtls_psa_crypto_free();
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
@@ -163,6 +164,7 @@ exit:
 
   mbedtls_exit ( exit_code );
 }
+
 #endif /* MBEDTLS_BIGNUM_C && MBEDTLS_ENTROPY_C &&
           MBEDTLS_MD_CAN_SHA256 && MBEDTLS_PK_PARSE_C && MBEDTLS_FS_IO &&
           MBEDTLS_CTR_DRBG_C */

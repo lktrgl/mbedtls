@@ -29,6 +29,7 @@ int main ( void )
                    "MBEDTLS_CTR_DRBG_C not defined.\n" );
   mbedtls_exit ( 0 );
 }
+
 #else
 
 
@@ -60,15 +61,15 @@ int main ( int argc, char* argv[] )
   mbedtls_printf ( "\n  . Seeding the random number generator..." );
   fflush ( stdout );
 
-  mbedtls_mpi_init ( &N );
-  mbedtls_mpi_init ( &E );
-  mbedtls_rsa_init ( &rsa );
-  mbedtls_ctr_drbg_init ( &ctr_drbg );
-  mbedtls_entropy_init ( &entropy );
+  mbedtls_mpi_init (&N );
+  mbedtls_mpi_init (&E );
+  mbedtls_rsa_init (&rsa );
+  mbedtls_ctr_drbg_init (&ctr_drbg );
+  mbedtls_entropy_init (&entropy );
 
-  ret = mbedtls_ctr_drbg_seed ( &ctr_drbg, mbedtls_entropy_func,
-                                &entropy, ( const unsigned char* ) pers,
-                                strlen ( pers ) );
+  ret = mbedtls_ctr_drbg_seed (&ctr_drbg, mbedtls_entropy_func,
+                               &entropy, ( const unsigned char* ) pers,
+                               strlen ( pers ) );
 
   if ( ret != 0 )
   {
@@ -87,8 +88,8 @@ int main ( int argc, char* argv[] )
     goto exit;
   }
 
-  if ( ( ret = mbedtls_mpi_read_file ( &N, 16, f ) ) != 0 ||
-       ( ret = mbedtls_mpi_read_file ( &E, 16, f ) ) != 0 )
+  if ( ( ret = mbedtls_mpi_read_file (&N, 16, f ) ) != 0 ||
+       ( ret = mbedtls_mpi_read_file (&E, 16, f ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_mpi_read_file returned %d\n\n",
                      ret );
@@ -98,7 +99,7 @@ int main ( int argc, char* argv[] )
 
   fclose ( f );
 
-  if ( ( ret = mbedtls_rsa_import ( &rsa, &N, NULL, NULL, NULL, &E ) ) != 0 )
+  if ( ( ret = mbedtls_rsa_import (&rsa, &N, NULL, NULL, NULL, &E ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_rsa_import returned %d\n\n",
                      ret );
@@ -119,8 +120,8 @@ int main ( int argc, char* argv[] )
   mbedtls_printf ( "\n  . Generating the RSA encrypted value" );
   fflush ( stdout );
 
-  ret = mbedtls_rsa_pkcs1_encrypt ( &rsa, mbedtls_ctr_drbg_random,
-                                    &ctr_drbg, strlen ( argv[1] ), input, buf );
+  ret = mbedtls_rsa_pkcs1_encrypt (&rsa, mbedtls_ctr_drbg_random,
+                                   &ctr_drbg, strlen ( argv[1] ), input, buf );
 
   if ( ret != 0 )
   {
@@ -138,7 +139,7 @@ int main ( int argc, char* argv[] )
     goto exit;
   }
 
-  for ( i = 0; i < mbedtls_rsa_get_len ( &rsa ); i++ )
+  for ( i = 0; i < mbedtls_rsa_get_len (&rsa ); i++ )
   {
     mbedtls_fprintf ( f, "%02X%s", buf[i],
                       ( i + 1 ) % 16 == 0 ? "\r\n" : " " );
@@ -151,13 +152,14 @@ int main ( int argc, char* argv[] )
   exit_code = MBEDTLS_EXIT_SUCCESS;
 
 exit:
-  mbedtls_mpi_free ( &N );
-  mbedtls_mpi_free ( &E );
-  mbedtls_ctr_drbg_free ( &ctr_drbg );
-  mbedtls_entropy_free ( &entropy );
-  mbedtls_rsa_free ( &rsa );
+  mbedtls_mpi_free (&N );
+  mbedtls_mpi_free (&E );
+  mbedtls_ctr_drbg_free (&ctr_drbg );
+  mbedtls_entropy_free (&entropy );
+  mbedtls_rsa_free (&rsa );
 
   mbedtls_exit ( exit_code );
 }
+
 #endif /* MBEDTLS_BIGNUM_C && MBEDTLS_RSA_C && MBEDTLS_ENTROPY_C &&
           MBEDTLS_FS_IO && MBEDTLS_CTR_DRBG_C */

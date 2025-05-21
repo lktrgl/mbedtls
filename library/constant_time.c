@@ -62,6 +62,7 @@ static inline uint32_t mbedtls_get_unaligned_volatile_uint32 ( volatile const un
 #endif
   return r;
 }
+
 #endif /* defined(MBEDTLS_EFFICIENT_UNALIGNED_ACCESS) &&
           (defined(MBEDTLS_CT_ARM_ASM) || defined(MBEDTLS_CT_AARCH64_ASM)) */
 
@@ -82,7 +83,7 @@ int mbedtls_ct_memcmp ( const void* a,
 
 #if defined(MBEDTLS_EFFICIENT_UNALIGNED_VOLATILE_ACCESS)
 
-  for ( ; ( i + 4 ) <= n; i += 4 )
+  for (; ( i + 4 ) <= n; i += 4 )
   {
     uint32_t x = mbedtls_get_unaligned_volatile_uint32 ( A + i );
     uint32_t y = mbedtls_get_unaligned_volatile_uint32 ( B + i );
@@ -91,7 +92,7 @@ int mbedtls_ct_memcmp ( const void* a,
 
 #endif
 
-  for ( ; i < n; i++ )
+  for (; i < n; i++ )
   {
     /* Read volatile data in order before computing diff.
      * This avoids IAR compiler warning:
@@ -206,7 +207,7 @@ void mbedtls_ct_memcpy_if ( mbedtls_ct_condition_t condition,
 #if defined(MBEDTLS_EFFICIENT_UNALIGNED_ACCESS)
 #if defined(MBEDTLS_CT_SIZE_64)
 
-  for ( ; ( i + 8 ) <= len; i += 8 )
+  for (; ( i + 8 ) <= len; i += 8 )
   {
     uint64_t a = mbedtls_get_unaligned_uint64 ( src1 + i ) & mask;
     uint64_t b = mbedtls_get_unaligned_uint64 ( src2 + i ) & not_mask;
@@ -215,7 +216,7 @@ void mbedtls_ct_memcpy_if ( mbedtls_ct_condition_t condition,
 
 #else
 
-  for ( ; ( i + 4 ) <= len; i += 4 )
+  for (; ( i + 4 ) <= len; i += 4 )
   {
     uint32_t a = mbedtls_get_unaligned_uint32 ( src1 + i ) & mask;
     uint32_t b = mbedtls_get_unaligned_uint32 ( src2 + i ) & not_mask;
@@ -225,7 +226,7 @@ void mbedtls_ct_memcpy_if ( mbedtls_ct_condition_t condition,
 #endif /* defined(MBEDTLS_CT_SIZE_64) */
 #endif /* MBEDTLS_EFFICIENT_UNALIGNED_ACCESS */
 
-  for ( ; i < len; i++ )
+  for (; i < len; i++ )
   {
     dest[i] = ( src1[i] & mask ) | ( src2[i] & not_mask );
   }
@@ -256,7 +257,7 @@ void mbedtls_ct_zeroize_if ( mbedtls_ct_condition_t condition, void* buf, size_t
   size_t i = 0;
 #if defined(MBEDTLS_EFFICIENT_UNALIGNED_ACCESS)
 
-  for ( ; ( i + 4 ) <= len; i += 4 )
+  for (; ( i + 4 ) <= len; i += 4 )
   {
     mbedtls_put_unaligned_uint32 ( ( void* ) ( p + i ),
                                    mbedtls_get_unaligned_uint32 ( ( void* ) ( p + i ) ) & mask );
@@ -264,7 +265,7 @@ void mbedtls_ct_zeroize_if ( mbedtls_ct_condition_t condition, void* buf, size_t
 
 #endif
 
-  for ( ; i < len; i++ )
+  for (; i < len; i++ )
   {
     p[i] = p[i] & mask;
   }

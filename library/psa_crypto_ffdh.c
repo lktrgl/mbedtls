@@ -146,6 +146,7 @@ cleanup:
 
   return PSA_SUCCESS;
 }
+
 #endif /* MBEDTLS_PSA_BUILTIN_KEY_TYPE_DH_KEY_PAIR_EXPORT ||
           MBEDTLS_PSA_BUILTIN_KEY_TYPE_DH_KEY_PAIR_GENERATE ||
           MBEDTLS_PSA_BUILTIN_KEY_TYPE_DH_PUBLIC_KEY ||
@@ -180,10 +181,10 @@ psa_status_t mbedtls_psa_ffdh_export_public_key (
     return PSA_SUCCESS;
   }
 
-  mbedtls_mpi_init ( &GX );
-  mbedtls_mpi_init ( &G );
-  mbedtls_mpi_init ( &X );
-  mbedtls_mpi_init ( &P );
+  mbedtls_mpi_init (&GX );
+  mbedtls_mpi_init (&G );
+  mbedtls_mpi_init (&X );
+  mbedtls_mpi_init (&P );
 
   size_t key_len = PSA_BITS_TO_BYTES ( attributes->bits );
 
@@ -194,20 +195,20 @@ psa_status_t mbedtls_psa_ffdh_export_public_key (
     goto cleanup;
   }
 
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_read_binary ( &X, key_buffer,
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_read_binary (&X, key_buffer,
                     key_buffer_size ) );
 
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_exp_mod ( &GX, &G, &X, &P, NULL ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_write_binary ( &GX, data, key_len ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_exp_mod (&GX, &G, &X, &P, NULL ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_write_binary (&GX, data, key_len ) );
 
   *data_length = key_len;
 
   ret = 0;
 cleanup:
-  mbedtls_mpi_free ( &P );
-  mbedtls_mpi_free ( &G );
-  mbedtls_mpi_free ( &X );
-  mbedtls_mpi_free ( &GX );
+  mbedtls_mpi_free (&P );
+  mbedtls_mpi_free (&G );
+  mbedtls_mpi_free (&X );
+  mbedtls_mpi_free (&GX );
 
   if ( status == PSA_SUCCESS && ret != 0 )
   {
@@ -216,6 +217,7 @@ cleanup:
 
   return status;
 }
+
 #endif /* MBEDTLS_PSA_BUILTIN_KEY_TYPE_DH_KEY_PAIR_EXPORT ||
           MBEDTLS_PSA_BUILTIN_KEY_TYPE_DH_PUBLIC_KEY */
 
@@ -227,8 +229,8 @@ psa_status_t mbedtls_psa_ffdh_generate_key (
   mbedtls_mpi X, P;
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
   psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-  mbedtls_mpi_init ( &P );
-  mbedtls_mpi_init ( &X );
+  mbedtls_mpi_init (&P );
+  mbedtls_mpi_init (&X );
   ( void ) attributes;
 
   status = mbedtls_psa_ffdh_set_prime_generator ( key_buffer_size, &P, NULL );
@@ -241,15 +243,15 @@ psa_status_t mbedtls_psa_ffdh_generate_key (
   /* RFC7919: Traditional finite field Diffie-Hellman has each peer choose their
       secret exponent from the range [2, P-2].
       Select random value in range [3, P-1] and decrease it by 1. */
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_random ( &X, 3, &P, mbedtls_psa_get_random,
-                                         MBEDTLS_PSA_RANDOM_STATE ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int ( &X, &X, 1 ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_write_binary ( &X, key_buffer, key_buffer_size ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_random (&X, 3, &P, mbedtls_psa_get_random,
+                                        MBEDTLS_PSA_RANDOM_STATE ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int (&X, &X, 1 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_write_binary (&X, key_buffer, key_buffer_size ) );
   *key_buffer_length = key_buffer_size;
 
 cleanup:
-  mbedtls_mpi_free ( &P );
-  mbedtls_mpi_free ( &X );
+  mbedtls_mpi_free (&P );
+  mbedtls_mpi_free (&X );
 
   if ( status == PSA_SUCCESS && ret != 0 )
   {
@@ -258,6 +260,7 @@ cleanup:
 
   return status;
 }
+
 #endif /* MBEDTLS_PSA_BUILTIN_KEY_TYPE_DH_KEY_PAIR_GENERATE */
 
 #if defined(MBEDTLS_PSA_BUILTIN_KEY_TYPE_DH_KEY_PAIR_IMPORT)
@@ -280,6 +283,7 @@ psa_status_t mbedtls_psa_ffdh_import_key (
 
   return PSA_SUCCESS;
 }
+
 #endif /* MBEDTLS_PSA_BUILTIN_KEY_TYPE_DH_KEY_PAIR_IMPORT */
 
 #if defined(MBEDTLS_PSA_BUILTIN_ALG_FFDH)
@@ -304,16 +308,16 @@ psa_status_t mbedtls_psa_ffdh_key_agreement (
     return PSA_ERROR_INVALID_ARGUMENT;
   }
 
-  if ( !PSA_KEY_TYPE_IS_DH_KEY_PAIR ( psa_get_key_type ( attributes ) ) )
+  if (!PSA_KEY_TYPE_IS_DH_KEY_PAIR ( psa_get_key_type ( attributes ) ) )
   {
     return PSA_ERROR_INVALID_ARGUMENT;
   }
 
-  mbedtls_mpi_init ( &P );
-  mbedtls_mpi_init ( &G );
-  mbedtls_mpi_init ( &X );
-  mbedtls_mpi_init ( &GY );
-  mbedtls_mpi_init ( &K );
+  mbedtls_mpi_init (&P );
+  mbedtls_mpi_init (&G );
+  mbedtls_mpi_init (&X );
+  mbedtls_mpi_init (&GY );
+  mbedtls_mpi_init (&K );
 
   status = mbedtls_psa_ffdh_set_prime_generator (
              PSA_BITS_TO_BYTES ( attributes->bits ), &P, &G );
@@ -323,16 +327,16 @@ psa_status_t mbedtls_psa_ffdh_key_agreement (
     goto cleanup;
   }
 
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_read_binary ( &X, key_buffer,
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_read_binary (&X, key_buffer,
                     key_buffer_size ) );
 
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_read_binary ( &GY, peer_key,
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_read_binary (&GY, peer_key,
                     peer_key_length ) );
 
   /* Calculate shared secret public key: K = G^(XY) mod P = GY^X mod P */
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_exp_mod ( &K, &GY, &X, &P, NULL ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_exp_mod (&K, &GY, &X, &P, NULL ) );
 
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_write_binary ( &K, shared_secret,
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_write_binary (&K, shared_secret,
                     calculated_shared_secret_size ) );
 
   *shared_secret_length = calculated_shared_secret_size;
@@ -340,11 +344,11 @@ psa_status_t mbedtls_psa_ffdh_key_agreement (
   ret = 0;
 
 cleanup:
-  mbedtls_mpi_free ( &P );
-  mbedtls_mpi_free ( &G );
-  mbedtls_mpi_free ( &X );
-  mbedtls_mpi_free ( &GY );
-  mbedtls_mpi_free ( &K );
+  mbedtls_mpi_free (&P );
+  mbedtls_mpi_free (&G );
+  mbedtls_mpi_free (&X );
+  mbedtls_mpi_free (&GY );
+  mbedtls_mpi_free (&K );
 
   if ( status == PSA_SUCCESS && ret != 0 )
   {
@@ -353,6 +357,7 @@ cleanup:
 
   return status;
 }
+
 #endif /* MBEDTLS_PSA_BUILTIN_ALG_FFDH */
 
 #endif /* MBEDTLS_PSA_CRYPTO_C */

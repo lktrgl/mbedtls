@@ -88,7 +88,7 @@
 #if !defined(MBEDTLS_PLATFORM_HAS_EXPLICIT_BZERO) && !(defined(__STDC_LIB_EXT1__) && \
     !defined(__IAR_SYSTEMS_ICC__)) \
     && !defined(_WIN32)
-static void* ( *const volatile memset_func ) ( void*, int, size_t ) = memset;
+static void* (*const volatile memset_func ) ( void*, int, size_t ) = memset;
 #endif
 
 void mbedtls_platform_zeroize ( void* buf, size_t len )
@@ -125,7 +125,7 @@ void mbedtls_platform_zeroize ( void* buf, size_t len )
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wvla"
 #endif
-    asm volatile ( "" : : "m" ( * ( char ( * ) [len] ) buf ) : );
+    asm volatile ( "" : : "m" (* ( char (* ) [len] ) buf ) : );
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #elif defined(MBEDTLS_COMPILER_IS_GCC)
@@ -135,6 +135,7 @@ void mbedtls_platform_zeroize ( void* buf, size_t len )
 #endif
   }
 }
+
 #endif /* MBEDTLS_PLATFORM_ZEROIZE_ALT */
 
 void mbedtls_zeroize_and_free ( void* buf, size_t len )
@@ -192,7 +193,7 @@ struct tm* mbedtls_platform_gmtime_r ( const mbedtls_time_t* tt,
 
 #if defined(MBEDTLS_THREADING_C)
 
-  if ( mbedtls_mutex_lock ( &mbedtls_threading_gmtime_mutex ) != 0 )
+  if ( mbedtls_mutex_lock (&mbedtls_threading_gmtime_mutex ) != 0 )
   {
     return NULL;
   }
@@ -208,7 +209,7 @@ struct tm* mbedtls_platform_gmtime_r ( const mbedtls_time_t* tt,
 
 #if defined(MBEDTLS_THREADING_C)
 
-  if ( mbedtls_mutex_unlock ( &mbedtls_threading_gmtime_mutex ) != 0 )
+  if ( mbedtls_mutex_unlock (&mbedtls_threading_gmtime_mutex ) != 0 )
   {
     return NULL;
   }
@@ -218,10 +219,11 @@ struct tm* mbedtls_platform_gmtime_r ( const mbedtls_time_t* tt,
   return ( lt == NULL ) ? NULL : tm_buf;
 #endif /* _WIN32 && !EFIX64 && !EFI32 */
 }
+
 #endif /* MBEDTLS_HAVE_TIME_DATE && MBEDTLS_PLATFORM_GMTIME_R_ALT */
 
 #if defined(MBEDTLS_TEST_HOOKS)
-  void ( *mbedtls_test_hook_test_fail ) ( const char*, int, const char* );
+  void (*mbedtls_test_hook_test_fail ) ( const char*, int, const char* );
 #endif /* MBEDTLS_TEST_HOOKS */
 
 #if defined(MBEDTLS_HAVE_TIME) && !defined(MBEDTLS_PLATFORM_MS_TIME_ALT)
@@ -255,6 +257,7 @@ mbedtls_ms_time_t mbedtls_ms_time ( void )
 
   return current_ms * 1000 + tv.tv_nsec / 1000000;
 }
+
 #elif defined(_WIN32) || defined(WIN32) || defined(__CYGWIN__) || \
     defined(__MINGW32__) || defined(_WIN64)
 #include <windows.h>
@@ -263,11 +266,12 @@ mbedtls_ms_time_t mbedtls_ms_time ( void )
   FILETIME ct;
   mbedtls_ms_time_t current_ms;
 
-  GetSystemTimeAsFileTime ( &ct );
+  GetSystemTimeAsFileTime (&ct );
   current_ms = ( ( mbedtls_ms_time_t ) ct.dwLowDateTime +
                  ( ( mbedtls_ms_time_t ) ( ct.dwHighDateTime ) << 32LL ) ) / 10000;
   return current_ms;
 }
+
 #else
 #error "No mbedtls_ms_time available"
 #endif

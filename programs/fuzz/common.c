@@ -11,6 +11,7 @@ mbedtls_time_t dummy_constant_time ( mbedtls_time_t* time )
   ( void ) time;
   return 0x5af2a056;
 }
+
 #endif
 
 void dummy_init ( void )

@@ -47,6 +47,7 @@ typedef struct mbedtls_sha256_context
                                                     0: Use SHA-256, or 1: Use SHA-224. */
 #endif
 }
+
 mbedtls_sha256_context;
 
 #else  /* MBEDTLS_SHA256_ALT */
@@ -196,6 +197,7 @@ int mbedtls_sha256_self_test ( int verbose );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* mbedtls_sha256.h */

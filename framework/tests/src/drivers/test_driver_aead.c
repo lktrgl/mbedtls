@@ -163,10 +163,10 @@ psa_status_t mbedtls_test_transparent_aead_encrypt_setup (
         defined(LIBTESTDRIVER1_MBEDTLS_PSA_BUILTIN_AEAD)
     mbedtls_test_driver_aead_hooks.driver_status =
       libtestdriver1_mbedtls_psa_aead_encrypt_setup ( operation,
-          ( const libtestdriver1_psa_key_attributes_t
-            * ) attributes,
-          key_buffer,
-          key_buffer_size, alg );
+        ( const libtestdriver1_psa_key_attributes_t
+          * ) attributes,
+        key_buffer,
+        key_buffer_size, alg );
 #elif defined(MBEDTLS_PSA_BUILTIN_AEAD)
     mbedtls_test_driver_aead_hooks.driver_status =
       mbedtls_psa_aead_encrypt_setup ( operation, attributes, key_buffer,
@@ -203,9 +203,9 @@ psa_status_t mbedtls_test_transparent_aead_decrypt_setup (
         defined(LIBTESTDRIVER1_MBEDTLS_PSA_BUILTIN_AEAD)
     mbedtls_test_driver_aead_hooks.driver_status =
       libtestdriver1_mbedtls_psa_aead_decrypt_setup ( operation,
-          ( const libtestdriver1_psa_key_attributes_t
-            * ) attributes,
-          key_buffer, key_buffer_size, alg );
+        ( const libtestdriver1_psa_key_attributes_t
+          * ) attributes,
+        key_buffer, key_buffer_size, alg );
 #elif defined(MBEDTLS_PSA_BUILTIN_AEAD)
     mbedtls_test_driver_aead_hooks.driver_status =
       mbedtls_psa_aead_decrypt_setup ( operation, attributes, key_buffer,
@@ -273,7 +273,7 @@ psa_status_t mbedtls_test_transparent_aead_set_lengths (
         defined(LIBTESTDRIVER1_MBEDTLS_PSA_BUILTIN_AEAD)
     mbedtls_test_driver_aead_hooks.driver_status =
       libtestdriver1_mbedtls_psa_aead_set_lengths ( operation, ad_length,
-          plaintext_length );
+        plaintext_length );
 #elif defined(MBEDTLS_PSA_BUILTIN_AEAD)
     mbedtls_test_driver_aead_hooks.driver_status =
       mbedtls_psa_aead_set_lengths ( operation, ad_length,
@@ -342,8 +342,8 @@ psa_status_t mbedtls_test_transparent_aead_update (
         defined(LIBTESTDRIVER1_MBEDTLS_PSA_BUILTIN_AEAD)
     mbedtls_test_driver_aead_hooks.driver_status =
       libtestdriver1_mbedtls_psa_aead_update ( operation, input,
-          input_length, output,
-          output_size, output_length );
+        input_length, output,
+        output_size, output_length );
 #elif defined(MBEDTLS_PSA_BUILTIN_AEAD)
     mbedtls_test_driver_aead_hooks.driver_status =
       mbedtls_psa_aead_update ( operation, input, input_length, output,
@@ -384,8 +384,8 @@ psa_status_t mbedtls_test_transparent_aead_finish (
         defined(LIBTESTDRIVER1_MBEDTLS_PSA_BUILTIN_AEAD)
     mbedtls_test_driver_aead_hooks.driver_status =
       libtestdriver1_mbedtls_psa_aead_finish ( operation, ciphertext,
-          ciphertext_size, ciphertext_length,
-          tag, tag_size, tag_length );
+        ciphertext_size, ciphertext_length,
+        tag, tag_size, tag_length );
 #elif defined(MBEDTLS_PSA_BUILTIN_AEAD)
     mbedtls_test_driver_aead_hooks.driver_status =
       mbedtls_psa_aead_finish ( operation, ciphertext, ciphertext_size,
@@ -430,12 +430,12 @@ psa_status_t mbedtls_test_transparent_aead_verify (
         defined(LIBTESTDRIVER1_MBEDTLS_PSA_BUILTIN_AEAD)
     mbedtls_test_driver_aead_hooks.driver_status =
       libtestdriver1_mbedtls_psa_aead_finish ( operation,
-          plaintext,
-          plaintext_size,
-          plaintext_length,
-          check_tag,
-          sizeof ( check_tag ),
-          &check_tag_length );
+        plaintext,
+        plaintext_size,
+        plaintext_length,
+        check_tag,
+        sizeof ( check_tag ),
+        &check_tag_length );
 #elif defined(MBEDTLS_PSA_BUILTIN_AEAD)
     mbedtls_test_driver_aead_hooks.driver_status =
       mbedtls_psa_aead_finish ( operation,

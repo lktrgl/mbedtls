@@ -19,6 +19,7 @@ int main ( void )
   mbedtls_printf ( "MBEDTLS_MD5_C not defined.\n" );
   mbedtls_exit ( 0 );
 }
+
 #else
 
 
@@ -44,4 +45,5 @@ int main ( void )
 
   mbedtls_exit ( MBEDTLS_EXIT_SUCCESS );
 }
+
 #endif /* MBEDTLS_MD5_C */

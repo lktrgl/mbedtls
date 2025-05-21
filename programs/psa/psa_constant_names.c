@@ -42,6 +42,7 @@ int snprintf ( char* s, size_t n, const char* fmt, ... )
 
   return ret;
 }
+
 #endif
 
 static void append ( char** buffer, size_t buffer_size,
@@ -50,9 +51,9 @@ static void append ( char** buffer, size_t buffer_size,
 {
   *required_size += length;
 
-  if ( *required_size < buffer_size )
+  if (*required_size < buffer_size )
   {
-    memcpy ( *buffer, string, length );
+    memcpy (*buffer, string, length );
     *buffer += length;
   }
 }
@@ -62,7 +63,7 @@ static void append_integer ( char** buffer, size_t buffer_size,
                              const char* format /*printf format for value*/,
                              unsigned long value )
 {
-  size_t n = snprintf ( *buffer, buffer_size - *required_size, format, value );
+  size_t n = snprintf (*buffer, buffer_size - *required_size, format, value );
 
   if ( n < buffer_size - *required_size )
   {
@@ -123,7 +124,7 @@ static void append_with_group ( char** buffer, size_t buffer_size,
   append ( buffer, buffer_size, required_size, ")", 1 );
 }
 
-typedef const char* ( *psa_get_algorithm_name_func_ptr ) ( psa_algorithm_t alg );
+typedef const char* (*psa_get_algorithm_name_func_ptr ) ( psa_algorithm_t alg );
 
 static void append_with_alg ( char** buffer, size_t buffer_size,
                               size_t* required_size,
@@ -242,13 +243,13 @@ typedef enum
 
 static int process_signed ( signed_value_type type, long min, long max, char** argp )
 {
-  for ( ; *argp != NULL; argp++ )
+  for (; *argp != NULL; argp++ )
   {
     char buffer[200];
     char* end;
-    long value = strtol ( *argp, &end, 0 );
+    long value = strtol (*argp, &end, 0 );
 
-    if ( *end )
+    if (*end )
     {
       printf ( "Non-numeric value: %s\n", *argp );
       return EXIT_FAILURE;
@@ -291,13 +292,13 @@ typedef enum
 
 static int process_unsigned ( unsigned_value_type type, unsigned long max, char** argp )
 {
-  for ( ; *argp != NULL; argp++ )
+  for (; *argp != NULL; argp++ )
   {
     char buffer[200];
     char* end;
-    unsigned long value = strtoul ( *argp, &end, 0 );
+    unsigned long value = strtoul (*argp, &end, 0 );
 
-    if ( *end )
+    if (*end )
     {
       printf ( "Non-numeric value: %s\n", *argp );
       return EXIT_FAILURE;
@@ -353,36 +354,36 @@ int main ( int argc, char* argv[] )
     return EXIT_FAILURE;
   }
 
-  if ( !strcmp ( argv[1], "error" ) || !strcmp ( argv[1], "status" ) )
+  if (!strcmp ( argv[1], "error" ) || !strcmp ( argv[1], "status" ) )
   {
     /* There's no way to obtain the actual range of a signed type,
      * so hard-code it here: psa_status_t is int32_t. */
     return process_signed ( TYPE_STATUS, INT32_MIN, INT32_MAX,
                             argv + 2 );
   }
-  else if ( !strcmp ( argv[1], "alg" ) || !strcmp ( argv[1], "algorithm" ) )
+  else if (!strcmp ( argv[1], "alg" ) || !strcmp ( argv[1], "algorithm" ) )
   {
-    return process_unsigned ( TYPE_ALGORITHM, ( psa_algorithm_t ) ( -1 ),
+    return process_unsigned ( TYPE_ALGORITHM, ( psa_algorithm_t ) (-1 ),
                               argv + 2 );
   }
-  else if ( !strcmp ( argv[1], "curve" ) || !strcmp ( argv[1], "ecc_curve" ) )
+  else if (!strcmp ( argv[1], "curve" ) || !strcmp ( argv[1], "ecc_curve" ) )
   {
-    return process_unsigned ( TYPE_ECC_CURVE, ( psa_ecc_family_t ) ( -1 ),
+    return process_unsigned ( TYPE_ECC_CURVE, ( psa_ecc_family_t ) (-1 ),
                               argv + 2 );
   }
-  else if ( !strcmp ( argv[1], "group" ) || !strcmp ( argv[1], "dh_group" ) )
+  else if (!strcmp ( argv[1], "group" ) || !strcmp ( argv[1], "dh_group" ) )
   {
-    return process_unsigned ( TYPE_DH_GROUP, ( psa_dh_family_t ) ( -1 ),
+    return process_unsigned ( TYPE_DH_GROUP, ( psa_dh_family_t ) (-1 ),
                               argv + 2 );
   }
-  else if ( !strcmp ( argv[1], "type" ) || !strcmp ( argv[1], "key_type" ) )
+  else if (!strcmp ( argv[1], "type" ) || !strcmp ( argv[1], "key_type" ) )
   {
-    return process_unsigned ( TYPE_KEY_TYPE, ( psa_key_type_t ) ( -1 ),
+    return process_unsigned ( TYPE_KEY_TYPE, ( psa_key_type_t ) (-1 ),
                               argv + 2 );
   }
-  else if ( !strcmp ( argv[1], "usage" ) || !strcmp ( argv[1], "key_usage" ) )
+  else if (!strcmp ( argv[1], "usage" ) || !strcmp ( argv[1], "key_usage" ) )
   {
-    return process_unsigned ( TYPE_KEY_USAGE, ( psa_key_usage_t ) ( -1 ),
+    return process_unsigned ( TYPE_KEY_USAGE, ( psa_key_usage_t ) (-1 ),
                               argv + 2 );
   }
   else

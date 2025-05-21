@@ -186,8 +186,8 @@ psa_signal_t psa_wait ( psa_signal_t signal_mask, uint32_t timeout )
 
                 if ( len >= 16 )
                 {
-                  memcpy ( &requested_version, msg.message_text.buf,
-                           sizeof ( requested_version ) );
+                  memcpy (&requested_version, msg.message_text.buf,
+                          sizeof ( requested_version ) );
                   INFO ( "Requesting version %u\n", requested_version );
                   INFO ( "Implemented version %u\n", rot_svc_versions[i] );
 
@@ -253,12 +253,12 @@ psa_signal_t psa_wait ( psa_signal_t signal_mask, uint32_t timeout )
                 if ( msg.message_text.psa_type >= 0 )
                 {
                   messages[i].type = msg.message_text.psa_type;
-                  memcpy ( &sizes, msg.message_text.buf, sizeof ( sizes ) );
-                  print_vectors ( &sizes );
-                  memcpy ( &messages[i].in_size, &sizes.invec_sizes,
-                           ( sizeof ( size_t ) * PSA_MAX_IOVEC ) );
-                  memcpy ( &messages[i].out_size, &sizes.outvec_sizes,
-                           ( sizeof ( size_t ) * PSA_MAX_IOVEC ) );
+                  memcpy (&sizes, msg.message_text.buf, sizeof ( sizes ) );
+                  print_vectors (&sizes );
+                  memcpy (&messages[i].in_size, &sizes.invec_sizes,
+                          ( sizeof ( size_t ) * PSA_MAX_IOVEC ) );
+                  memcpy (&messages[i].out_size, &sizes.outvec_sizes,
+                          ( sizeof ( size_t ) * PSA_MAX_IOVEC ) );
                 }
                 else
                 {
@@ -446,7 +446,7 @@ static size_t skip ( psa_handle_t msg_handle, uint32_t invec_idx, size_t num_byt
   if ( num_bytes < ( messages[msg_handle].in_size[invec_idx] - num_bytes ) )
   {
     messages[msg_handle].in_size[invec_idx] = messages[msg_handle].in_size[invec_idx] -
-        num_bytes;
+      num_bytes;
     return num_bytes;
   }
   else
@@ -779,7 +779,7 @@ void __init_psasim ( const char** array,
   memcpy ( nsacl, allow_ns_clients_array, sizeof ( int ) * 32 );
   memcpy ( strict_policy, strict_policy_array, sizeof ( int ) * 32 );
   memcpy ( rot_svc_versions, versions, sizeof ( uint32_t ) * 32 );
-  bzero ( &connections, sizeof ( struct connection ) * MAX_CLIENTS );
+  bzero (&connections, sizeof ( struct connection ) * MAX_CLIENTS );
 
   __psa_ff_client_security_state = 0; /* Set the client status to SECURE */
 }

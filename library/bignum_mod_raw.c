@@ -68,7 +68,7 @@ int mbedtls_mpi_mod_raw_read ( mbedtls_mpi_uint* X,
     goto cleanup;
   }
 
-  if ( !mbedtls_mpi_core_lt_ct ( X, N->p, N->limbs ) )
+  if (!mbedtls_mpi_core_lt_ct ( X, N->p, N->limbs ) )
   {
     ret = MBEDTLS_ERR_MPI_BAD_INPUT_DATA;
     goto cleanup;
@@ -144,7 +144,7 @@ void mbedtls_mpi_mod_raw_mul ( mbedtls_mpi_uint* X,
     mbedtls_mpi_core_mul ( T, A, N->limbs, B, N->limbs );
 
     /* Optimised Reduction */
-    ( *N->rep.ored.modp ) ( T, T_limbs );
+    (*N->rep.ored.modp ) ( T, T_limbs );
 
     /* Convert back to canonical representation */
     mbedtls_mpi_mod_raw_fix_quasi_reduction ( T, N );
@@ -236,7 +236,7 @@ int mbedtls_mpi_mod_raw_modulus_to_canonical_rep (
 int mbedtls_mpi_mod_raw_random ( mbedtls_mpi_uint* X,
                                  mbedtls_mpi_uint min,
                                  const mbedtls_mpi_mod_modulus* N,
-                                 int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                 int (*f_rng ) ( void*, unsigned char*, size_t ),
                                  void* p_rng )
 {
   int ret = mbedtls_mpi_core_random ( X, min, N->p, N->limbs, f_rng, p_rng );

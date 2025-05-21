@@ -144,7 +144,7 @@ struct mbedtls_ecp_restart_mul
  */
 static void ecp_restart_rsm_init ( mbedtls_ecp_restart_mul_ctx* ctx )
 {
-  mbedtls_ecp_point_init ( &ctx->R );
+  mbedtls_ecp_point_init (&ctx->R );
   ctx->i = 0;
   ctx->T = NULL;
   ctx->T_size = 0;
@@ -163,7 +163,7 @@ static void ecp_restart_rsm_free ( mbedtls_ecp_restart_mul_ctx* ctx )
     return;
   }
 
-  mbedtls_ecp_point_free ( &ctx->R );
+  mbedtls_ecp_point_free (&ctx->R );
 
   if ( ctx->T != NULL )
   {
@@ -199,8 +199,8 @@ struct mbedtls_ecp_restart_muladd
  */
 static void ecp_restart_ma_init ( mbedtls_ecp_restart_muladd_ctx* ctx )
 {
-  mbedtls_ecp_point_init ( &ctx->mP );
-  mbedtls_ecp_point_init ( &ctx->R );
+  mbedtls_ecp_point_init (&ctx->mP );
+  mbedtls_ecp_point_init (&ctx->R );
   ctx->state = ecp_rsma_mul1;
 }
 
@@ -214,8 +214,8 @@ static void ecp_restart_ma_free ( mbedtls_ecp_restart_muladd_ctx* ctx )
     return;
   }
 
-  mbedtls_ecp_point_free ( &ctx->mP );
-  mbedtls_ecp_point_free ( &ctx->R );
+  mbedtls_ecp_point_free (&ctx->mP );
+  mbedtls_ecp_point_free (&ctx->R );
 
   ecp_restart_ma_init ( ctx );
 }
@@ -344,6 +344,7 @@ static void mpi_free_many ( mbedtls_mpi* arr, size_t size )
     mbedtls_mpi_free ( arr++ );
   }
 }
+
 #endif /* MBEDTLS_ECP_C */
 
 /*
@@ -422,7 +423,7 @@ const mbedtls_ecp_group_id* mbedtls_ecp_grp_id_list ( void )
 {
   static int init_done = 0;
 
-  if ( !init_done )
+  if (!init_done )
   {
     size_t i = 0;
     const mbedtls_ecp_curve_info* curve_info;
@@ -532,9 +533,9 @@ mbedtls_ecp_curve_type mbedtls_ecp_get_type ( const mbedtls_ecp_group* grp )
  */
 void mbedtls_ecp_point_init ( mbedtls_ecp_point* pt )
 {
-  mbedtls_mpi_init ( &pt->X );
-  mbedtls_mpi_init ( &pt->Y );
-  mbedtls_mpi_init ( &pt->Z );
+  mbedtls_mpi_init (&pt->X );
+  mbedtls_mpi_init (&pt->Y );
+  mbedtls_mpi_init (&pt->Z );
 }
 
 /*
@@ -543,11 +544,11 @@ void mbedtls_ecp_point_init ( mbedtls_ecp_point* pt )
 void mbedtls_ecp_group_init ( mbedtls_ecp_group* grp )
 {
   grp->id = MBEDTLS_ECP_DP_NONE;
-  mbedtls_mpi_init ( &grp->P );
-  mbedtls_mpi_init ( &grp->A );
-  mbedtls_mpi_init ( &grp->B );
-  mbedtls_ecp_point_init ( &grp->G );
-  mbedtls_mpi_init ( &grp->N );
+  mbedtls_mpi_init (&grp->P );
+  mbedtls_mpi_init (&grp->A );
+  mbedtls_mpi_init (&grp->B );
+  mbedtls_ecp_point_init (&grp->G );
+  mbedtls_mpi_init (&grp->N );
   grp->pbits = 0;
   grp->nbits = 0;
   grp->h = 0;
@@ -564,9 +565,9 @@ void mbedtls_ecp_group_init ( mbedtls_ecp_group* grp )
  */
 void mbedtls_ecp_keypair_init ( mbedtls_ecp_keypair* key )
 {
-  mbedtls_ecp_group_init ( &key->grp );
-  mbedtls_mpi_init ( &key->d );
-  mbedtls_ecp_point_init ( &key->Q );
+  mbedtls_ecp_group_init (&key->grp );
+  mbedtls_mpi_init (&key->d );
+  mbedtls_ecp_point_init (&key->Q );
 }
 
 /*
@@ -579,9 +580,9 @@ void mbedtls_ecp_point_free ( mbedtls_ecp_point* pt )
     return;
   }
 
-  mbedtls_mpi_free ( & ( pt->X ) );
-  mbedtls_mpi_free ( & ( pt->Y ) );
-  mbedtls_mpi_free ( & ( pt->Z ) );
+  mbedtls_mpi_free (& ( pt->X ) );
+  mbedtls_mpi_free (& ( pt->Y ) );
+  mbedtls_mpi_free (& ( pt->Z ) );
 }
 
 /*
@@ -611,21 +612,21 @@ void mbedtls_ecp_group_free ( mbedtls_ecp_group* grp )
 
   if ( grp->h != 1 )
   {
-    mbedtls_mpi_free ( &grp->A );
-    mbedtls_mpi_free ( &grp->B );
-    mbedtls_ecp_point_free ( &grp->G );
+    mbedtls_mpi_free (&grp->A );
+    mbedtls_mpi_free (&grp->B );
+    mbedtls_ecp_point_free (&grp->G );
 
 #if !defined(MBEDTLS_ECP_WITH_MPI_UINT)
-    mbedtls_mpi_free ( &grp->N );
-    mbedtls_mpi_free ( &grp->P );
+    mbedtls_mpi_free (&grp->N );
+    mbedtls_mpi_free (&grp->P );
 #endif
   }
 
-  if ( !ecp_group_is_static_comb_table ( grp ) && grp->T != NULL )
+  if (!ecp_group_is_static_comb_table ( grp ) && grp->T != NULL )
   {
     for ( i = 0; i < grp->T_size; i++ )
     {
-      mbedtls_ecp_point_free ( &grp->T[i] );
+      mbedtls_ecp_point_free (&grp->T[i] );
     }
 
     mbedtls_free ( grp->T );
@@ -644,9 +645,9 @@ void mbedtls_ecp_keypair_free ( mbedtls_ecp_keypair* key )
     return;
   }
 
-  mbedtls_ecp_group_free ( &key->grp );
-  mbedtls_mpi_free ( &key->d );
-  mbedtls_ecp_point_free ( &key->Q );
+  mbedtls_ecp_group_free (&key->grp );
+  mbedtls_mpi_free (&key->d );
+  mbedtls_ecp_point_free (&key->Q );
 }
 
 /*
@@ -655,9 +656,9 @@ void mbedtls_ecp_keypair_free ( mbedtls_ecp_keypair* key )
 int mbedtls_ecp_copy ( mbedtls_ecp_point* P, const mbedtls_ecp_point* Q )
 {
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_copy ( &P->X, &Q->X ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_copy ( &P->Y, &Q->Y ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_copy ( &P->Z, &Q->Z ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_copy (&P->X, &Q->X ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_copy (&P->Y, &Q->Y ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_copy (&P->Z, &Q->Z ) );
 
 cleanup:
   return ret;
@@ -677,9 +678,9 @@ int mbedtls_ecp_group_copy ( mbedtls_ecp_group* dst, const mbedtls_ecp_group* sr
 int mbedtls_ecp_set_zero ( mbedtls_ecp_point* pt )
 {
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset ( &pt->X, 1 ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset ( &pt->Y, 1 ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset ( &pt->Z, 0 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset (&pt->X, 1 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset (&pt->Y, 1 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset (&pt->Z, 0 ) );
 
 cleanup:
   return ret;
@@ -690,7 +691,7 @@ cleanup:
  */
 int mbedtls_ecp_is_zero ( mbedtls_ecp_point* pt )
 {
-  return mbedtls_mpi_cmp_int ( &pt->Z, 0 ) == 0;
+  return mbedtls_mpi_cmp_int (&pt->Z, 0 ) == 0;
 }
 
 /*
@@ -699,9 +700,9 @@ int mbedtls_ecp_is_zero ( mbedtls_ecp_point* pt )
 int mbedtls_ecp_point_cmp ( const mbedtls_ecp_point* P,
                             const mbedtls_ecp_point* Q )
 {
-  if ( mbedtls_mpi_cmp_mpi ( &P->X, &Q->X ) == 0 &&
-       mbedtls_mpi_cmp_mpi ( &P->Y, &Q->Y ) == 0 &&
-       mbedtls_mpi_cmp_mpi ( &P->Z, &Q->Z ) == 0 )
+  if ( mbedtls_mpi_cmp_mpi (&P->X, &Q->X ) == 0 &&
+       mbedtls_mpi_cmp_mpi (&P->Y, &Q->Y ) == 0 &&
+       mbedtls_mpi_cmp_mpi (&P->Z, &Q->Z ) == 0 )
   {
     return 0;
   }
@@ -716,9 +717,9 @@ int mbedtls_ecp_point_read_string ( mbedtls_ecp_point* P, int radix,
                                     const char* x, const char* y )
 {
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_read_string ( &P->X, radix, x ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_read_string ( &P->Y, radix, y ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset ( &P->Z, 1 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_read_string (&P->X, radix, x ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_read_string (&P->Y, radix, y ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset (&P->Z, 1 ) );
 
 cleanup:
   return ret;
@@ -741,7 +742,7 @@ int mbedtls_ecp_point_write_binary ( const mbedtls_ecp_group* grp,
     return MBEDTLS_ERR_ECP_BAD_INPUT_DATA;
   }
 
-  plen = mbedtls_mpi_size ( &grp->P );
+  plen = mbedtls_mpi_size (&grp->P );
 
 #if defined(MBEDTLS_ECP_MONTGOMERY_ENABLED)
   ( void ) format; /* Montgomery curves always use the same point format */
@@ -755,7 +756,7 @@ int mbedtls_ecp_point_write_binary ( const mbedtls_ecp_group* grp,
       return MBEDTLS_ERR_ECP_BUFFER_TOO_SMALL;
     }
 
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_write_binary_le ( &P->X, buf, plen ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_write_binary_le (&P->X, buf, plen ) );
   }
 
 #endif
@@ -766,7 +767,7 @@ int mbedtls_ecp_point_write_binary ( const mbedtls_ecp_group* grp,
     /*
      * Common case: P == 0
      */
-    if ( mbedtls_mpi_cmp_int ( &P->Z, 0 ) == 0 )
+    if ( mbedtls_mpi_cmp_int (&P->Z, 0 ) == 0 )
     {
       if ( buflen < 1 )
       {
@@ -789,8 +790,8 @@ int mbedtls_ecp_point_write_binary ( const mbedtls_ecp_group* grp,
       }
 
       buf[0] = 0x04;
-      MBEDTLS_MPI_CHK ( mbedtls_mpi_write_binary ( &P->X, buf + 1, plen ) );
-      MBEDTLS_MPI_CHK ( mbedtls_mpi_write_binary ( &P->Y, buf + 1 + plen, plen ) );
+      MBEDTLS_MPI_CHK ( mbedtls_mpi_write_binary (&P->X, buf + 1, plen ) );
+      MBEDTLS_MPI_CHK ( mbedtls_mpi_write_binary (&P->Y, buf + 1 + plen, plen ) );
     }
     else if ( format == MBEDTLS_ECP_PF_COMPRESSED )
     {
@@ -801,8 +802,8 @@ int mbedtls_ecp_point_write_binary ( const mbedtls_ecp_group* grp,
         return MBEDTLS_ERR_ECP_BUFFER_TOO_SMALL;
       }
 
-      buf[0] = 0x02 + mbedtls_mpi_get_bit ( &P->Y, 0 );
-      MBEDTLS_MPI_CHK ( mbedtls_mpi_write_binary ( &P->X, buf + 1, plen ) );
+      buf[0] = 0x02 + mbedtls_mpi_get_bit (&P->Y, 0 );
+      MBEDTLS_MPI_CHK ( mbedtls_mpi_write_binary (&P->X, buf + 1, plen ) );
     }
   }
 
@@ -834,7 +835,7 @@ int mbedtls_ecp_point_read_binary ( const mbedtls_ecp_group* grp,
     return MBEDTLS_ERR_ECP_BAD_INPUT_DATA;
   }
 
-  plen = mbedtls_mpi_size ( &grp->P );
+  plen = mbedtls_mpi_size (&grp->P );
 
 #if defined(MBEDTLS_ECP_MONTGOMERY_ENABLED)
 
@@ -845,16 +846,16 @@ int mbedtls_ecp_point_read_binary ( const mbedtls_ecp_group* grp,
       return MBEDTLS_ERR_ECP_BAD_INPUT_DATA;
     }
 
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_read_binary_le ( &pt->X, buf, plen ) );
-    mbedtls_mpi_free ( &pt->Y );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_read_binary_le (&pt->X, buf, plen ) );
+    mbedtls_mpi_free (&pt->Y );
 
     if ( grp->id == MBEDTLS_ECP_DP_CURVE25519 )
     {
       /* Set most significant bit to 0 as prescribed in RFC7748 §5 */
-      MBEDTLS_MPI_CHK ( mbedtls_mpi_set_bit ( &pt->X, plen * 8 - 1, 0 ) );
+      MBEDTLS_MPI_CHK ( mbedtls_mpi_set_bit (&pt->X, plen * 8 - 1, 0 ) );
     }
 
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_lset ( &pt->Z, 1 ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_lset (&pt->Z, 1 ) );
   }
 
 #endif
@@ -879,8 +880,8 @@ int mbedtls_ecp_point_read_binary ( const mbedtls_ecp_group* grp,
       return MBEDTLS_ERR_ECP_BAD_INPUT_DATA;
     }
 
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_read_binary ( &pt->X, buf + 1, plen ) );
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_lset ( &pt->Z, 1 ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_read_binary (&pt->X, buf + 1, plen ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_lset (&pt->Z, 1 ) );
 
     if ( buf[0] == 0x04 )
     {
@@ -890,7 +891,7 @@ int mbedtls_ecp_point_read_binary ( const mbedtls_ecp_group* grp,
         return MBEDTLS_ERR_ECP_BAD_INPUT_DATA;
       }
 
-      return mbedtls_mpi_read_binary ( &pt->Y, buf + 1 + plen, plen );
+      return mbedtls_mpi_read_binary (&pt->Y, buf + 1 + plen, plen );
     }
     else if ( buf[0] == 0x02 || buf[0] == 0x03 )
     {
@@ -936,7 +937,7 @@ int mbedtls_ecp_tls_read_point ( const mbedtls_ecp_group* grp,
     return MBEDTLS_ERR_ECP_BAD_INPUT_DATA;
   }
 
-  data_len = * ( *buf )++;
+  data_len = * (*buf )++;
 
   if ( data_len < 1 || data_len > buf_len - 1 )
   {
@@ -1002,7 +1003,7 @@ int mbedtls_ecp_tls_read_group ( mbedtls_ecp_group* grp,
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
   mbedtls_ecp_group_id grp_id;
 
-  if ( ( ret = mbedtls_ecp_tls_read_group_id ( &grp_id, buf, len ) ) != 0 )
+  if ( ( ret = mbedtls_ecp_tls_read_group_id (&grp_id, buf, len ) ) != 0 )
   {
     return ret;
   }
@@ -1031,7 +1032,7 @@ int mbedtls_ecp_tls_read_group_id ( mbedtls_ecp_group_id* grp,
   /*
    * First byte is curve_type; only named_curve is handled
    */
-  if ( * ( *buf )++ != MBEDTLS_ECP_TLS_NAMED_CURVE )
+  if (* (*buf )++ != MBEDTLS_ECP_TLS_NAMED_CURVE )
   {
     return MBEDTLS_ERR_ECP_BAD_INPUT_DATA;
   }
@@ -1039,7 +1040,7 @@ int mbedtls_ecp_tls_read_group_id ( mbedtls_ecp_group_id* grp,
   /*
    * Next two bytes are the namedcurve value
    */
-  tls_id = MBEDTLS_GET_UINT16_BE ( *buf, 0 );
+  tls_id = MBEDTLS_GET_UINT16_BE (*buf, 0 );
   *buf += 2;
 
   if ( ( curve_info = mbedtls_ecp_curve_info_from_tls_id ( tls_id ) ) == NULL )
@@ -1161,7 +1162,7 @@ static inline int mbedtls_mpi_mul_mod ( const mbedtls_ecp_group* grp,
 {
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
   MBEDTLS_MPI_CHK ( mbedtls_mpi_mul_mpi ( X, A, B ) );
-  MOD_MUL ( *X );
+  MOD_MUL (*X );
 cleanup:
   return ret;
 }
@@ -1367,23 +1368,23 @@ static int mbedtls_ecp_sw_derive_y ( const mbedtls_ecp_group* grp,
    */
 
   /* Check prerequisite p = 3 mod 4 */
-  if ( mbedtls_mpi_get_bit ( &grp->P, 0 ) != 1 ||
-       mbedtls_mpi_get_bit ( &grp->P, 1 ) != 1 )
+  if ( mbedtls_mpi_get_bit (&grp->P, 0 ) != 1 ||
+       mbedtls_mpi_get_bit (&grp->P, 1 ) != 1 )
   {
     return MBEDTLS_ERR_ECP_FEATURE_UNAVAILABLE;
   }
 
   int ret;
   mbedtls_mpi exp;
-  mbedtls_mpi_init ( &exp );
+  mbedtls_mpi_init (&exp );
 
   /* use Y to store intermediate result, actually w above */
   MBEDTLS_MPI_CHK ( ecp_sw_rhs ( grp, Y, X ) );
 
   /* w = y^2 */ /* Y contains y^2 intermediate result */
   /* exp = ((p+1)/4) */
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_add_int ( &exp, &grp->P, 1 ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_shift_r ( &exp, 2 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_add_int (&exp, &grp->P, 1 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_shift_r (&exp, 2 ) );
   /* sqrt(w) = w^((p+1)/4) mod p   (for prime p where p = 3 mod 4) */
   MBEDTLS_MPI_CHK ( mbedtls_mpi_exp_mod ( Y, Y /*y^2*/, &exp, &grp->P, NULL ) );
 
@@ -1399,9 +1400,10 @@ static int mbedtls_ecp_sw_derive_y ( const mbedtls_ecp_group* grp,
 
 cleanup:
 
-  mbedtls_mpi_free ( &exp );
+  mbedtls_mpi_free (&exp );
   return ret;
 }
+
 #endif /* MBEDTLS_ECP_SHORT_WEIERSTRASS_ENABLED */
 
 #if defined(MBEDTLS_ECP_C)
@@ -1420,7 +1422,7 @@ cleanup:
  */
 static int ecp_normalize_jac ( const mbedtls_ecp_group* grp, mbedtls_ecp_point* pt )
 {
-  if ( MPI_ECP_CMP_INT ( &pt->Z, 0 ) == 0 )
+  if ( MPI_ECP_CMP_INT (&pt->Z, 0 ) == 0 )
   {
     return 0;
   }
@@ -1439,19 +1441,19 @@ static int ecp_normalize_jac ( const mbedtls_ecp_group* grp, mbedtls_ecp_point* 
 #else
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
   mbedtls_mpi T;
-  mbedtls_mpi_init ( &T );
+  mbedtls_mpi_init (&T );
 
-  MPI_ECP_INV ( &T,       &pt->Z );         /* T   <-          1 / Z   */
-  MPI_ECP_MUL ( &pt->Y,   &pt->Y,     &T ); /* Y'  <- Y*T    = Y / Z   */
-  MPI_ECP_SQR ( &T,       &T );             /* T   <- T^2    = 1 / Z^2 */
-  MPI_ECP_MUL ( &pt->X,   &pt->X,     &T ); /* X   <- X  * T = X / Z^2 */
-  MPI_ECP_MUL ( &pt->Y,   &pt->Y,     &T ); /* Y'' <- Y' * T = Y / Z^3 */
+  MPI_ECP_INV (&T, &pt->Z );      /* T   <-          1 / Z   */
+  MPI_ECP_MUL (&pt->Y, &pt->Y, &T ); /* Y'  <- Y*T    = Y / Z   */
+  MPI_ECP_SQR (&T, &T );          /* T   <- T^2    = 1 / Z^2 */
+  MPI_ECP_MUL (&pt->X, &pt->X, &T ); /* X   <- X  * T = X / Z^2 */
+  MPI_ECP_MUL (&pt->Y, &pt->Y, &T ); /* Y'' <- Y' * T = Y / Z^3 */
 
-  MPI_ECP_LSET ( &pt->Z, 1 );
+  MPI_ECP_LSET (&pt->Z, 1 );
 
 cleanup:
 
-  mbedtls_mpi_free ( &T );
+  mbedtls_mpi_free (&T );
 
   return ret;
 #endif /* !defined(MBEDTLS_ECP_NO_FALLBACK) || !defined(MBEDTLS_ECP_NORMALIZE_JAC_ALT) */
@@ -1497,23 +1499,23 @@ static int ecp_normalize_jac_many ( const mbedtls_ecp_group* grp,
     return MBEDTLS_ERR_ECP_ALLOC_FAILED;
   }
 
-  mbedtls_mpi_init ( &t );
+  mbedtls_mpi_init (&t );
 
   mpi_init_many ( c, T_size );
   /*
    * c[i] = Z_0 * ... * Z_i,   i = 0,..,n := T_size-1
    */
-  MPI_ECP_MOV ( &c[0], &T[0]->Z );
+  MPI_ECP_MOV (&c[0], &T[0]->Z );
 
   for ( i = 1; i < T_size; i++ )
   {
-    MPI_ECP_MUL ( &c[i], &c[i - 1], &T[i]->Z );
+    MPI_ECP_MUL (&c[i], &c[i - 1], &T[i]->Z );
   }
 
   /*
    * c[n] = 1 / (Z_0 * ... * Z_n) mod P
    */
-  MPI_ECP_INV ( &c[T_size - 1], &c[T_size - 1] );
+  MPI_ECP_INV (&c[T_size - 1], &c[T_size - 1] );
 
   for ( i = T_size - 1;; i-- )
   {
@@ -1532,19 +1534,19 @@ static int ecp_normalize_jac_many ( const mbedtls_ecp_group* grp,
     if ( i > 0 )
     {
       /* Compute 1/Z_i and establish invariant for the next iteration. */
-      MPI_ECP_MUL ( &t,      &c[i], &c[i - 1] );
-      MPI_ECP_MUL ( &c[i - 1], &c[i], &T[i]->Z );
+      MPI_ECP_MUL (&t, &c[i], &c[i - 1] );
+      MPI_ECP_MUL (&c[i - 1], &c[i], &T[i]->Z );
     }
     else
     {
-      MPI_ECP_MOV ( &t, &c[0] );
+      MPI_ECP_MOV (&t, &c[0] );
     }
 
     /* Now t holds 1 / Z_i; normalize as in ecp_normalize_jac() */
-    MPI_ECP_MUL ( &T[i]->Y, &T[i]->Y, &t );
-    MPI_ECP_SQR ( &t,       &t );
-    MPI_ECP_MUL ( &T[i]->X, &T[i]->X, &t );
-    MPI_ECP_MUL ( &T[i]->Y, &T[i]->Y, &t );
+    MPI_ECP_MUL (&T[i]->Y, &T[i]->Y, &t );
+    MPI_ECP_SQR (&t, &t );
+    MPI_ECP_MUL (&T[i]->X, &T[i]->X, &t );
+    MPI_ECP_MUL (&T[i]->Y, &T[i]->Y, &t );
 
     /*
      * Post-precessing: reclaim some memory by shrinking coordinates
@@ -1552,10 +1554,10 @@ static int ecp_normalize_jac_many ( const mbedtls_ecp_group* grp,
      * - shrinking other coordinates, but still keeping the same number of
      *   limbs as P, as otherwise it will too likely be regrown too fast.
      */
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_shrink ( &T[i]->X, grp->P.n ) );
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_shrink ( &T[i]->Y, grp->P.n ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_shrink (&T[i]->X, grp->P.n ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_shrink (&T[i]->Y, grp->P.n ) );
 
-    MPI_ECP_LSET ( &T[i]->Z, 1 );
+    MPI_ECP_LSET (&T[i]->Z, 1 );
 
     if ( i == 0 )
     {
@@ -1565,7 +1567,7 @@ static int ecp_normalize_jac_many ( const mbedtls_ecp_group* grp,
 
 cleanup:
 
-  mbedtls_mpi_free ( &t );
+  mbedtls_mpi_free (&t );
   mpi_free_many ( c, T_size );
   mbedtls_free ( c );
 
@@ -1583,12 +1585,12 @@ static int ecp_safe_invert_jac ( const mbedtls_ecp_group* grp,
 {
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
   mbedtls_mpi tmp;
-  mbedtls_mpi_init ( &tmp );
+  mbedtls_mpi_init (&tmp );
 
-  MPI_ECP_COND_NEG ( &Q->Y, inv );
+  MPI_ECP_COND_NEG (&Q->Y, inv );
 
 cleanup:
-  mbedtls_mpi_free ( &tmp );
+  mbedtls_mpi_free (&tmp );
   return ret;
 }
 
@@ -1632,57 +1634,57 @@ static int ecp_double_jac ( const mbedtls_ecp_group* grp, mbedtls_ecp_point* R,
   if ( mbedtls_ecp_group_a_is_minus_3 ( grp ) )
   {
     /* tmp[0] <- M = 3(X + Z^2)(X - Z^2) */
-    MPI_ECP_SQR ( &tmp[1],  &P->Z );
-    MPI_ECP_ADD ( &tmp[2],  &P->X,  &tmp[1] );
-    MPI_ECP_SUB ( &tmp[3],  &P->X,  &tmp[1] );
-    MPI_ECP_MUL ( &tmp[1],  &tmp[2],     &tmp[3] );
-    MPI_ECP_MUL_INT ( &tmp[0],  &tmp[1],     3 );
+    MPI_ECP_SQR (&tmp[1], &P->Z );
+    MPI_ECP_ADD (&tmp[2], &P->X, &tmp[1] );
+    MPI_ECP_SUB (&tmp[3], &P->X, &tmp[1] );
+    MPI_ECP_MUL (&tmp[1], &tmp[2], &tmp[3] );
+    MPI_ECP_MUL_INT (&tmp[0], &tmp[1],     3 );
   }
   else
   {
     /* tmp[0] <- M = 3.X^2 + A.Z^4 */
-    MPI_ECP_SQR ( &tmp[1],  &P->X );
-    MPI_ECP_MUL_INT ( &tmp[0],  &tmp[1],  3 );
+    MPI_ECP_SQR (&tmp[1], &P->X );
+    MPI_ECP_MUL_INT (&tmp[0], &tmp[1],  3 );
 
     /* Optimize away for "koblitz" curves with A = 0 */
-    if ( MPI_ECP_CMP_INT ( &grp->A, 0 ) != 0 )
+    if ( MPI_ECP_CMP_INT (&grp->A, 0 ) != 0 )
     {
       /* M += A.Z^4 */
-      MPI_ECP_SQR ( &tmp[1],  &P->Z );
-      MPI_ECP_SQR ( &tmp[2],  &tmp[1] );
-      MPI_ECP_MUL ( &tmp[1],  &tmp[2],     &grp->A );
-      MPI_ECP_ADD ( &tmp[0],  &tmp[0],     &tmp[1] );
+      MPI_ECP_SQR (&tmp[1], &P->Z );
+      MPI_ECP_SQR (&tmp[2], &tmp[1] );
+      MPI_ECP_MUL (&tmp[1], &tmp[2], &grp->A );
+      MPI_ECP_ADD (&tmp[0], &tmp[0], &tmp[1] );
     }
   }
 
   /* tmp[1] <- S = 4.X.Y^2 */
-  MPI_ECP_SQR ( &tmp[2],  &P->Y );
-  MPI_ECP_SHIFT_L ( &tmp[2],  1 );
-  MPI_ECP_MUL ( &tmp[1],  &P->X, &tmp[2] );
-  MPI_ECP_SHIFT_L ( &tmp[1],  1 );
+  MPI_ECP_SQR (&tmp[2], &P->Y );
+  MPI_ECP_SHIFT_L (&tmp[2],  1 );
+  MPI_ECP_MUL (&tmp[1], &P->X, &tmp[2] );
+  MPI_ECP_SHIFT_L (&tmp[1],  1 );
 
   /* tmp[3] <- U = 8.Y^4 */
-  MPI_ECP_SQR ( &tmp[3],  &tmp[2] );
-  MPI_ECP_SHIFT_L ( &tmp[3],  1 );
+  MPI_ECP_SQR (&tmp[3], &tmp[2] );
+  MPI_ECP_SHIFT_L (&tmp[3],  1 );
 
   /* tmp[2] <- T = M^2 - 2.S */
-  MPI_ECP_SQR ( &tmp[2],  &tmp[0] );
-  MPI_ECP_SUB ( &tmp[2],  &tmp[2], &tmp[1] );
-  MPI_ECP_SUB ( &tmp[2],  &tmp[2], &tmp[1] );
+  MPI_ECP_SQR (&tmp[2], &tmp[0] );
+  MPI_ECP_SUB (&tmp[2], &tmp[2], &tmp[1] );
+  MPI_ECP_SUB (&tmp[2], &tmp[2], &tmp[1] );
 
   /* tmp[1] <- S = M(S - T) - U */
-  MPI_ECP_SUB ( &tmp[1],  &tmp[1],     &tmp[2] );
-  MPI_ECP_MUL ( &tmp[1],  &tmp[1],     &tmp[0] );
-  MPI_ECP_SUB ( &tmp[1],  &tmp[1],     &tmp[3] );
+  MPI_ECP_SUB (&tmp[1], &tmp[1], &tmp[2] );
+  MPI_ECP_MUL (&tmp[1], &tmp[1], &tmp[0] );
+  MPI_ECP_SUB (&tmp[1], &tmp[1], &tmp[3] );
 
   /* tmp[3] <- U = 2.Y.Z */
-  MPI_ECP_MUL ( &tmp[3],  &P->Y,  &P->Z );
-  MPI_ECP_SHIFT_L ( &tmp[3],  1 );
+  MPI_ECP_MUL (&tmp[3], &P->Y, &P->Z );
+  MPI_ECP_SHIFT_L (&tmp[3],  1 );
 
   /* Store results */
-  MPI_ECP_MOV ( &R->X, &tmp[2] );
-  MPI_ECP_MOV ( &R->Y, &tmp[1] );
-  MPI_ECP_MOV ( &R->Z, &tmp[3] );
+  MPI_ECP_MOV (&R->X, &tmp[2] );
+  MPI_ECP_MOV (&R->Y, &tmp[1] );
+  MPI_ECP_MOV (&R->Z, &tmp[3] );
 
 cleanup:
 
@@ -1739,7 +1741,7 @@ static int ecp_add_mixed ( const mbedtls_ecp_group* grp, mbedtls_ecp_point* R,
   mbedtls_mpi* const Y = &R->Y;
   mbedtls_mpi* const Z = &R->Z;
 
-  if ( !MPI_ECP_VALID ( &Q->Z ) )
+  if (!MPI_ECP_VALID (&Q->Z ) )
   {
     return MBEDTLS_ERR_ECP_BAD_INPUT_DATA;
   }
@@ -1747,12 +1749,12 @@ static int ecp_add_mixed ( const mbedtls_ecp_group* grp, mbedtls_ecp_point* R,
   /*
    * Trivial cases: P == 0 or Q == 0 (case 1)
    */
-  if ( MPI_ECP_CMP_INT ( &P->Z, 0 ) == 0 )
+  if ( MPI_ECP_CMP_INT (&P->Z, 0 ) == 0 )
   {
     return mbedtls_ecp_copy ( R, Q );
   }
 
-  if ( MPI_ECP_CMP_INT ( &Q->Z, 0 ) == 0 )
+  if ( MPI_ECP_CMP_INT (&Q->Z, 0 ) == 0 )
   {
     return mbedtls_ecp_copy ( R, P );
   }
@@ -1760,22 +1762,22 @@ static int ecp_add_mixed ( const mbedtls_ecp_group* grp, mbedtls_ecp_point* R,
   /*
    * Make sure Q coordinates are normalized
    */
-  if ( MPI_ECP_CMP_INT ( &Q->Z, 1 ) != 0 )
+  if ( MPI_ECP_CMP_INT (&Q->Z, 1 ) != 0 )
   {
     return MBEDTLS_ERR_ECP_BAD_INPUT_DATA;
   }
 
-  MPI_ECP_SQR ( &tmp[0], &P->Z );
-  MPI_ECP_MUL ( &tmp[1], &tmp[0], &P->Z );
-  MPI_ECP_MUL ( &tmp[0], &tmp[0], &Q->X );
-  MPI_ECP_MUL ( &tmp[1], &tmp[1], &Q->Y );
-  MPI_ECP_SUB ( &tmp[0], &tmp[0], &P->X );
-  MPI_ECP_SUB ( &tmp[1], &tmp[1], &P->Y );
+  MPI_ECP_SQR (&tmp[0], &P->Z );
+  MPI_ECP_MUL (&tmp[1], &tmp[0], &P->Z );
+  MPI_ECP_MUL (&tmp[0], &tmp[0], &Q->X );
+  MPI_ECP_MUL (&tmp[1], &tmp[1], &Q->Y );
+  MPI_ECP_SUB (&tmp[0], &tmp[0], &P->X );
+  MPI_ECP_SUB (&tmp[1], &tmp[1], &P->Y );
 
   /* Special cases (2) and (3) */
-  if ( MPI_ECP_CMP_INT ( &tmp[0], 0 ) == 0 )
+  if ( MPI_ECP_CMP_INT (&tmp[0], 0 ) == 0 )
   {
-    if ( MPI_ECP_CMP_INT ( &tmp[1], 0 ) == 0 )
+    if ( MPI_ECP_CMP_INT (&tmp[1], 0 ) == 0 )
     {
       ret = ecp_double_jac ( grp, R, P, tmp );
       goto cleanup;
@@ -1788,23 +1790,23 @@ static int ecp_add_mixed ( const mbedtls_ecp_group* grp, mbedtls_ecp_point* R,
   }
 
   /* {P,Q}->Z no longer used, so OK to write to Z even if there's aliasing. */
-  MPI_ECP_MUL ( Z,        &P->Z,    &tmp[0] );
-  MPI_ECP_SQR ( &tmp[2],  &tmp[0] );
-  MPI_ECP_MUL ( &tmp[3],  &tmp[2],  &tmp[0] );
-  MPI_ECP_MUL ( &tmp[2],  &tmp[2],  &P->X );
+  MPI_ECP_MUL ( Z, &P->Z, &tmp[0] );
+  MPI_ECP_SQR (&tmp[2], &tmp[0] );
+  MPI_ECP_MUL (&tmp[3], &tmp[2], &tmp[0] );
+  MPI_ECP_MUL (&tmp[2], &tmp[2], &P->X );
 
-  MPI_ECP_MOV ( &tmp[0], &tmp[2] );
-  MPI_ECP_SHIFT_L ( &tmp[0], 1 );
+  MPI_ECP_MOV (&tmp[0], &tmp[2] );
+  MPI_ECP_SHIFT_L (&tmp[0], 1 );
 
   /* {P,Q}->X no longer used, so OK to write to X even if there's aliasing. */
-  MPI_ECP_SQR ( X,        &tmp[1] );
-  MPI_ECP_SUB ( X,        X,        &tmp[0] );
-  MPI_ECP_SUB ( X,        X,        &tmp[3] );
-  MPI_ECP_SUB ( &tmp[2],  &tmp[2],  X );
-  MPI_ECP_MUL ( &tmp[2],  &tmp[2],  &tmp[1] );
-  MPI_ECP_MUL ( &tmp[3],  &tmp[3],  &P->Y );
+  MPI_ECP_SQR ( X, &tmp[1] );
+  MPI_ECP_SUB ( X,        X, &tmp[0] );
+  MPI_ECP_SUB ( X,        X, &tmp[3] );
+  MPI_ECP_SUB (&tmp[2], &tmp[2],  X );
+  MPI_ECP_MUL (&tmp[2], &tmp[2], &tmp[1] );
+  MPI_ECP_MUL (&tmp[3], &tmp[3], &P->Y );
   /* {P,Q}->Y no longer used, so OK to write to Y even if there's aliasing. */
-  MPI_ECP_SUB ( Y,     &tmp[2],     &tmp[3] );
+  MPI_ECP_SUB ( Y, &tmp[2], &tmp[3] );
 
 cleanup:
 
@@ -1820,7 +1822,7 @@ cleanup:
  * This countermeasure was first suggested in [2].
  */
 static int ecp_randomize_jac ( const mbedtls_ecp_group* grp, mbedtls_ecp_point* pt,
-                               int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
+                               int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
 {
 #if defined(MBEDTLS_ECP_RANDOMIZE_JAC_ALT)
 
@@ -1837,26 +1839,26 @@ static int ecp_randomize_jac ( const mbedtls_ecp_group* grp, mbedtls_ecp_point* 
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
   mbedtls_mpi l;
 
-  mbedtls_mpi_init ( &l );
+  mbedtls_mpi_init (&l );
 
   /* Generate l such that 1 < l < p */
-  MPI_ECP_RAND ( &l );
+  MPI_ECP_RAND (&l );
 
   /* Z' = l * Z */
-  MPI_ECP_MUL ( &pt->Z,   &pt->Z,     &l );
+  MPI_ECP_MUL (&pt->Z, &pt->Z, &l );
 
   /* Y' = l * Y */
-  MPI_ECP_MUL ( &pt->Y,   &pt->Y,     &l );
+  MPI_ECP_MUL (&pt->Y, &pt->Y, &l );
 
   /* X' = l^2 * X */
-  MPI_ECP_SQR ( &l,       &l );
-  MPI_ECP_MUL ( &pt->X,   &pt->X,     &l );
+  MPI_ECP_SQR (&l, &l );
+  MPI_ECP_MUL (&pt->X, &pt->X, &l );
 
   /* Y'' = l^2 * Y' = l^3 * Y */
-  MPI_ECP_MUL ( &pt->Y,   &pt->Y,     &l );
+  MPI_ECP_MUL (&pt->Y, &pt->Y, &l );
 
 cleanup:
-  mbedtls_mpi_free ( &l );
+  mbedtls_mpi_free (&l );
 
   if ( ret == MBEDTLS_ERR_MPI_NOT_ACCEPTABLE )
   {
@@ -2005,7 +2007,7 @@ static int ecp_precompute_comb ( const mbedtls_ecp_group* grp,
   unsigned char i;
   size_t j = 0;
   const unsigned char T_size = 1U << ( w - 1 );
-  mbedtls_ecp_point* cur, *TT[COMB_MAX_PRE - 1] = { NULL };
+  mbedtls_ecp_point* cur, * TT[COMB_MAX_PRE - 1] = { NULL };
 
   mbedtls_mpi tmp[4];
 
@@ -2056,7 +2058,7 @@ dbl:
    * Set T[0] = P and
    * T[2^{l-1}] = 2^{dl} P for l = 1 .. w-1 (this is not the final value)
    */
-  MBEDTLS_MPI_CHK ( mbedtls_ecp_copy ( &T[0], P ) );
+  MBEDTLS_MPI_CHK ( mbedtls_ecp_copy (&T[0], P ) );
 
 #if defined(MBEDTLS_ECP_RESTARTABLE)
 
@@ -2068,7 +2070,7 @@ dbl:
 #endif
     j = 0;
 
-  for ( ; j < d * ( w - 1 ); j++ )
+  for (; j < d * ( w - 1 ); j++ )
   {
     MBEDTLS_ECP_BUDGET ( MBEDTLS_ECP_OPS_DBL );
 
@@ -2166,7 +2168,7 @@ norm_add:
    * target's Z coordinate to 1. */
   for ( i = 0; i < T_size; i++ )
   {
-    mbedtls_mpi_free ( &T[i].Z );
+    mbedtls_mpi_free (&T[i].Z );
   }
 
 cleanup:
@@ -2207,14 +2209,14 @@ static int ecp_select_comb ( const mbedtls_ecp_group* grp, mbedtls_ecp_point* R,
   /* Read the whole table to thwart cache-based timing attacks */
   for ( j = 0; j < T_size; j++ )
   {
-    MPI_ECP_COND_ASSIGN ( &R->X, &T[j].X, j == ii );
-    MPI_ECP_COND_ASSIGN ( &R->Y, &T[j].Y, j == ii );
+    MPI_ECP_COND_ASSIGN (&R->X, &T[j].X, j == ii );
+    MPI_ECP_COND_ASSIGN (&R->Y, &T[j].Y, j == ii );
   }
 
   /* Safely invert result if i is "negative" */
   MBEDTLS_MPI_CHK ( ecp_safe_invert_jac ( grp, R, i >> 7 ) );
 
-  MPI_ECP_LSET ( &R->Z, 1 );
+  MPI_ECP_LSET (&R->Z, 1 );
 
 cleanup:
   return ret;
@@ -2229,7 +2231,7 @@ cleanup:
 static int ecp_mul_comb_core ( const mbedtls_ecp_group* grp, mbedtls_ecp_point* R,
                                const mbedtls_ecp_point T[], unsigned char T_size,
                                const unsigned char x[], size_t d,
-                               int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                               int (*f_rng ) ( void*, unsigned char*, size_t ),
                                void* p_rng,
                                mbedtls_ecp_restart_ctx* rs_ctx )
 {
@@ -2238,7 +2240,7 @@ static int ecp_mul_comb_core ( const mbedtls_ecp_group* grp, mbedtls_ecp_point* 
   mbedtls_mpi tmp[4];
   size_t i;
 
-  mbedtls_ecp_point_init ( &Txi );
+  mbedtls_ecp_point_init (&Txi );
   mpi_init_many ( tmp, sizeof ( tmp ) / sizeof ( mbedtls_mpi ) );
 
 #if !defined(MBEDTLS_ECP_RESTARTABLE)
@@ -2285,7 +2287,7 @@ static int ecp_mul_comb_core ( const mbedtls_ecp_group* grp, mbedtls_ecp_point* 
 
 cleanup:
 
-  mbedtls_ecp_point_free ( &Txi );
+  mbedtls_ecp_point_free (&Txi );
   mpi_free_many ( tmp, sizeof ( tmp ) / sizeof ( mbedtls_mpi ) );
 
 #if defined(MBEDTLS_ECP_RESTARTABLE)
@@ -2324,11 +2326,11 @@ static int ecp_comb_recode_scalar ( const mbedtls_ecp_group* grp,
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
   mbedtls_mpi M, mm;
 
-  mbedtls_mpi_init ( &M );
-  mbedtls_mpi_init ( &mm );
+  mbedtls_mpi_init (&M );
+  mbedtls_mpi_init (&mm );
 
   /* N is always odd (see above), just make extra sure */
-  if ( mbedtls_mpi_get_bit ( &grp->N, 0 ) != 1 )
+  if ( mbedtls_mpi_get_bit (&grp->N, 0 ) != 1 )
   {
     return MBEDTLS_ERR_ECP_BAD_INPUT_DATA;
   }
@@ -2337,16 +2339,16 @@ static int ecp_comb_recode_scalar ( const mbedtls_ecp_group* grp,
   *parity_trick = ( mbedtls_mpi_get_bit ( m, 0 ) == 0 );
 
   /* execute parity fix in constant time */
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_copy ( &M, m ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_mpi ( &mm, &grp->N, m ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_safe_cond_assign ( &M, &mm, *parity_trick ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_copy (&M, m ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_mpi (&mm, &grp->N, m ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_safe_cond_assign (&M, &mm, *parity_trick ) );
 
   /* actual scalar recoding */
   ecp_comb_recode_core ( k, d, w, &M );
 
 cleanup:
-  mbedtls_mpi_free ( &mm );
-  mbedtls_mpi_free ( &M );
+  mbedtls_mpi_free (&mm );
+  mbedtls_mpi_free (&M );
 
   return ret;
 }
@@ -2365,7 +2367,7 @@ static int ecp_mul_comb_after_precomp ( const mbedtls_ecp_group* grp,
                                         unsigned char T_size,
                                         unsigned char w,
                                         size_t d,
-                                        int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                        int (*f_rng ) ( void*, unsigned char*, size_t ),
                                         void* p_rng,
                                         mbedtls_ecp_restart_ctx* rs_ctx )
 {
@@ -2472,7 +2474,7 @@ static unsigned char ecp_pick_window_size ( const mbedtls_ecp_group* grp,
    */
 #if (MBEDTLS_ECP_WINDOW_SIZE < 6)
 
-  if ( ( !p_eq_g || !ecp_group_is_static_comb_table ( grp ) ) && w > MBEDTLS_ECP_WINDOW_SIZE )
+  if ( (!p_eq_g || !ecp_group_is_static_comb_table ( grp ) ) && w > MBEDTLS_ECP_WINDOW_SIZE )
   {
     w = MBEDTLS_ECP_WINDOW_SIZE;
   }
@@ -2502,7 +2504,7 @@ static unsigned char ecp_pick_window_size ( const mbedtls_ecp_group* grp,
  */
 static int ecp_mul_comb ( mbedtls_ecp_group* grp, mbedtls_ecp_point* R,
                           const mbedtls_mpi* m, const mbedtls_ecp_point* P,
-                          int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                          int (*f_rng ) ( void*, unsigned char*, size_t ),
                           void* p_rng,
                           mbedtls_ecp_restart_ctx* rs_ctx )
 {
@@ -2516,8 +2518,8 @@ static int ecp_mul_comb ( mbedtls_ecp_group* grp, mbedtls_ecp_point* R,
 
   /* Is P the base point ? */
 #if MBEDTLS_ECP_FIXED_POINT_OPTIM == 1
-  p_eq_g = ( MPI_ECP_CMP ( &P->Y, &grp->G.Y ) == 0 &&
-             MPI_ECP_CMP ( &P->X, &grp->G.X ) == 0 );
+  p_eq_g = ( MPI_ECP_CMP (&P->Y, &grp->G.Y ) == 0 &&
+             MPI_ECP_CMP (&P->X, &grp->G.X ) == 0 );
 #else
   p_eq_g = 0;
 #endif
@@ -2562,14 +2564,14 @@ static int ecp_mul_comb ( mbedtls_ecp_group* grp, mbedtls_ecp_point* R,
 
       for ( i = 0; i < T_size; i++ )
       {
-        mbedtls_ecp_point_init ( &T[i] );
+        mbedtls_ecp_point_init (&T[i] );
       }
 
       T_ok = 0;
     }
 
   /* Compute table (or finish computing it) if not done already */
-  if ( !T_ok )
+  if (!T_ok )
   {
     MBEDTLS_MPI_CHK ( ecp_precompute_comb ( grp, T, P, w, d, rs_ctx ) );
 
@@ -2613,7 +2615,7 @@ cleanup:
   {
     for ( i = 0; i < T_size; i++ )
     {
-      mbedtls_ecp_point_free ( &T[i] );
+      mbedtls_ecp_point_free (&T[i] );
     }
 
     mbedtls_free ( T );
@@ -2671,9 +2673,9 @@ static int ecp_normalize_mxz ( const mbedtls_ecp_group* grp, mbedtls_ecp_point* 
   return MBEDTLS_ERR_ECP_FEATURE_UNAVAILABLE;
 #else
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
-  MPI_ECP_INV ( &P->Z, &P->Z );
-  MPI_ECP_MUL ( &P->X, &P->X, &P->Z );
-  MPI_ECP_LSET ( &P->Z, 1 );
+  MPI_ECP_INV (&P->Z, &P->Z );
+  MPI_ECP_MUL (&P->X, &P->X, &P->Z );
+  MPI_ECP_LSET (&P->Z, 1 );
 
 cleanup:
   return ret;
@@ -2689,7 +2691,7 @@ cleanup:
  * Cost: 2M
  */
 static int ecp_randomize_mxz ( const mbedtls_ecp_group* grp, mbedtls_ecp_point* P,
-                               int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
+                               int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
 {
 #if defined(MBEDTLS_ECP_RANDOMIZE_MXZ_ALT)
 
@@ -2705,16 +2707,16 @@ static int ecp_randomize_mxz ( const mbedtls_ecp_group* grp, mbedtls_ecp_point* 
 #else
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
   mbedtls_mpi l;
-  mbedtls_mpi_init ( &l );
+  mbedtls_mpi_init (&l );
 
   /* Generate l such that 1 < l < p */
-  MPI_ECP_RAND ( &l );
+  MPI_ECP_RAND (&l );
 
-  MPI_ECP_MUL ( &P->X, &P->X, &l );
-  MPI_ECP_MUL ( &P->Z, &P->Z, &l );
+  MPI_ECP_MUL (&P->X, &P->X, &l );
+  MPI_ECP_MUL (&P->Z, &P->Z, &l );
 
 cleanup:
-  mbedtls_mpi_free ( &l );
+  mbedtls_mpi_free (&l );
 
   if ( ret == MBEDTLS_ERR_MPI_NOT_ACCEPTABLE )
   {
@@ -2760,24 +2762,24 @@ static int ecp_double_add_mxz ( const mbedtls_ecp_group* grp,
 #else
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
 
-  MPI_ECP_ADD ( &T[0], &P->X,   &P->Z ); /* Pp := PX + PZ                    */
-  MPI_ECP_SUB ( &T[1], &P->X,   &P->Z ); /* Pm := PX - PZ                    */
-  MPI_ECP_ADD ( &T[2], &Q->X,   &Q->Z ); /* Qp := QX + XZ                    */
-  MPI_ECP_SUB ( &T[3], &Q->X,   &Q->Z ); /* Qm := QX - QZ                    */
-  MPI_ECP_MUL ( &T[3], &T[3],   &T[0] ); /* Qm * Pp                          */
-  MPI_ECP_MUL ( &T[2], &T[2],   &T[1] ); /* Qp * Pm                          */
-  MPI_ECP_SQR ( &T[0], &T[0] );         /* Pp^2                             */
-  MPI_ECP_SQR ( &T[1], &T[1] );         /* Pm^2                             */
-  MPI_ECP_MUL ( &R->X, &T[0],   &T[1] ); /* Pp^2 * Pm^2                      */
-  MPI_ECP_SUB ( &T[0], &T[0],   &T[1] ); /* Pp^2 - Pm^2                      */
-  MPI_ECP_MUL ( &R->Z, &grp->A, &T[0] ); /* A * (Pp^2 - Pm^2)                */
-  MPI_ECP_ADD ( &R->Z, &T[1],   &R->Z ); /* [ A * (Pp^2-Pm^2) ] + Pm^2       */
-  MPI_ECP_ADD ( &S->X, &T[3],   &T[2] ); /* Qm*Pp + Qp*Pm                    */
-  MPI_ECP_SQR ( &S->X, &S->X );         /* (Qm*Pp + Qp*Pm)^2                */
-  MPI_ECP_SUB ( &S->Z, &T[3],   &T[2] ); /* Qm*Pp - Qp*Pm                    */
-  MPI_ECP_SQR ( &S->Z, &S->Z );         /* (Qm*Pp - Qp*Pm)^2                */
-  MPI_ECP_MUL ( &S->Z, d,       &S->Z ); /* d * ( Qm*Pp - Qp*Pm )^2          */
-  MPI_ECP_MUL ( &R->Z, &T[0],   &R->Z ); /* [A*(Pp^2-Pm^2)+Pm^2]*(Pp^2-Pm^2) */
+  MPI_ECP_ADD (&T[0], &P->X, &P->Z ); /* Pp := PX + PZ                    */
+  MPI_ECP_SUB (&T[1], &P->X, &P->Z ); /* Pm := PX - PZ                    */
+  MPI_ECP_ADD (&T[2], &Q->X, &Q->Z ); /* Qp := QX + XZ                    */
+  MPI_ECP_SUB (&T[3], &Q->X, &Q->Z ); /* Qm := QX - QZ                    */
+  MPI_ECP_MUL (&T[3], &T[3], &T[0] ); /* Qm * Pp                          */
+  MPI_ECP_MUL (&T[2], &T[2], &T[1] ); /* Qp * Pm                          */
+  MPI_ECP_SQR (&T[0], &T[0] );      /* Pp^2                             */
+  MPI_ECP_SQR (&T[1], &T[1] );      /* Pm^2                             */
+  MPI_ECP_MUL (&R->X, &T[0], &T[1] ); /* Pp^2 * Pm^2                      */
+  MPI_ECP_SUB (&T[0], &T[0], &T[1] ); /* Pp^2 - Pm^2                      */
+  MPI_ECP_MUL (&R->Z, &grp->A, &T[0] ); /* A * (Pp^2 - Pm^2)                */
+  MPI_ECP_ADD (&R->Z, &T[1], &R->Z ); /* [ A * (Pp^2-Pm^2) ] + Pm^2       */
+  MPI_ECP_ADD (&S->X, &T[3], &T[2] ); /* Qm*Pp + Qp*Pm                    */
+  MPI_ECP_SQR (&S->X, &S->X );      /* (Qm*Pp + Qp*Pm)^2                */
+  MPI_ECP_SUB (&S->Z, &T[3], &T[2] ); /* Qm*Pp - Qp*Pm                    */
+  MPI_ECP_SQR (&S->Z, &S->Z );      /* (Qm*Pp - Qp*Pm)^2                */
+  MPI_ECP_MUL (&S->Z, d, &S->Z ); /* d * ( Qm*Pp - Qp*Pm )^2          */
+  MPI_ECP_MUL (&R->Z, &T[0], &R->Z ); /* [A*(Pp^2-Pm^2)+Pm^2]*(Pp^2-Pm^2) */
 
 cleanup:
 
@@ -2791,7 +2793,7 @@ cleanup:
  */
 static int ecp_mul_mxz ( mbedtls_ecp_group* grp, mbedtls_ecp_point* R,
                          const mbedtls_mpi* m, const mbedtls_ecp_point* P,
-                         int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                         int (*f_rng ) ( void*, unsigned char*, size_t ),
                          void* p_rng )
 {
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
@@ -2800,8 +2802,8 @@ static int ecp_mul_mxz ( mbedtls_ecp_group* grp, mbedtls_ecp_point* R,
   mbedtls_ecp_point RP;
   mbedtls_mpi PX;
   mbedtls_mpi tmp[4];
-  mbedtls_ecp_point_init ( &RP );
-  mbedtls_mpi_init ( &PX );
+  mbedtls_ecp_point_init (&RP );
+  mbedtls_mpi_init (&PX );
 
   mpi_init_many ( tmp, sizeof ( tmp ) / sizeof ( mbedtls_mpi ) );
 
@@ -2811,16 +2813,16 @@ static int ecp_mul_mxz ( mbedtls_ecp_group* grp, mbedtls_ecp_point* R,
   }
 
   /* Save PX and read from P before writing to R, in case P == R */
-  MPI_ECP_MOV ( &PX, &P->X );
-  MBEDTLS_MPI_CHK ( mbedtls_ecp_copy ( &RP, P ) );
+  MPI_ECP_MOV (&PX, &P->X );
+  MBEDTLS_MPI_CHK ( mbedtls_ecp_copy (&RP, P ) );
 
   /* Set R to zero in modified x/z coordinates */
-  MPI_ECP_LSET ( &R->X, 1 );
-  MPI_ECP_LSET ( &R->Z, 0 );
-  mbedtls_mpi_free ( &R->Y );
+  MPI_ECP_LSET (&R->X, 1 );
+  MPI_ECP_LSET (&R->Z, 0 );
+  mbedtls_mpi_free (&R->Y );
 
   /* RP.X might be slightly larger than P, so reduce it */
-  MOD_ADD ( &RP.X );
+  MOD_ADD (&RP.X );
 
   /* Randomize coordinates of the starting point */
   MBEDTLS_MPI_CHK ( ecp_randomize_mxz ( grp, &RP, f_rng, p_rng ) );
@@ -2838,11 +2840,11 @@ static int ecp_mul_mxz ( mbedtls_ecp_group* grp, mbedtls_ecp_point* R,
      *  else   double_add( R, RP, R, RP )
      * but using safe conditional swaps to avoid leaks
      */
-    MPI_ECP_COND_SWAP ( &R->X, &RP.X, b );
-    MPI_ECP_COND_SWAP ( &R->Z, &RP.Z, b );
+    MPI_ECP_COND_SWAP (&R->X, &RP.X, b );
+    MPI_ECP_COND_SWAP (&R->Z, &RP.Z, b );
     MBEDTLS_MPI_CHK ( ecp_double_add_mxz ( grp, R, &RP, R, &RP, &PX, tmp ) );
-    MPI_ECP_COND_SWAP ( &R->X, &RP.X, b );
-    MPI_ECP_COND_SWAP ( &R->Z, &RP.Z, b );
+    MPI_ECP_COND_SWAP (&R->X, &RP.X, b );
+    MPI_ECP_COND_SWAP (&R->Z, &RP.Z, b );
   }
 
   /*
@@ -2860,8 +2862,8 @@ static int ecp_mul_mxz ( mbedtls_ecp_group* grp, mbedtls_ecp_point* R,
   MBEDTLS_MPI_CHK ( ecp_normalize_mxz ( grp, R ) );
 
 cleanup:
-  mbedtls_ecp_point_free ( &RP );
-  mbedtls_mpi_free ( &PX );
+  mbedtls_ecp_point_free (&RP );
+  mbedtls_mpi_free (&PX );
 
   mpi_free_many ( tmp, sizeof ( tmp ) / sizeof ( mbedtls_mpi ) );
   return ret;
@@ -2877,7 +2879,7 @@ cleanup:
  */
 static int ecp_mul_restartable_internal ( mbedtls_ecp_group* grp, mbedtls_ecp_point* R,
     const mbedtls_mpi* m, const mbedtls_ecp_point* P,
-    int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng,
+    int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng,
     mbedtls_ecp_restart_ctx* rs_ctx )
 {
   int ret = MBEDTLS_ERR_ECP_BAD_INPUT_DATA;
@@ -2912,7 +2914,7 @@ static int ecp_mul_restartable_internal ( mbedtls_ecp_group* grp, mbedtls_ecp_po
 #endif
 
   /* skip argument check when restarting */
-  if ( !restarting )
+  if (!restarting )
   {
     /* check_privkey is free */
     MBEDTLS_ECP_BUDGET ( MBEDTLS_ECP_OPS_CHK );
@@ -2968,7 +2970,7 @@ cleanup:
  */
 int mbedtls_ecp_mul_restartable ( mbedtls_ecp_group* grp, mbedtls_ecp_point* R,
                                   const mbedtls_mpi* m, const mbedtls_ecp_point* P,
-                                  int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng,
+                                  int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng,
                                   mbedtls_ecp_restart_ctx* rs_ctx )
 {
   if ( f_rng == NULL )
@@ -2984,10 +2986,11 @@ int mbedtls_ecp_mul_restartable ( mbedtls_ecp_group* grp, mbedtls_ecp_point* R,
  */
 int mbedtls_ecp_mul ( mbedtls_ecp_group* grp, mbedtls_ecp_point* R,
                       const mbedtls_mpi* m, const mbedtls_ecp_point* P,
-                      int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
+                      int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
 {
   return mbedtls_ecp_mul_restartable ( grp, R, m, P, f_rng, p_rng, NULL );
 }
+
 #endif /* MBEDTLS_ECP_C */
 
 #if defined(MBEDTLS_ECP_SHORT_WEIERSTRASS_ENABLED)
@@ -3001,36 +3004,37 @@ static int ecp_check_pubkey_sw ( const mbedtls_ecp_group* grp, const mbedtls_ecp
   mbedtls_mpi YY, RHS;
 
   /* pt coordinates must be normalized for our checks */
-  if ( mbedtls_mpi_cmp_int ( &pt->X, 0 ) < 0 ||
-       mbedtls_mpi_cmp_int ( &pt->Y, 0 ) < 0 ||
-       mbedtls_mpi_cmp_mpi ( &pt->X, &grp->P ) >= 0 ||
-       mbedtls_mpi_cmp_mpi ( &pt->Y, &grp->P ) >= 0 )
+  if ( mbedtls_mpi_cmp_int (&pt->X, 0 ) < 0 ||
+       mbedtls_mpi_cmp_int (&pt->Y, 0 ) < 0 ||
+       mbedtls_mpi_cmp_mpi (&pt->X, &grp->P ) >= 0 ||
+       mbedtls_mpi_cmp_mpi (&pt->Y, &grp->P ) >= 0 )
   {
     return MBEDTLS_ERR_ECP_INVALID_KEY;
   }
 
-  mbedtls_mpi_init ( &YY );
-  mbedtls_mpi_init ( &RHS );
+  mbedtls_mpi_init (&YY );
+  mbedtls_mpi_init (&RHS );
 
   /*
    * YY = Y^2
    * RHS = X^3 + A X + B
    */
-  MPI_ECP_SQR ( &YY,  &pt->Y );
+  MPI_ECP_SQR (&YY, &pt->Y );
   MBEDTLS_MPI_CHK ( ecp_sw_rhs ( grp, &RHS, &pt->X ) );
 
-  if ( MPI_ECP_CMP ( &YY, &RHS ) != 0 )
+  if ( MPI_ECP_CMP (&YY, &RHS ) != 0 )
   {
     ret = MBEDTLS_ERR_ECP_INVALID_KEY;
   }
 
 cleanup:
 
-  mbedtls_mpi_free ( &YY );
-  mbedtls_mpi_free ( &RHS );
+  mbedtls_mpi_free (&YY );
+  mbedtls_mpi_free (&RHS );
 
   return ret;
 }
+
 #endif /* MBEDTLS_ECP_SHORT_WEIERSTRASS_ENABLED */
 
 #if defined(MBEDTLS_ECP_C)
@@ -3047,7 +3051,7 @@ static int mbedtls_ecp_mul_shortcuts ( mbedtls_ecp_group* grp,
 {
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
   mbedtls_mpi tmp;
-  mbedtls_mpi_init ( &tmp );
+  mbedtls_mpi_init (&tmp );
 
   if ( mbedtls_mpi_cmp_int ( m, 0 ) == 0 )
   {
@@ -3063,7 +3067,7 @@ static int mbedtls_ecp_mul_shortcuts ( mbedtls_ecp_group* grp,
   {
     MBEDTLS_MPI_CHK ( mbedtls_ecp_check_pubkey ( grp, P ) );
     MBEDTLS_MPI_CHK ( mbedtls_ecp_copy ( R, P ) );
-    MPI_ECP_NEG ( &R->Y );
+    MPI_ECP_NEG (&R->Y );
   }
   else
   {
@@ -3072,7 +3076,7 @@ static int mbedtls_ecp_mul_shortcuts ( mbedtls_ecp_group* grp,
   }
 
 cleanup:
-  mbedtls_mpi_free ( &tmp );
+  mbedtls_mpi_free (&tmp );
 
   return ret;
 }
@@ -3101,7 +3105,7 @@ int mbedtls_ecp_muladd_restartable (
     return MBEDTLS_ERR_ECP_FEATURE_UNAVAILABLE;
   }
 
-  mbedtls_ecp_point_init ( &mP );
+  mbedtls_ecp_point_init (&mP );
   mpi_init_many ( tmp, sizeof ( tmp ) / sizeof ( mbedtls_mpi ) );
 
   ECP_RS_ENTER ( ma );
@@ -3199,7 +3203,7 @@ cleanup:
 
 #endif /* MBEDTLS_ECP_INTERNAL_ALT */
 
-  mbedtls_ecp_point_free ( &mP );
+  mbedtls_ecp_point_free (&mP );
 
   ECP_RS_LEAVE ( ma );
 
@@ -3216,6 +3220,7 @@ int mbedtls_ecp_muladd ( mbedtls_ecp_group* grp, mbedtls_ecp_point* R,
 {
   return mbedtls_ecp_muladd_restartable ( grp, R, m, P, n, Q, NULL );
 }
+
 #endif /* MBEDTLS_ECP_SHORT_WEIERSTRASS_ENABLED */
 #endif /* MBEDTLS_ECP_C */
 
@@ -3244,9 +3249,9 @@ static const mbedtls_mpi_uint x25519_bad_point_2[] =
   MBEDTLS_BYTES_TO_T_UINT_8 ( 0xd8, 0x22, 0x4e, 0xdd, 0xd0, 0x9f, 0x11, 0x57 ),
 };
 static const mbedtls_mpi ecp_x25519_bad_point_1 = ECP_MPI_INIT_ARRAY (
-      x25519_bad_point_1 );
+    x25519_bad_point_1 );
 static const mbedtls_mpi ecp_x25519_bad_point_2 = ECP_MPI_INIT_ARRAY (
-      x25519_bad_point_2 );
+    x25519_bad_point_2 );
 #endif /* MBEDTLS_ECP_DP_CURVE25519_ENABLED */
 
 /*
@@ -3261,21 +3266,21 @@ static int ecp_check_bad_points_mx ( const mbedtls_mpi* X, const mbedtls_mpi* P,
   int ret;
   mbedtls_mpi XmP;
 
-  mbedtls_mpi_init ( &XmP );
+  mbedtls_mpi_init (&XmP );
 
   /* Reduce X mod P so that we only need to check values less than P.
    * We know X < 2^256 so we can proceed by subtraction. */
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_copy ( &XmP, X ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_copy (&XmP, X ) );
 
-  while ( mbedtls_mpi_cmp_mpi ( &XmP, P ) >= 0 )
+  while ( mbedtls_mpi_cmp_mpi (&XmP, P ) >= 0 )
   {
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_mpi ( &XmP, &XmP, P ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_mpi (&XmP, &XmP, P ) );
   }
 
   /* Check against the known bad values that are less than P. For Curve448
    * these are 0, 1 and -1. For Curve25519 we check the values less than P
    * from the following list: https://cr.yp.to/ecdh.html#validate */
-  if ( mbedtls_mpi_cmp_int ( &XmP, 1 ) <= 0 ) /* takes care of 0 and 1 */
+  if ( mbedtls_mpi_cmp_int (&XmP, 1 ) <= 0 ) /* takes care of 0 and 1 */
   {
     ret = MBEDTLS_ERR_ECP_INVALID_KEY;
     goto cleanup;
@@ -3285,13 +3290,13 @@ static int ecp_check_bad_points_mx ( const mbedtls_mpi* X, const mbedtls_mpi* P,
 
   if ( grp_id == MBEDTLS_ECP_DP_CURVE25519 )
   {
-    if ( mbedtls_mpi_cmp_mpi ( &XmP, &ecp_x25519_bad_point_1 ) == 0 )
+    if ( mbedtls_mpi_cmp_mpi (&XmP, &ecp_x25519_bad_point_1 ) == 0 )
     {
       ret = MBEDTLS_ERR_ECP_INVALID_KEY;
       goto cleanup;
     }
 
-    if ( mbedtls_mpi_cmp_mpi ( &XmP, &ecp_x25519_bad_point_2 ) == 0 )
+    if ( mbedtls_mpi_cmp_mpi (&XmP, &ecp_x25519_bad_point_2 ) == 0 )
     {
       ret = MBEDTLS_ERR_ECP_INVALID_KEY;
       goto cleanup;
@@ -3303,9 +3308,9 @@ static int ecp_check_bad_points_mx ( const mbedtls_mpi* X, const mbedtls_mpi* P,
 #endif
 
   /* Final check: check if XmP + 1 is P (final because it changes XmP!) */
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_add_int ( &XmP, &XmP, 1 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_add_int (&XmP, &XmP, 1 ) );
 
-  if ( mbedtls_mpi_cmp_mpi ( &XmP, P ) == 0 )
+  if ( mbedtls_mpi_cmp_mpi (&XmP, P ) == 0 )
   {
     ret = MBEDTLS_ERR_ECP_INVALID_KEY;
     goto cleanup;
@@ -3314,7 +3319,7 @@ static int ecp_check_bad_points_mx ( const mbedtls_mpi* X, const mbedtls_mpi* P,
   ret = 0;
 
 cleanup:
-  mbedtls_mpi_free ( &XmP );
+  mbedtls_mpi_free (&XmP );
 
   return ret;
 }
@@ -3327,7 +3332,7 @@ static int ecp_check_pubkey_mx ( const mbedtls_ecp_group* grp, const mbedtls_ecp
   /* [Curve25519 p. 5] Just check X is the correct number of bytes */
   /* Allow any public value, if it's too big then we'll just reduce it mod p
    * (RFC 7748 sec. 5 para. 3). */
-  if ( mbedtls_mpi_size ( &pt->X ) > ( grp->nbits + 7 ) / 8 )
+  if ( mbedtls_mpi_size (&pt->X ) > ( grp->nbits + 7 ) / 8 )
   {
     return MBEDTLS_ERR_ECP_INVALID_KEY;
   }
@@ -3335,13 +3340,14 @@ static int ecp_check_pubkey_mx ( const mbedtls_ecp_group* grp, const mbedtls_ecp
   /* Implicit in all standards (as they don't consider negative numbers):
    * X must be non-negative. This is normally ensured by the way it's
    * encoded for transmission, but let's be extra sure. */
-  if ( mbedtls_mpi_cmp_int ( &pt->X, 0 ) < 0 )
+  if ( mbedtls_mpi_cmp_int (&pt->X, 0 ) < 0 )
   {
     return MBEDTLS_ERR_ECP_INVALID_KEY;
   }
 
-  return ecp_check_bad_points_mx ( &pt->X, &grp->P, grp->id );
+  return ecp_check_bad_points_mx (&pt->X, &grp->P, grp->id );
 }
+
 #endif /* MBEDTLS_ECP_MONTGOMERY_ENABLED */
 
 /*
@@ -3351,7 +3357,7 @@ int mbedtls_ecp_check_pubkey ( const mbedtls_ecp_group* grp,
                                const mbedtls_ecp_point* pt )
 {
   /* Must use affine coordinates */
-  if ( mbedtls_mpi_cmp_int ( &pt->Z, 1 ) != 0 )
+  if ( mbedtls_mpi_cmp_int (&pt->Z, 1 ) != 0 )
   {
     return MBEDTLS_ERR_ECP_INVALID_KEY;
   }
@@ -3428,7 +3434,7 @@ int mbedtls_ecp_check_privkey ( const mbedtls_ecp_group* grp,
 MBEDTLS_STATIC_TESTABLE
 int mbedtls_ecp_gen_privkey_mx ( size_t high_bit,
                                  mbedtls_mpi* d,
-                                 int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                 int (*f_rng ) ( void*, unsigned char*, size_t ),
                                  void* p_rng )
 {
   int ret = MBEDTLS_ERR_ECP_BAD_INPUT_DATA;
@@ -3457,12 +3463,13 @@ int mbedtls_ecp_gen_privkey_mx ( size_t high_bit,
 cleanup:
   return ret;
 }
+
 #endif /* MBEDTLS_ECP_MONTGOMERY_ENABLED */
 
 #if defined(MBEDTLS_ECP_SHORT_WEIERSTRASS_ENABLED)
 static int mbedtls_ecp_gen_privkey_sw (
   const mbedtls_mpi* N, mbedtls_mpi* d,
-  int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
+  int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
 {
   int ret = mbedtls_mpi_random ( d, 1, N, f_rng, p_rng );
 
@@ -3475,6 +3482,7 @@ static int mbedtls_ecp_gen_privkey_sw (
     return ret;
   }
 }
+
 #endif /* MBEDTLS_ECP_SHORT_WEIERSTRASS_ENABLED */
 
 /*
@@ -3482,7 +3490,7 @@ static int mbedtls_ecp_gen_privkey_sw (
  */
 int mbedtls_ecp_gen_privkey ( const mbedtls_ecp_group* grp,
                               mbedtls_mpi* d,
-                              int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                              int (*f_rng ) ( void*, unsigned char*, size_t ),
                               void* p_rng )
 {
 #if defined(MBEDTLS_ECP_MONTGOMERY_ENABLED)
@@ -3498,7 +3506,7 @@ int mbedtls_ecp_gen_privkey ( const mbedtls_ecp_group* grp,
 
   if ( mbedtls_ecp_get_type ( grp ) == MBEDTLS_ECP_TYPE_SHORT_WEIERSTRASS )
   {
-    return mbedtls_ecp_gen_privkey_sw ( &grp->N, d, f_rng, p_rng );
+    return mbedtls_ecp_gen_privkey_sw (&grp->N, d, f_rng, p_rng );
   }
 
 #endif /* MBEDTLS_ECP_SHORT_WEIERSTRASS_ENABLED */
@@ -3513,7 +3521,7 @@ int mbedtls_ecp_gen_privkey ( const mbedtls_ecp_group* grp,
 int mbedtls_ecp_gen_keypair_base ( mbedtls_ecp_group* grp,
                                    const mbedtls_ecp_point* G,
                                    mbedtls_mpi* d, mbedtls_ecp_point* Q,
-                                   int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                   int (*f_rng ) ( void*, unsigned char*, size_t ),
                                    void* p_rng )
 {
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
@@ -3529,7 +3537,7 @@ cleanup:
  */
 int mbedtls_ecp_gen_keypair ( mbedtls_ecp_group* grp,
                               mbedtls_mpi* d, mbedtls_ecp_point* Q,
-                              int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                              int (*f_rng ) ( void*, unsigned char*, size_t ),
                               void* p_rng )
 {
   return mbedtls_ecp_gen_keypair_base ( grp, &grp->G, d, Q, f_rng, p_rng );
@@ -3539,17 +3547,18 @@ int mbedtls_ecp_gen_keypair ( mbedtls_ecp_group* grp,
  * Generate a keypair, prettier wrapper
  */
 int mbedtls_ecp_gen_key ( mbedtls_ecp_group_id grp_id, mbedtls_ecp_keypair* key,
-                          int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
+                          int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
 {
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
 
-  if ( ( ret = mbedtls_ecp_group_load ( &key->grp, grp_id ) ) != 0 )
+  if ( ( ret = mbedtls_ecp_group_load (&key->grp, grp_id ) ) != 0 )
   {
     return ret;
   }
 
-  return mbedtls_ecp_gen_keypair ( &key->grp, &key->d, &key->Q, f_rng, p_rng );
+  return mbedtls_ecp_gen_keypair (&key->grp, &key->d, &key->Q, f_rng, p_rng );
 }
+
 #endif /* MBEDTLS_ECP_C */
 
 int mbedtls_ecp_set_public_key ( mbedtls_ecp_group_id grp_id,
@@ -3561,7 +3570,7 @@ int mbedtls_ecp_set_public_key ( mbedtls_ecp_group_id grp_id,
   if ( key->grp.id == MBEDTLS_ECP_DP_NONE )
   {
     /* Group not set yet */
-    if ( ( ret = mbedtls_ecp_group_load ( &key->grp, grp_id ) ) != 0 )
+    if ( ( ret = mbedtls_ecp_group_load (&key->grp, grp_id ) ) != 0 )
     {
       return ret;
     }
@@ -3572,7 +3581,7 @@ int mbedtls_ecp_set_public_key ( mbedtls_ecp_group_id grp_id,
     return MBEDTLS_ERR_ECP_BAD_INPUT_DATA;
   }
 
-  return mbedtls_ecp_copy ( &key->Q, Q );
+  return mbedtls_ecp_copy (&key->Q, Q );
 }
 
 
@@ -3586,7 +3595,7 @@ int mbedtls_ecp_read_key ( mbedtls_ecp_group_id grp_id, mbedtls_ecp_keypair* key
 {
   int ret = 0;
 
-  if ( ( ret = mbedtls_ecp_group_load ( &key->grp, grp_id ) ) != 0 )
+  if ( ( ret = mbedtls_ecp_group_load (&key->grp, grp_id ) ) != 0 )
   {
     return ret;
   }
@@ -3595,7 +3604,7 @@ int mbedtls_ecp_read_key ( mbedtls_ecp_group_id grp_id, mbedtls_ecp_keypair* key
 
 #if defined(MBEDTLS_ECP_MONTGOMERY_ENABLED)
 
-  if ( mbedtls_ecp_get_type ( &key->grp ) == MBEDTLS_ECP_TYPE_MONTGOMERY )
+  if ( mbedtls_ecp_get_type (&key->grp ) == MBEDTLS_ECP_TYPE_MONTGOMERY )
   {
     /*
      * Mask the key as mandated by RFC7748 for Curve25519 and Curve448.
@@ -3607,23 +3616,23 @@ int mbedtls_ecp_read_key ( mbedtls_ecp_group_id grp_id, mbedtls_ecp_keypair* key
         return MBEDTLS_ERR_ECP_INVALID_KEY;
       }
 
-      MBEDTLS_MPI_CHK ( mbedtls_mpi_read_binary_le ( &key->d, buf, buflen ) );
+      MBEDTLS_MPI_CHK ( mbedtls_mpi_read_binary_le (&key->d, buf, buflen ) );
 
       /* Set the three least significant bits to 0 */
-      MBEDTLS_MPI_CHK ( mbedtls_mpi_set_bit ( &key->d, 0, 0 ) );
-      MBEDTLS_MPI_CHK ( mbedtls_mpi_set_bit ( &key->d, 1, 0 ) );
-      MBEDTLS_MPI_CHK ( mbedtls_mpi_set_bit ( &key->d, 2, 0 ) );
+      MBEDTLS_MPI_CHK ( mbedtls_mpi_set_bit (&key->d, 0, 0 ) );
+      MBEDTLS_MPI_CHK ( mbedtls_mpi_set_bit (&key->d, 1, 0 ) );
+      MBEDTLS_MPI_CHK ( mbedtls_mpi_set_bit (&key->d, 2, 0 ) );
 
       /* Set the most significant bit to 0 */
       MBEDTLS_MPI_CHK (
-        mbedtls_mpi_set_bit ( &key->d,
-                              ECP_CURVE25519_KEY_SIZE * 8 - 1, 0 )
+        mbedtls_mpi_set_bit (&key->d,
+                             ECP_CURVE25519_KEY_SIZE * 8 - 1, 0 )
       );
 
       /* Set the second most significant bit to 1 */
       MBEDTLS_MPI_CHK (
-        mbedtls_mpi_set_bit ( &key->d,
-                              ECP_CURVE25519_KEY_SIZE * 8 - 2, 1 )
+        mbedtls_mpi_set_bit (&key->d,
+                             ECP_CURVE25519_KEY_SIZE * 8 - 2, 1 )
       );
     }
     else if ( grp_id == MBEDTLS_ECP_DP_CURVE448 )
@@ -3633,16 +3642,16 @@ int mbedtls_ecp_read_key ( mbedtls_ecp_group_id grp_id, mbedtls_ecp_keypair* key
         return MBEDTLS_ERR_ECP_INVALID_KEY;
       }
 
-      MBEDTLS_MPI_CHK ( mbedtls_mpi_read_binary_le ( &key->d, buf, buflen ) );
+      MBEDTLS_MPI_CHK ( mbedtls_mpi_read_binary_le (&key->d, buf, buflen ) );
 
       /* Set the two least significant bits to 0 */
-      MBEDTLS_MPI_CHK ( mbedtls_mpi_set_bit ( &key->d, 0, 0 ) );
-      MBEDTLS_MPI_CHK ( mbedtls_mpi_set_bit ( &key->d, 1, 0 ) );
+      MBEDTLS_MPI_CHK ( mbedtls_mpi_set_bit (&key->d, 0, 0 ) );
+      MBEDTLS_MPI_CHK ( mbedtls_mpi_set_bit (&key->d, 1, 0 ) );
 
       /* Set the most significant bit to 1 */
       MBEDTLS_MPI_CHK (
-        mbedtls_mpi_set_bit ( &key->d,
-                              ECP_CURVE448_KEY_SIZE * 8 - 1, 1 )
+        mbedtls_mpi_set_bit (&key->d,
+                             ECP_CURVE448_KEY_SIZE * 8 - 1, 1 )
       );
     }
   }
@@ -3650,23 +3659,23 @@ int mbedtls_ecp_read_key ( mbedtls_ecp_group_id grp_id, mbedtls_ecp_keypair* key
 #endif
 #if defined(MBEDTLS_ECP_SHORT_WEIERSTRASS_ENABLED)
 
-  if ( mbedtls_ecp_get_type ( &key->grp ) == MBEDTLS_ECP_TYPE_SHORT_WEIERSTRASS )
+  if ( mbedtls_ecp_get_type (&key->grp ) == MBEDTLS_ECP_TYPE_SHORT_WEIERSTRASS )
   {
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_read_binary ( &key->d, buf, buflen ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_read_binary (&key->d, buf, buflen ) );
   }
 
 #endif
 
   if ( ret == 0 )
   {
-    MBEDTLS_MPI_CHK ( mbedtls_ecp_check_privkey ( &key->grp, &key->d ) );
+    MBEDTLS_MPI_CHK ( mbedtls_ecp_check_privkey (&key->grp, &key->d ) );
   }
 
 cleanup:
 
   if ( ret != 0 )
   {
-    mbedtls_mpi_free ( &key->d );
+    mbedtls_mpi_free (&key->d );
   }
 
   return ret;
@@ -3683,7 +3692,7 @@ int mbedtls_ecp_write_key ( mbedtls_ecp_keypair* key,
 
 #if defined(MBEDTLS_ECP_MONTGOMERY_ENABLED)
 
-  if ( mbedtls_ecp_get_type ( &key->grp ) == MBEDTLS_ECP_TYPE_MONTGOMERY )
+  if ( mbedtls_ecp_get_type (&key->grp ) == MBEDTLS_ECP_TYPE_MONTGOMERY )
   {
     if ( key->grp.id == MBEDTLS_ECP_DP_CURVE25519 )
     {
@@ -3701,15 +3710,15 @@ int mbedtls_ecp_write_key ( mbedtls_ecp_keypair* key,
       }
     }
 
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_write_binary_le ( &key->d, buf, buflen ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_write_binary_le (&key->d, buf, buflen ) );
   }
 
 #endif
 #if defined(MBEDTLS_ECP_SHORT_WEIERSTRASS_ENABLED)
 
-  if ( mbedtls_ecp_get_type ( &key->grp ) == MBEDTLS_ECP_TYPE_SHORT_WEIERSTRASS )
+  if ( mbedtls_ecp_get_type (&key->grp ) == MBEDTLS_ECP_TYPE_SHORT_WEIERSTRASS )
   {
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_write_binary ( &key->d, buf, buflen ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_write_binary (&key->d, buf, buflen ) );
   }
 
 #endif
@@ -3717,6 +3726,7 @@ cleanup:
 
   return ret;
 }
+
 #endif /* MBEDTLS_DEPRECATED_REMOVED */
 
 int mbedtls_ecp_write_key_ext ( const mbedtls_ecp_keypair* key,
@@ -3741,18 +3751,18 @@ int mbedtls_ecp_write_key_ext ( const mbedtls_ecp_keypair* key,
 
 #if defined(MBEDTLS_ECP_MONTGOMERY_ENABLED)
 
-  if ( mbedtls_ecp_get_type ( &key->grp ) == MBEDTLS_ECP_TYPE_MONTGOMERY )
+  if ( mbedtls_ecp_get_type (&key->grp ) == MBEDTLS_ECP_TYPE_MONTGOMERY )
   {
-    return mbedtls_mpi_write_binary_le ( &key->d, buf, len );
+    return mbedtls_mpi_write_binary_le (&key->d, buf, len );
   }
 
 #endif
 
 #if defined(MBEDTLS_ECP_SHORT_WEIERSTRASS_ENABLED)
 
-  if ( mbedtls_ecp_get_type ( &key->grp ) == MBEDTLS_ECP_TYPE_SHORT_WEIERSTRASS )
+  if ( mbedtls_ecp_get_type (&key->grp ) == MBEDTLS_ECP_TYPE_SHORT_WEIERSTRASS )
   {
-    return mbedtls_mpi_write_binary ( &key->d, buf, len );
+    return mbedtls_mpi_write_binary (&key->d, buf, len );
   }
 
 #endif
@@ -3768,8 +3778,8 @@ int mbedtls_ecp_write_public_key ( const mbedtls_ecp_keypair* key,
                                    int format, size_t* olen,
                                    unsigned char* buf, size_t buflen )
 {
-  return mbedtls_ecp_point_write_binary ( &key->grp, &key->Q,
-                                          format, olen, buf, buflen );
+  return mbedtls_ecp_point_write_binary (&key->grp, &key->Q,
+                                         format, olen, buf, buflen );
 }
 
 
@@ -3779,7 +3789,7 @@ int mbedtls_ecp_write_public_key ( const mbedtls_ecp_keypair* key,
  */
 int mbedtls_ecp_check_pub_priv (
   const mbedtls_ecp_keypair* pub, const mbedtls_ecp_keypair* prv,
-  int ( *f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
+  int (*f_rng ) ( void*, unsigned char*, size_t ), void* p_rng )
 {
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
   mbedtls_ecp_point Q;
@@ -3787,44 +3797,45 @@ int mbedtls_ecp_check_pub_priv (
 
   if ( pub->grp.id == MBEDTLS_ECP_DP_NONE ||
        pub->grp.id != prv->grp.id ||
-       mbedtls_mpi_cmp_mpi ( &pub->Q.X, &prv->Q.X ) ||
-       mbedtls_mpi_cmp_mpi ( &pub->Q.Y, &prv->Q.Y ) ||
-       mbedtls_mpi_cmp_mpi ( &pub->Q.Z, &prv->Q.Z ) )
+       mbedtls_mpi_cmp_mpi (&pub->Q.X, &prv->Q.X ) ||
+       mbedtls_mpi_cmp_mpi (&pub->Q.Y, &prv->Q.Y ) ||
+       mbedtls_mpi_cmp_mpi (&pub->Q.Z, &prv->Q.Z ) )
   {
     return MBEDTLS_ERR_ECP_BAD_INPUT_DATA;
   }
 
-  mbedtls_ecp_point_init ( &Q );
-  mbedtls_ecp_group_init ( &grp );
+  mbedtls_ecp_point_init (&Q );
+  mbedtls_ecp_group_init (&grp );
 
   /* mbedtls_ecp_mul() needs a non-const group... */
-  mbedtls_ecp_group_copy ( &grp, &prv->grp );
+  mbedtls_ecp_group_copy (&grp, &prv->grp );
 
   /* Also checks d is valid */
-  MBEDTLS_MPI_CHK ( mbedtls_ecp_mul ( &grp, &Q, &prv->d, &prv->grp.G, f_rng, p_rng ) );
+  MBEDTLS_MPI_CHK ( mbedtls_ecp_mul (&grp, &Q, &prv->d, &prv->grp.G, f_rng, p_rng ) );
 
-  if ( mbedtls_mpi_cmp_mpi ( &Q.X, &prv->Q.X ) ||
-       mbedtls_mpi_cmp_mpi ( &Q.Y, &prv->Q.Y ) ||
-       mbedtls_mpi_cmp_mpi ( &Q.Z, &prv->Q.Z ) )
+  if ( mbedtls_mpi_cmp_mpi (&Q.X, &prv->Q.X ) ||
+       mbedtls_mpi_cmp_mpi (&Q.Y, &prv->Q.Y ) ||
+       mbedtls_mpi_cmp_mpi (&Q.Z, &prv->Q.Z ) )
   {
     ret = MBEDTLS_ERR_ECP_BAD_INPUT_DATA;
     goto cleanup;
   }
 
 cleanup:
-  mbedtls_ecp_point_free ( &Q );
-  mbedtls_ecp_group_free ( &grp );
+  mbedtls_ecp_point_free (&Q );
+  mbedtls_ecp_group_free (&grp );
 
   return ret;
 }
 
 int mbedtls_ecp_keypair_calc_public ( mbedtls_ecp_keypair* key,
-                                      int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                      int (*f_rng ) ( void*, unsigned char*, size_t ),
                                       void* p_rng )
 {
-  return mbedtls_ecp_mul ( &key->grp, &key->Q, &key->d, &key->grp.G,
-                           f_rng, p_rng );
+  return mbedtls_ecp_mul (&key->grp, &key->Q, &key->d, &key->grp.G,
+                          f_rng, p_rng );
 }
+
 #endif /* MBEDTLS_ECP_C */
 
 mbedtls_ecp_group_id mbedtls_ecp_keypair_get_group_id (
@@ -3983,6 +3994,7 @@ cleanup:
 
   return ret;
 }
+
 #endif /* MBEDTLS_ECP_C */
 
 /*
@@ -4025,17 +4037,17 @@ int mbedtls_ecp_self_test ( int verbose )
   };
 #endif /* MBEDTLS_ECP_MONTGOMERY_ENABLED */
 
-  mbedtls_ecp_group_init ( &grp );
-  mbedtls_ecp_point_init ( &R );
-  mbedtls_ecp_point_init ( &P );
-  mbedtls_mpi_init ( &m );
+  mbedtls_ecp_group_init (&grp );
+  mbedtls_ecp_point_init (&R );
+  mbedtls_ecp_point_init (&P );
+  mbedtls_mpi_init (&m );
 
 #if defined(MBEDTLS_ECP_SHORT_WEIERSTRASS_ENABLED)
   /* Use secp192r1 if available, or any available curve */
 #if defined(MBEDTLS_ECP_DP_SECP192R1_ENABLED)
-  MBEDTLS_MPI_CHK ( mbedtls_ecp_group_load ( &grp, MBEDTLS_ECP_DP_SECP192R1 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_ecp_group_load (&grp, MBEDTLS_ECP_DP_SECP192R1 ) );
 #else
-  MBEDTLS_MPI_CHK ( mbedtls_ecp_group_load ( &grp, mbedtls_ecp_curve_list()->grp_id ) );
+  MBEDTLS_MPI_CHK ( mbedtls_ecp_group_load (&grp, mbedtls_ecp_curve_list()->grp_id ) );
 #endif
 
   if ( verbose != 0 )
@@ -4044,8 +4056,8 @@ int mbedtls_ecp_self_test ( int verbose )
   }
 
   /* Do a dummy multiplication first to trigger precomputation */
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset ( &m, 2 ) );
-  MBEDTLS_MPI_CHK ( mbedtls_ecp_mul ( &grp, &P, &m, &grp.G, self_test_rng, NULL ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_lset (&m, 2 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_ecp_mul (&grp, &P, &m, &grp.G, self_test_rng, NULL ) );
   ret = self_test_point ( verbose,
                           &grp, &R, &m, &grp.G,
                           sw_exponents,
@@ -4072,8 +4084,8 @@ int mbedtls_ecp_self_test ( int verbose )
     goto cleanup;
   }
 
-  mbedtls_ecp_group_free ( &grp );
-  mbedtls_ecp_point_free ( &R );
+  mbedtls_ecp_group_free (&grp );
+  mbedtls_ecp_point_free (&R );
 #endif /* MBEDTLS_ECP_SHORT_WEIERSTRASS_ENABLED */
 
 #if defined(MBEDTLS_ECP_MONTGOMERY_ENABLED)
@@ -4084,9 +4096,9 @@ int mbedtls_ecp_self_test ( int verbose )
   }
 
 #if defined(MBEDTLS_ECP_DP_CURVE25519_ENABLED)
-  MBEDTLS_MPI_CHK ( mbedtls_ecp_group_load ( &grp, MBEDTLS_ECP_DP_CURVE25519 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_ecp_group_load (&grp, MBEDTLS_ECP_DP_CURVE25519 ) );
 #elif defined(MBEDTLS_ECP_DP_CURVE448_ENABLED)
-  MBEDTLS_MPI_CHK ( mbedtls_ecp_group_load ( &grp, MBEDTLS_ECP_DP_CURVE448 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_ecp_group_load (&grp, MBEDTLS_ECP_DP_CURVE448 ) );
 #else
 #error "MBEDTLS_ECP_MONTGOMERY_ENABLED is defined, but no curve is supported for self-test"
 #endif
@@ -4109,10 +4121,10 @@ cleanup:
     mbedtls_printf ( "Unexpected error, return code = %08X\n", ( unsigned int ) ret );
   }
 
-  mbedtls_ecp_group_free ( &grp );
-  mbedtls_ecp_point_free ( &R );
-  mbedtls_ecp_point_free ( &P );
-  mbedtls_mpi_free ( &m );
+  mbedtls_ecp_group_free (&grp );
+  mbedtls_ecp_point_free (&R );
+  mbedtls_ecp_point_free (&P );
+  mbedtls_mpi_free (&m );
 
   if ( verbose != 0 )
   {

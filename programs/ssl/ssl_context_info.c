@@ -20,6 +20,7 @@ int main ( void )
            "MBEDTLS_SSL_TLS_C not defined.\n" );
   return 0;
 }
+
 #else
 
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_DEPRECATE)
@@ -173,7 +174,7 @@ static void error_exit ( void )
     fclose ( b64_file );
   }
 
-  exit ( -1 );
+  exit (-1 );
 }
 
 /*
@@ -205,7 +206,7 @@ static void parse_arguments ( int argc, char* argv[] )
     }
     else if ( strcmp ( argv[i], "-f" ) == 0 )
     {
-      if ( ++i >= argc )
+      if (++i >= argc )
       {
         printf_err ( "File path is empty\n" );
         error_exit();
@@ -252,7 +253,7 @@ static void print_b64 ( const uint8_t* b, size_t len )
 
   while ( b < end )
   {
-    if ( ++i > 75 )
+    if (++i > 75 )
     {
       printf ( "\n\t" );
       i = 0;
@@ -286,7 +287,7 @@ static void print_hex ( const uint8_t* b, size_t len,
 
   while ( b < end )
   {
-    if ( ++i > in_line )
+    if (++i > in_line )
     {
       printf ( "\n%s", prefix );
       i = 1;
@@ -437,16 +438,16 @@ static size_t read_next_b64_code ( uint8_t** b64, size_t* max_len )
 
       if ( len < *max_len )
       {
-        ( *b64 ) [len++] = c;
+        (*b64 ) [len++] = c;
       }
-      else if ( *max_len < MAX_BASE64_LEN )
+      else if (*max_len < MAX_BASE64_LEN )
       {
         /* Current buffer is too small, but can be resized. */
         void* ptr;
         size_t new_size = ( MAX_BASE64_LEN - 4096 > *max_len ) ?
                           *max_len + 4096 : MAX_BASE64_LEN;
 
-        ptr = realloc ( *b64, new_size );
+        ptr = realloc (*b64, new_size );
 
         if ( NULL == ptr )
         {
@@ -456,7 +457,7 @@ static size_t read_next_b64_code ( uint8_t** b64, size_t* max_len )
 
         *b64 = ptr;
         *max_len = new_size;
-        ( *b64 ) [len++] = c;
+        (*b64 ) [len++] = c;
       }
       else
       {
@@ -527,8 +528,8 @@ static void print_deserialized_ssl_cert ( const uint8_t* ssl, uint32_t len )
 
   printf ( "\nCertificate:\n" );
 
-  mbedtls_x509_crt_init ( &crt );
-  ret = mbedtls_x509_crt_parse_der ( &crt, ssl, len );
+  mbedtls_x509_crt_init (&crt );
+  ret = mbedtls_x509_crt_parse_der (&crt, ssl, len );
 
   if ( 0 != ret )
   {
@@ -565,8 +566,9 @@ static void print_deserialized_ssl_cert ( const uint8_t* ssl, uint32_t len )
     }
   }
 
-  mbedtls_x509_crt_free ( &crt );
+  mbedtls_x509_crt_free (&crt );
 }
+
 #endif /* !MBEDTLS_X509_REMOVE_INFO */
 
 /*
@@ -619,7 +621,7 @@ static void print_deserialized_ssl_session ( const uint8_t* ssl, uint32_t len,
             ( ( uint64_t ) ssl[7] );
     ssl += 8;
     printf ( "\tstart time     : " );
-    print_time ( &start );
+    print_time (&start );
   }
 
   CHECK_SSL_END ( 2 );
@@ -675,7 +677,7 @@ static void print_deserialized_ssl_session ( const uint8_t* ssl, uint32_t len,
   }
 
   CHECK_SSL_END ( 1 );
-  printf ( "\tcompression    : %s\n", get_enabled_str ( *ssl++ ) );
+  printf ( "\tcompression    : %s\n", get_enabled_str (*ssl++ ) );
 
   /* Note - Here we can get session ID length from serialized data, but we
    * use hardcoded 32-bytes length. This approach was taken from
@@ -815,19 +817,19 @@ static void print_deserialized_ssl_session ( const uint8_t* ssl, uint32_t len,
   if ( SESSION_CONFIG_MFL_BIT & session_cfg_flag )
   {
     CHECK_SSL_END ( 1 );
-    printf ( "\tMFL                      : %s\n", get_mfl_str ( *ssl++ ) );
+    printf ( "\tMFL                      : %s\n", get_mfl_str (*ssl++ ) );
   }
 
   if ( SESSION_CONFIG_TRUNC_HMAC_BIT & session_cfg_flag )
   {
     CHECK_SSL_END ( 1 );
-    printf ( "\tnegotiate truncated HMAC : %s\n", get_enabled_str ( *ssl++ ) );
+    printf ( "\tnegotiate truncated HMAC : %s\n", get_enabled_str (*ssl++ ) );
   }
 
   if ( SESSION_CONFIG_ETM_BIT & session_cfg_flag )
   {
     CHECK_SSL_END ( 1 );
-    printf ( "\tEncrypt-then-MAC         : %s\n", get_enabled_str ( *ssl++ ) );
+    printf ( "\tEncrypt-then-MAC         : %s\n", get_enabled_str (*ssl++ ) );
   }
 
   if ( 0 != ( end - ssl ) )
@@ -1009,7 +1011,7 @@ static void print_deserialized_ssl_context ( const uint8_t* ssl, size_t len )
   {
     CHECK_SSL_END ( 1 );
     printf ( "\tDTLS datagram packing              : %s\n",
-             get_enabled_str ( ! ( *ssl++ ) ) );
+             get_enabled_str (! (*ssl++ ) ) );
   }
 
   /* value 'cur_out_ctr' from mbedtls_ssl_context */
@@ -1109,7 +1111,7 @@ int main ( int argc, char* argv[] )
 
   while ( NULL != b64_file )
   {
-    size_t b64_len = read_next_b64_code ( &b64_buf, &b64_max_len );
+    size_t b64_len = read_next_b64_code (&b64_buf, &b64_max_len );
 
     if ( b64_len > 0 )
     {
@@ -1133,7 +1135,7 @@ int main ( int argc, char* argv[] )
         ssl_max_len = ssl_required_len;
       }
 
-      printf ( "\nDeserializing number %u:\n",  ++b64_counter );
+      printf ( "\nDeserializing number %u:\n", ++b64_counter );
 
       printf ( "\nBase64 code:\n" );
       print_b64 ( b64_buf, b64_len );

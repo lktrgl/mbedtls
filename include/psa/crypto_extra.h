@@ -1774,7 +1774,7 @@ static inline void psa_pake_cs_set_algorithm (
   psa_pake_cipher_suite_t* cipher_suite,
   psa_algorithm_t algorithm )
 {
-  if ( !PSA_ALG_IS_PAKE ( algorithm ) )
+  if (!PSA_ALG_IS_PAKE ( algorithm ) )
   {
     cipher_suite->algorithm = 0;
   }
@@ -1821,7 +1821,7 @@ static inline psa_algorithm_t psa_pake_cs_get_hash (
 static inline void psa_pake_cs_set_hash ( psa_pake_cipher_suite_t* cipher_suite,
     psa_algorithm_t hash )
 {
-  if ( !PSA_ALG_IS_HASH ( hash ) )
+  if (!PSA_ALG_IS_HASH ( hash ) )
   {
     cipher_suite->hash = 0;
   }
@@ -1919,11 +1919,13 @@ struct psa_pake_operation_s
     psa_jpake_computation_stage_t MBEDTLS_PRIVATE ( jpake );
 #endif
   } MBEDTLS_PRIVATE ( computation_stage );
+
   union
   {
     psa_driver_pake_context_t MBEDTLS_PRIVATE ( ctx );
     psa_crypto_driver_pake_inputs_t MBEDTLS_PRIVATE ( inputs );
   } MBEDTLS_PRIVATE ( data );
+
 #endif
 };
 
@@ -1941,6 +1943,7 @@ static inline struct psa_pake_operation_s psa_pake_operation_init ( void )
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* PSA_CRYPTO_EXTRA_H */

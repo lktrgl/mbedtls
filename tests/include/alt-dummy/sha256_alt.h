@@ -11,6 +11,7 @@ typedef struct mbedtls_sha256_context
 {
   int dummy;
 }
+
 mbedtls_sha256_context;
 
 

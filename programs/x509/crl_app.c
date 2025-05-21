@@ -19,6 +19,7 @@ int main ( void )
                    "MBEDTLS_X509_REMOVE_INFO defined.\n" );
   mbedtls_exit ( 0 );
 }
+
 #else
 
 #include "mbedtls/x509_crl.h"
@@ -52,12 +53,12 @@ int main ( int argc, char* argv[] )
   unsigned char buf[100000];
   mbedtls_x509_crl crl;
   int i;
-  char* p, *q;
+  char* p, * q;
 
   /*
    * Set to sane values
    */
-  mbedtls_x509_crl_init ( &crl );
+  mbedtls_x509_crl_init (&crl );
 
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
   psa_status_t status = psa_crypto_init();
@@ -107,12 +108,12 @@ usage:
   mbedtls_printf ( "\n  . Loading the CRL ..." );
   fflush ( stdout );
 
-  ret = mbedtls_x509_crl_parse_file ( &crl, opt.filename );
+  ret = mbedtls_x509_crl_parse_file (&crl, opt.filename );
 
   if ( ret != 0 )
   {
     mbedtls_printf ( " failed\n  !  mbedtls_x509_crl_parse_file returned %d\n\n", ret );
-    mbedtls_x509_crl_free ( &crl );
+    mbedtls_x509_crl_free (&crl );
     goto exit;
   }
 
@@ -127,7 +128,7 @@ usage:
   if ( ret == -1 )
   {
     mbedtls_printf ( " failed\n  !  mbedtls_x509_crl_info returned %d\n\n", ret );
-    mbedtls_x509_crl_free ( &crl );
+    mbedtls_x509_crl_free (&crl );
     goto exit;
   }
 
@@ -136,12 +137,13 @@ usage:
   exit_code = MBEDTLS_EXIT_SUCCESS;
 
 exit:
-  mbedtls_x509_crl_free ( &crl );
+  mbedtls_x509_crl_free (&crl );
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
   mbedtls_psa_crypto_free();
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 
   mbedtls_exit ( exit_code );
 }
+
 #endif /* MBEDTLS_BIGNUM_C && MBEDTLS_RSA_C && MBEDTLS_X509_CRL_PARSE_C &&
           MBEDTLS_FS_IO */

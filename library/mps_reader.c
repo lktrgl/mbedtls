@@ -424,7 +424,7 @@ int mbedtls_mps_reader_commit ( mbedtls_mps_reader* rd )
 int mbedtls_mps_reader_reclaim ( mbedtls_mps_reader* rd,
                                  int* paused )
 {
-  unsigned char* frag, *acc;
+  unsigned char* frag, * acc;
   mbedtls_mps_size_t pending, commit;
   mbedtls_mps_size_t acc_len, frag_offset, frag_len;
   MBEDTLS_MPS_TRACE_INIT ( "mbedtls_mps_reader_reclaim" );

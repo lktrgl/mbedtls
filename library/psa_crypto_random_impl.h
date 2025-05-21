@@ -67,8 +67,8 @@ typedef mbedtls_psa_external_random_context_t mbedtls_psa_random_context_t;
 
 typedef struct
 {
-  void ( * entropy_init ) ( mbedtls_entropy_context* ctx );
-  void ( * entropy_free ) ( mbedtls_entropy_context* ctx );
+  void (* entropy_init ) ( mbedtls_entropy_context* ctx );
+  void (* entropy_free ) ( mbedtls_entropy_context* ctx );
   mbedtls_entropy_context entropy;
   mbedtls_psa_drbg_context_t drbg;
 } mbedtls_psa_random_context_t;

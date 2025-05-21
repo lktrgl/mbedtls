@@ -37,6 +37,7 @@ static int lifetime_is_dynamic_secure_element ( psa_key_lifetime_t lifetime )
   return PSA_KEY_LIFETIME_GET_LOCATION ( lifetime ) !=
          PSA_KEY_LOCATION_LOCAL_STORAGE;
 }
+
 #endif
 
 static int check_key_attributes_sanity ( mbedtls_svc_key_id_t key,
@@ -53,15 +54,15 @@ static int check_key_attributes_sanity ( mbedtls_svc_key_id_t key,
   if ( key_destroyable && status == PSA_ERROR_INVALID_HANDLE )
   {
     /* The key has been destroyed. */
-    psa_reset_key_attributes ( &attributes );
+    psa_reset_key_attributes (&attributes );
     return 1;
   }
 
   PSA_ASSERT ( status );
-  lifetime = psa_get_key_lifetime ( &attributes );
-  id = psa_get_key_id ( &attributes );
-  type = psa_get_key_type ( &attributes );
-  bits = psa_get_key_bits ( &attributes );
+  lifetime = psa_get_key_lifetime (&attributes );
+  id = psa_get_key_id (&attributes );
+  type = psa_get_key_type (&attributes );
+  bits = psa_get_key_bits (&attributes );
 
   /* Persistence */
   if ( PSA_KEY_LIFETIME_IS_VOLATILE ( lifetime ) )
@@ -86,7 +87,7 @@ static int check_key_attributes_sanity ( mbedtls_svc_key_id_t key,
   {
     /* randomly-generated 64-bit constant, should never appear in test data */
     psa_key_slot_number_t slot_number = 0xec94d4a5058a1a21;
-    status = psa_get_key_slot_number ( &attributes, &slot_number );
+    status = psa_get_key_slot_number (&attributes, &slot_number );
 
     if ( lifetime_is_dynamic_secure_element ( lifetime ) )
     {
@@ -133,7 +134,7 @@ exit:
    * Key attributes may have been returned by psa_get_key_attributes()
    * thus reset them as required.
    */
-  psa_reset_key_attributes ( &attributes );
+  psa_reset_key_attributes (&attributes );
 
   return ok;
 }
@@ -157,21 +158,21 @@ static int exercise_mac_key ( mbedtls_svc_key_id_t key,
 
   if ( usage & PSA_KEY_USAGE_SIGN_HASH )
   {
-    status = psa_mac_sign_setup ( &operation, key, alg );
+    status = psa_mac_sign_setup (&operation, key, alg );
 
     if ( key_destroyable && status == PSA_ERROR_INVALID_HANDLE )
     {
       /* The key has been destroyed. */
-      PSA_ASSERT ( psa_mac_abort ( &operation ) );
+      PSA_ASSERT ( psa_mac_abort (&operation ) );
       return 1;
     }
 
     PSA_ASSERT ( status );
-    PSA_ASSERT ( psa_mac_update ( &operation,
-                                  input, sizeof ( input ) ) );
-    PSA_ASSERT ( psa_mac_sign_finish ( &operation,
-                                       mac, sizeof ( mac ),
-                                       &mac_length ) );
+    PSA_ASSERT ( psa_mac_update (&operation,
+                                 input, sizeof ( input ) ) );
+    PSA_ASSERT ( psa_mac_sign_finish (&operation,
+                                      mac, sizeof ( mac ),
+                                      &mac_length ) );
   }
 
   if ( usage & PSA_KEY_USAGE_VERIFY_HASH )
@@ -180,26 +181,26 @@ static int exercise_mac_key ( mbedtls_svc_key_id_t key,
       ( usage & PSA_KEY_USAGE_SIGN_HASH ?
         PSA_SUCCESS :
         PSA_ERROR_INVALID_SIGNATURE );
-    status = psa_mac_verify_setup ( &operation, key, alg );
+    status = psa_mac_verify_setup (&operation, key, alg );
 
     if ( key_destroyable && status == PSA_ERROR_INVALID_HANDLE )
     {
       /* The key has been destroyed. */
-      PSA_ASSERT ( psa_mac_abort ( &operation ) );
+      PSA_ASSERT ( psa_mac_abort (&operation ) );
       return 1;
     }
 
     PSA_ASSERT ( status );
-    PSA_ASSERT ( psa_mac_update ( &operation,
-                                  input, sizeof ( input ) ) );
-    TEST_EQUAL ( psa_mac_verify_finish ( &operation, mac, mac_length ),
+    PSA_ASSERT ( psa_mac_update (&operation,
+                                 input, sizeof ( input ) ) );
+    TEST_EQUAL ( psa_mac_verify_finish (&operation, mac, mac_length ),
                  verify_status );
   }
 
   return 1;
 
 exit:
-  psa_mac_abort ( &operation );
+  psa_mac_abort (&operation );
   return 0;
 }
 
@@ -221,17 +222,17 @@ static int exercise_cipher_key ( mbedtls_svc_key_id_t key,
   psa_status_t status = PSA_SUCCESS;
 
   PSA_ASSERT ( psa_get_key_attributes ( key, &attributes ) );
-  key_type = psa_get_key_type ( &attributes );
+  key_type = psa_get_key_type (&attributes );
   iv_length = PSA_CIPHER_IV_LENGTH ( key_type, alg );
 
   if ( usage & PSA_KEY_USAGE_ENCRYPT )
   {
-    status = psa_cipher_encrypt_setup ( &operation, key, alg );
+    status = psa_cipher_encrypt_setup (&operation, key, alg );
 
     if ( key_destroyable && status == PSA_ERROR_INVALID_HANDLE )
     {
       /* The key has been destroyed. */
-      PSA_ASSERT ( psa_cipher_abort ( &operation ) );
+      PSA_ASSERT ( psa_cipher_abort (&operation ) );
       return 1;
     }
 
@@ -239,19 +240,19 @@ static int exercise_cipher_key ( mbedtls_svc_key_id_t key,
 
     if ( iv_length != 0 )
     {
-      PSA_ASSERT ( psa_cipher_generate_iv ( &operation,
-                                            iv, sizeof ( iv ),
-                                            &iv_length ) );
+      PSA_ASSERT ( psa_cipher_generate_iv (&operation,
+                                           iv, sizeof ( iv ),
+                                           &iv_length ) );
     }
 
-    PSA_ASSERT ( psa_cipher_update ( &operation,
-                                     plaintext, sizeof ( plaintext ),
-                                     ciphertext, sizeof ( ciphertext ),
-                                     &ciphertext_length ) );
-    PSA_ASSERT ( psa_cipher_finish ( &operation,
-                                     ciphertext + ciphertext_length,
-                                     sizeof ( ciphertext ) - ciphertext_length,
-                                     &part_length ) );
+    PSA_ASSERT ( psa_cipher_update (&operation,
+                                    plaintext, sizeof ( plaintext ),
+                                    ciphertext, sizeof ( ciphertext ),
+                                    &ciphertext_length ) );
+    PSA_ASSERT ( psa_cipher_finish (&operation,
+                                    ciphertext + ciphertext_length,
+                                    sizeof ( ciphertext ) - ciphertext_length,
+                                    &part_length ) );
     ciphertext_length += part_length;
   }
 
@@ -259,17 +260,17 @@ static int exercise_cipher_key ( mbedtls_svc_key_id_t key,
   {
     int maybe_invalid_padding = 0;
 
-    if ( ! ( usage & PSA_KEY_USAGE_ENCRYPT ) )
+    if (! ( usage & PSA_KEY_USAGE_ENCRYPT ) )
     {
       maybe_invalid_padding = !PSA_ALG_IS_STREAM_CIPHER ( alg );
     }
 
-    status = psa_cipher_decrypt_setup ( &operation, key, alg );
+    status = psa_cipher_decrypt_setup (&operation, key, alg );
 
     if ( key_destroyable && status == PSA_ERROR_INVALID_HANDLE )
     {
       /* The key has been destroyed. */
-      PSA_ASSERT ( psa_cipher_abort ( &operation ) );
+      PSA_ASSERT ( psa_cipher_abort (&operation ) );
       return 1;
     }
 
@@ -277,18 +278,18 @@ static int exercise_cipher_key ( mbedtls_svc_key_id_t key,
 
     if ( iv_length != 0 )
     {
-      PSA_ASSERT ( psa_cipher_set_iv ( &operation,
-                                       iv, iv_length ) );
+      PSA_ASSERT ( psa_cipher_set_iv (&operation,
+                                      iv, iv_length ) );
     }
 
-    PSA_ASSERT ( psa_cipher_update ( &operation,
-                                     ciphertext, ciphertext_length,
-                                     decrypted, sizeof ( decrypted ),
-                                     &part_length ) );
-    status = psa_cipher_finish ( &operation,
-                                 decrypted + part_length,
-                                 sizeof ( decrypted ) - part_length,
-                                 &part_length );
+    PSA_ASSERT ( psa_cipher_update (&operation,
+                                    ciphertext, ciphertext_length,
+                                    decrypted, sizeof ( decrypted ),
+                                    &part_length ) );
+    status = psa_cipher_finish (&operation,
+                                decrypted + part_length,
+                                sizeof ( decrypted ) - part_length,
+                                &part_length );
 
     /* For a stream cipher, all inputs are valid. For a block cipher,
      * if the input is some arbitrary data rather than an actual
@@ -307,8 +308,8 @@ static int exercise_cipher_key ( mbedtls_svc_key_id_t key,
   return 1;
 
 exit:
-  psa_cipher_abort ( &operation );
-  psa_reset_key_attributes ( &attributes );
+  psa_cipher_abort (&operation );
+  psa_reset_key_attributes (&attributes );
   return 0;
 }
 
@@ -334,7 +335,7 @@ static int exercise_aead_key ( mbedtls_svc_key_id_t key,
   }
 
   PSA_ASSERT ( psa_get_key_attributes ( key, &attributes ) );
-  key_type = psa_get_key_type ( &attributes );
+  key_type = psa_get_key_type (&attributes );
   nonce_length = PSA_AEAD_NONCE_LENGTH ( key_type, alg );
 
   if ( usage & PSA_KEY_USAGE_ENCRYPT )
@@ -380,7 +381,7 @@ static int exercise_aead_key ( mbedtls_svc_key_id_t key,
   return 1;
 
 exit:
-  psa_reset_key_attributes ( &attributes );
+  psa_reset_key_attributes (&attributes );
   return 0;
 }
 
@@ -724,27 +725,27 @@ static int exercise_key_derivation_key ( mbedtls_svc_key_id_t key,
 
   if ( usage & PSA_KEY_USAGE_DERIVE )
   {
-    if ( !mbedtls_test_psa_setup_key_derivation_wrap ( &operation, key, alg,
-         input1, input1_length,
-         input2, input2_length,
-         capacity, key_destroyable ) )
+    if (!mbedtls_test_psa_setup_key_derivation_wrap (&operation, key, alg,
+        input1, input1_length,
+        input2, input2_length,
+        capacity, key_destroyable ) )
     {
       goto exit;
     }
 
-    psa_status_t status = psa_key_derivation_output_bytes ( &operation,
+    psa_status_t status = psa_key_derivation_output_bytes (&operation,
                           output,
                           capacity );
 
     if ( key_destroyable && status == PSA_ERROR_BAD_STATE )
     {
       /* The key has been destroyed. */
-      PSA_ASSERT ( psa_key_derivation_abort ( &operation ) );
+      PSA_ASSERT ( psa_key_derivation_abort (&operation ) );
     }
     else
     {
       PSA_ASSERT ( status );
-      PSA_ASSERT ( psa_key_derivation_abort ( &operation ) );
+      PSA_ASSERT ( psa_key_derivation_abort (&operation ) );
     }
   }
 
@@ -772,14 +773,14 @@ psa_status_t mbedtls_test_psa_key_agreement_with_self (
   if ( key_destroyable && status == PSA_ERROR_INVALID_HANDLE )
   {
     /* The key has been destroyed. */
-    psa_reset_key_attributes ( &attributes );
+    psa_reset_key_attributes (&attributes );
     return PSA_SUCCESS;
   }
 
   PSA_ASSERT ( status );
 
-  private_key_type = psa_get_key_type ( &attributes );
-  key_bits = psa_get_key_bits ( &attributes );
+  private_key_type = psa_get_key_type (&attributes );
+  key_bits = psa_get_key_bits (&attributes );
   public_key_type = PSA_KEY_TYPE_PUBLIC_KEY_OF_KEY_PAIR ( private_key_type );
   public_key_length = PSA_EXPORT_PUBLIC_KEY_OUTPUT_SIZE ( public_key_type, key_bits );
   TEST_CALLOC ( public_key, public_key_length );
@@ -811,7 +812,7 @@ exit:
    * Key attributes may have been returned by psa_get_key_attributes()
    * thus reset them as required.
    */
-  psa_reset_key_attributes ( &attributes );
+  psa_reset_key_attributes (&attributes );
 
   mbedtls_free ( public_key );
   return status;
@@ -852,14 +853,14 @@ psa_status_t mbedtls_test_psa_raw_key_agreement_with_self (
   if ( key_destroyable && status == PSA_ERROR_INVALID_HANDLE )
   {
     /* The key has been destroyed. */
-    psa_reset_key_attributes ( &attributes );
+    psa_reset_key_attributes (&attributes );
     return PSA_SUCCESS;
   }
 
   PSA_ASSERT ( status );
 
-  private_key_type = psa_get_key_type ( &attributes );
-  key_bits = psa_get_key_bits ( &attributes );
+  private_key_type = psa_get_key_type (&attributes );
+  key_bits = psa_get_key_bits (&attributes );
   public_key_type = PSA_KEY_TYPE_PUBLIC_KEY_OF_KEY_PAIR ( private_key_type );
   public_key_length = PSA_EXPORT_PUBLIC_KEY_OUTPUT_SIZE ( public_key_type, key_bits );
   TEST_CALLOC ( public_key, public_key_length );
@@ -897,8 +898,8 @@ psa_status_t mbedtls_test_psa_raw_key_agreement_with_self (
   }
 
 #if MBEDTLS_VERSION_MAJOR >= 4
-  psa_set_key_type ( &shared_secret_attributes, PSA_KEY_TYPE_DERIVE );
-  psa_set_key_usage_flags ( &shared_secret_attributes, PSA_KEY_USAGE_DERIVE | PSA_KEY_USAGE_EXPORT );
+  psa_set_key_type (&shared_secret_attributes, PSA_KEY_TYPE_DERIVE );
+  psa_set_key_usage_flags (&shared_secret_attributes, PSA_KEY_USAGE_DERIVE | PSA_KEY_USAGE_EXPORT );
 
   status = psa_key_agreement ( key, public_key, public_key_length, alg,
                                &shared_secret_attributes, &shared_secret_id );
@@ -921,8 +922,8 @@ psa_status_t mbedtls_test_psa_raw_key_agreement_with_self (
       goto exit;
     }
 
-    exported_size = PSA_EXPORT_KEY_OUTPUT_SIZE ( psa_get_key_type ( &export_attributes ),
-                    psa_get_key_bits ( &export_attributes ) );
+    exported_size = PSA_EXPORT_KEY_OUTPUT_SIZE ( psa_get_key_type (&export_attributes ),
+                    psa_get_key_bits (&export_attributes ) );
     TEST_CALLOC ( exported, exported_size );
 
     status = psa_export_key ( shared_secret_id, exported, exported_size, &exported_length );
@@ -945,9 +946,9 @@ psa_status_t mbedtls_test_psa_raw_key_agreement_with_self (
 
     psa_interruptible_set_max_ops ( 1 );
 
-    status = psa_key_agreement_iop_setup ( &iop_operation, key, public_key,
-                                           public_key_length, alg,
-                                           &shared_secret_attributes );
+    status = psa_key_agreement_iop_setup (&iop_operation, key, public_key,
+                                          public_key_length, alg,
+                                          &shared_secret_attributes );
 
     if ( key_destroyable && status == PSA_ERROR_INVALID_HANDLE )
     {
@@ -960,7 +961,7 @@ psa_status_t mbedtls_test_psa_raw_key_agreement_with_self (
 
       do
       {
-        status = psa_key_agreement_iop_complete ( &iop_operation, &shared_secret_id );
+        status = psa_key_agreement_iop_complete (&iop_operation, &shared_secret_id );
       }
       while ( status == PSA_OPERATION_INCOMPLETE );
 
@@ -975,7 +976,7 @@ psa_status_t mbedtls_test_psa_raw_key_agreement_with_self (
   }
   else
   {
-    TEST_EQUAL ( psa_key_agreement_iop_setup ( &iop_operation, key, public_key,
+    TEST_EQUAL ( psa_key_agreement_iop_setup (&iop_operation, key, public_key,
                  public_key_length, alg,
                  &shared_secret_attributes ),
                  PSA_ERROR_INVALID_ARGUMENT );
@@ -989,17 +990,17 @@ exit:
    * Key attributes may have been returned by psa_get_key_attributes()
    * thus reset them as required.
    */
-  psa_reset_key_attributes ( &attributes );
+  psa_reset_key_attributes (&attributes );
 
 #if MBEDTLS_VERSION_MAJOR >= 4
-  psa_reset_key_attributes ( &export_attributes );
+  psa_reset_key_attributes (&export_attributes );
 
   /* Make sure to reset and free derived key attributes and slot. */
-  psa_reset_key_attributes ( &shared_secret_attributes );
+  psa_reset_key_attributes (&shared_secret_attributes );
   psa_destroy_key ( shared_secret_id );
 
   mbedtls_free ( exported );
-  psa_key_agreement_iop_abort ( &iop_operation );
+  psa_key_agreement_iop_abort (&iop_operation );
 #endif /* MBEDTLS_VERSION_MAJOR >= 4 */
 
   mbedtls_free ( public_key );
@@ -1043,7 +1044,7 @@ static int exercise_key_agreement_key ( mbedtls_svc_key_id_t key,
   {
     /* We need two keys to exercise key agreement. Exercise the
      * private key against its own public key. */
-    PSA_ASSERT ( psa_key_derivation_setup ( &operation, alg ) );
+    PSA_ASSERT ( psa_key_derivation_setup (&operation, alg ) );
 
     if ( PSA_ALG_IS_TLS12_PRF ( kdf_alg ) ||
          PSA_ALG_IS_TLS12_PSK_TO_MS ( kdf_alg ) )
@@ -1075,7 +1076,7 @@ static int exercise_key_agreement_key ( mbedtls_svc_key_id_t key,
       }
 
       PSA_ASSERT ( status );
-      size_t key_bits = psa_get_key_bits ( &attributes );
+      size_t key_bits = psa_get_key_bits (&attributes );
       psa_algorithm_t hash_alg = PSA_ALG_HKDF_GET_HASH ( kdf_alg );
 
       if ( PSA_BITS_TO_BYTES ( key_bits ) != PSA_HASH_LENGTH ( hash_alg ) )
@@ -1084,7 +1085,7 @@ static int exercise_key_agreement_key ( mbedtls_svc_key_id_t key,
       }
     }
 
-    TEST_EQUAL ( mbedtls_test_psa_key_agreement_with_self ( &operation, key,
+    TEST_EQUAL ( mbedtls_test_psa_key_agreement_with_self (&operation, key,
                  key_destroyable ),
                  expected_key_agreement_status );
 
@@ -1107,10 +1108,10 @@ static int exercise_key_agreement_key ( mbedtls_svc_key_id_t key,
                      input, sizeof ( input ) ) );
     }
 
-    PSA_ASSERT ( psa_key_derivation_output_bytes ( &operation,
+    PSA_ASSERT ( psa_key_derivation_output_bytes (&operation,
                  output,
                  sizeof ( output ) ) );
-    PSA_ASSERT ( psa_key_derivation_abort ( &operation ) );
+    PSA_ASSERT ( psa_key_derivation_abort (&operation ) );
   }
 
   ok = 1;
@@ -1149,54 +1150,54 @@ int mbedtls_test_psa_exported_key_sanity_check (
        *       coefficient         INTEGER,  -- (inverse of q) mod p
        *   }
        */
-      TEST_EQUAL ( mbedtls_asn1_get_tag ( &p, end, &len,
-                                          MBEDTLS_ASN1_SEQUENCE |
-                                          MBEDTLS_ASN1_CONSTRUCTED ), 0 );
+      TEST_EQUAL ( mbedtls_asn1_get_tag (&p, end, &len,
+                                         MBEDTLS_ASN1_SEQUENCE |
+                                         MBEDTLS_ASN1_CONSTRUCTED ), 0 );
       TEST_EQUAL ( len, end - p );
 
-      if ( !mbedtls_test_asn1_skip_integer ( &p, end, 0, 0, 0 ) )
+      if (!mbedtls_test_asn1_skip_integer (&p, end, 0, 0, 0 ) )
       {
         goto exit;
       }
 
-      if ( !mbedtls_test_asn1_skip_integer ( &p, end, bits, bits, 1 ) )
+      if (!mbedtls_test_asn1_skip_integer (&p, end, bits, bits, 1 ) )
       {
         goto exit;
       }
 
-      if ( !mbedtls_test_asn1_skip_integer ( &p, end, 2, bits, 1 ) )
+      if (!mbedtls_test_asn1_skip_integer (&p, end, 2, bits, 1 ) )
       {
         goto exit;
       }
 
       /* Require d to be at least half the size of n. */
-      if ( !mbedtls_test_asn1_skip_integer ( &p, end, bits / 2, bits, 1 ) )
+      if (!mbedtls_test_asn1_skip_integer (&p, end, bits / 2, bits, 1 ) )
       {
         goto exit;
       }
 
       /* Require p and q to be at most half the size of n, rounded up. */
-      if ( !mbedtls_test_asn1_skip_integer ( &p, end, bits / 2, bits / 2 + 1, 1 ) )
+      if (!mbedtls_test_asn1_skip_integer (&p, end, bits / 2, bits / 2 + 1, 1 ) )
       {
         goto exit;
       }
 
-      if ( !mbedtls_test_asn1_skip_integer ( &p, end, bits / 2, bits / 2 + 1, 1 ) )
+      if (!mbedtls_test_asn1_skip_integer (&p, end, bits / 2, bits / 2 + 1, 1 ) )
       {
         goto exit;
       }
 
-      if ( !mbedtls_test_asn1_skip_integer ( &p, end, 1, bits / 2 + 1, 0 ) )
+      if (!mbedtls_test_asn1_skip_integer (&p, end, 1, bits / 2 + 1, 0 ) )
       {
         goto exit;
       }
 
-      if ( !mbedtls_test_asn1_skip_integer ( &p, end, 1, bits / 2 + 1, 0 ) )
+      if (!mbedtls_test_asn1_skip_integer (&p, end, 1, bits / 2 + 1, 0 ) )
       {
         goto exit;
       }
 
-      if ( !mbedtls_test_asn1_skip_integer ( &p, end, 1, bits / 2 + 1, 0 ) )
+      if (!mbedtls_test_asn1_skip_integer (&p, end, 1, bits / 2 + 1, 0 ) )
       {
         goto exit;
       }
@@ -1227,18 +1228,18 @@ int mbedtls_test_psa_exported_key_sanity_check (
            *      modulus            INTEGER,    -- n
            *      publicExponent     INTEGER  }  -- e
            */
-          TEST_EQUAL ( mbedtls_asn1_get_tag ( &p, end, &len,
-                                              MBEDTLS_ASN1_SEQUENCE |
-                                              MBEDTLS_ASN1_CONSTRUCTED ),
+          TEST_EQUAL ( mbedtls_asn1_get_tag (&p, end, &len,
+                                             MBEDTLS_ASN1_SEQUENCE |
+                                             MBEDTLS_ASN1_CONSTRUCTED ),
                        0 );
           TEST_EQUAL ( len, end - p );
 
-          if ( !mbedtls_test_asn1_skip_integer ( &p, end, bits, bits, 1 ) )
+          if (!mbedtls_test_asn1_skip_integer (&p, end, bits, bits, 1 ) )
           {
             goto exit;
           }
 
-          if ( !mbedtls_test_asn1_skip_integer ( &p, end, 2, bits, 1 ) )
+          if (!mbedtls_test_asn1_skip_integer (&p, end, 2, bits, 1 ) )
           {
             goto exit;
           }
@@ -1346,15 +1347,15 @@ static int exercise_export_key ( mbedtls_svc_key_id_t key,
   if ( key_destroyable && status == PSA_ERROR_INVALID_HANDLE )
   {
     /* The key has been destroyed. */
-    psa_reset_key_attributes ( &attributes );
+    psa_reset_key_attributes (&attributes );
     return 1;
   }
 
   PSA_ASSERT ( status );
 
   exported_size = PSA_EXPORT_KEY_OUTPUT_SIZE (
-                    psa_get_key_type ( &attributes ),
-                    psa_get_key_bits ( &attributes ) );
+                    psa_get_key_type (&attributes ),
+                    psa_get_key_bits (&attributes ) );
   TEST_CALLOC ( exported, exported_size );
 
   status = psa_export_key ( key, exported, exported_size, &exported_length );
@@ -1366,7 +1367,7 @@ static int exercise_export_key ( mbedtls_svc_key_id_t key,
     goto exit;
   }
   else if ( ( usage & PSA_KEY_USAGE_EXPORT ) == 0 &&
-            !PSA_KEY_TYPE_IS_PUBLIC_KEY ( psa_get_key_type ( &attributes ) ) )
+            !PSA_KEY_TYPE_IS_PUBLIC_KEY ( psa_get_key_type (&attributes ) ) )
   {
     TEST_EQUAL ( status, PSA_ERROR_NOT_PERMITTED );
     ok = 1;
@@ -1375,7 +1376,7 @@ static int exercise_export_key ( mbedtls_svc_key_id_t key,
 
   PSA_ASSERT ( status );
   ok = mbedtls_test_psa_exported_key_sanity_check (
-         psa_get_key_type ( &attributes ), psa_get_key_bits ( &attributes ),
+         psa_get_key_type (&attributes ), psa_get_key_bits (&attributes ),
          exported, exported_length );
 
 exit:
@@ -1383,7 +1384,7 @@ exit:
    * Key attributes may have been returned by psa_get_key_attributes()
    * thus reset them as required.
    */
-  psa_reset_key_attributes ( &attributes );
+  psa_reset_key_attributes (&attributes );
 
   mbedtls_free ( exported );
   return ok;
@@ -1404,17 +1405,17 @@ static int exercise_export_public_key ( mbedtls_svc_key_id_t key,
   if ( key_destroyable && status == PSA_ERROR_INVALID_HANDLE )
   {
     /* The key has been destroyed. */
-    psa_reset_key_attributes ( &attributes );
+    psa_reset_key_attributes (&attributes );
     return 1;
   }
 
   PSA_ASSERT ( status );
 
-  if ( !PSA_KEY_TYPE_IS_ASYMMETRIC ( psa_get_key_type ( &attributes ) ) )
+  if (!PSA_KEY_TYPE_IS_ASYMMETRIC ( psa_get_key_type (&attributes ) ) )
   {
     exported_size = PSA_EXPORT_KEY_OUTPUT_SIZE (
-                      psa_get_key_type ( &attributes ),
-                      psa_get_key_bits ( &attributes ) );
+                      psa_get_key_type (&attributes ),
+                      psa_get_key_bits (&attributes ) );
     TEST_CALLOC ( exported, exported_size );
 
     status = psa_export_public_key ( key, exported,
@@ -1433,9 +1434,9 @@ static int exercise_export_public_key ( mbedtls_svc_key_id_t key,
   }
 
   public_type = PSA_KEY_TYPE_PUBLIC_KEY_OF_KEY_PAIR (
-                  psa_get_key_type ( &attributes ) );
+                  psa_get_key_type (&attributes ) );
   exported_size = PSA_EXPORT_PUBLIC_KEY_OUTPUT_SIZE ( public_type,
-                  psa_get_key_bits ( &attributes ) );
+                  psa_get_key_bits (&attributes ) );
   TEST_CALLOC ( exported, exported_size );
 
   status = psa_export_public_key ( key, exported,
@@ -1450,7 +1451,7 @@ static int exercise_export_public_key ( mbedtls_svc_key_id_t key,
 
   PSA_ASSERT ( status );
   ok = mbedtls_test_psa_exported_key_sanity_check (
-         public_type, psa_get_key_bits ( &attributes ),
+         public_type, psa_get_key_bits (&attributes ),
          exported, exported_length );
 
 exit:
@@ -1458,7 +1459,7 @@ exit:
    * Key attributes may have been returned by psa_get_key_attributes()
    * thus reset them as required.
    */
-  psa_reset_key_attributes ( &attributes );
+  psa_reset_key_attributes (&attributes );
 
   mbedtls_free ( exported );
   return ok;
@@ -1471,7 +1472,7 @@ int mbedtls_test_psa_exercise_key ( mbedtls_svc_key_id_t key,
 {
   int ok = 0;
 
-  if ( !check_key_attributes_sanity ( key, key_destroyable ) )
+  if (!check_key_attributes_sanity ( key, key_destroyable ) )
   {
     return 0;
   }
@@ -1647,12 +1648,12 @@ int mbedtls_test_key_consistency_psa_pk ( mbedtls_svc_key_id_t psa_key,
   int ok = 0;
 
   PSA_ASSERT ( psa_get_key_attributes ( psa_key, &psa_attributes ) );
-  psa_key_type_t psa_type = psa_get_key_type ( &psa_attributes );
+  psa_key_type_t psa_type = psa_get_key_type (&psa_attributes );
   mbedtls_pk_type_t pk_type = mbedtls_pk_get_type ( pk );
 
   TEST_ASSERT ( PSA_KEY_TYPE_IS_PUBLIC_KEY ( psa_type ) ||
                 PSA_KEY_TYPE_IS_KEY_PAIR ( psa_type ) );
-  TEST_EQUAL ( psa_get_key_bits ( &psa_attributes ), mbedtls_pk_get_bitlen ( pk ) );
+  TEST_EQUAL ( psa_get_key_bits (&psa_attributes ), mbedtls_pk_get_bitlen ( pk ) );
 
   uint8_t pk_public_buffer[PSA_EXPORT_PUBLIC_KEY_MAX_SIZE];
   const uint8_t* pk_public = NULL;
@@ -1664,7 +1665,7 @@ int mbedtls_test_key_consistency_psa_pk ( mbedtls_svc_key_id_t psa_key,
 
   case MBEDTLS_PK_RSA:
     TEST_ASSERT ( PSA_KEY_TYPE_IS_RSA ( psa_type ) );
-    const mbedtls_rsa_context* rsa = mbedtls_pk_rsa ( *pk );
+    const mbedtls_rsa_context* rsa = mbedtls_pk_rsa (*pk );
     uint8_t* const end = pk_public_buffer + sizeof ( pk_public_buffer );
     uint8_t* cursor = end;
     TEST_LE_U ( 1, mbedtls_rsa_write_pubkey ( rsa,
@@ -1691,8 +1692,8 @@ int mbedtls_test_key_consistency_psa_pk ( mbedtls_svc_key_id_t psa_key,
   case MBEDTLS_PK_ECKEY:
   case MBEDTLS_PK_ECKEY_DH:
   case MBEDTLS_PK_ECDSA:
-    TEST_ASSERT ( PSA_KEY_TYPE_IS_ECC ( psa_get_key_type ( &psa_attributes ) ) );
-    const mbedtls_ecp_keypair* ec = mbedtls_pk_ec_ro ( *pk );
+    TEST_ASSERT ( PSA_KEY_TYPE_IS_ECC ( psa_get_key_type (&psa_attributes ) ) );
+    const mbedtls_ecp_keypair* ec = mbedtls_pk_ec_ro (*pk );
     TEST_EQUAL ( mbedtls_ecp_write_public_key (
                    ec, MBEDTLS_ECP_PF_UNCOMPRESSED, &pk_public_length,
                    pk_public_buffer, sizeof ( pk_public_buffer ) ), 0 );
@@ -1704,7 +1705,7 @@ int mbedtls_test_key_consistency_psa_pk ( mbedtls_svc_key_id_t psa_key,
 
   case MBEDTLS_PK_OPAQUE:
     PSA_ASSERT ( psa_get_key_attributes ( pk->priv_id, &pk_attributes ) );
-    psa_key_type_t pk_psa_type = psa_get_key_type ( &pk_attributes );
+    psa_key_type_t pk_psa_type = psa_get_key_type (&pk_attributes );
     TEST_EQUAL ( PSA_KEY_TYPE_PUBLIC_KEY_OF_KEY_PAIR ( psa_type ),
                  PSA_KEY_TYPE_PUBLIC_KEY_OF_KEY_PAIR ( pk_psa_type ) );
     PSA_ASSERT ( psa_export_public_key ( psa_key,
@@ -1730,10 +1731,11 @@ int mbedtls_test_key_consistency_psa_pk ( mbedtls_svc_key_id_t psa_key,
   ok = 1;
 
 exit:
-  psa_reset_key_attributes ( &psa_attributes );
-  psa_reset_key_attributes ( &pk_attributes );
+  psa_reset_key_attributes (&psa_attributes );
+  psa_reset_key_attributes (&pk_attributes );
   return ok;
 }
+
 #endif /* MBEDTLS_PK_C */
 
 #endif /* MBEDTLS_PSA_CRYPTO_C || MBEDTLS_PSA_CRYPTO_CLIENT */

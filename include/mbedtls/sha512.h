@@ -46,6 +46,7 @@ typedef struct mbedtls_sha512_context
                                                       0: Use SHA-512, or 1: Use SHA-384. */
 #endif
 }
+
 mbedtls_sha512_context;
 
 #else  /* MBEDTLS_SHA512_ALT */
@@ -204,6 +205,7 @@ int mbedtls_sha512_self_test ( int verbose );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* mbedtls_sha512.h */

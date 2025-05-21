@@ -161,21 +161,21 @@
 inline static uint16_t load16 ( uint8_t* b )
 {
   uint16_t x;
-  memcpy ( &x, b, 2 );
+  memcpy (&x, b, 2 );
   return x;
 }
 
 inline static uint32_t load32 ( uint8_t* b )
 {
   uint32_t x;
-  memcpy ( &x, b, 4 );
+  memcpy (&x, b, 4 );
   return x;
 }
 
 inline static uint64_t load64 ( uint8_t* b )
 {
   uint64_t x;
-  memcpy ( &x, b, 8 );
+  memcpy (&x, b, 8 );
   return x;
 }
 

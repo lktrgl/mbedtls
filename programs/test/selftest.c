@@ -228,6 +228,7 @@ static int calloc_self_test ( int verbose )
   mbedtls_free ( buffer4 );
   return failures;
 }
+
 #endif /* MBEDTLS_SELF_TEST */
 
 static int test_snprintf ( size_t n, const char* ref_buf, int ref_ret )
@@ -255,10 +256,10 @@ static int test_snprintf ( size_t n, const char* ref_buf, int ref_ret )
 
 static int run_test_snprintf ( void )
 {
-  return test_snprintf ( 0, "xxxxxxxxx",  -1 ) != 0 ||
-         test_snprintf ( 1, "",           -1 ) != 0 ||
-         test_snprintf ( 2, "1",          -1 ) != 0 ||
-         test_snprintf ( 3, "12",         -1 ) != 0 ||
+  return test_snprintf ( 0, "xxxxxxxxx", -1 ) != 0 ||
+         test_snprintf ( 1, "", -1 ) != 0 ||
+         test_snprintf ( 2, "1", -1 ) != 0 ||
+         test_snprintf ( 3, "12", -1 ) != 0 ||
          test_snprintf ( 4, "123",         3 ) != 0 ||
          test_snprintf ( 5, "123",         3 ) != 0;
 }
@@ -303,6 +304,7 @@ static void create_entropy_seed_file ( void )
 
   mbedtls_platform_std_nv_seed_write ( seed_value, MBEDTLS_ENTROPY_BLOCK_SIZE );
 }
+
 #endif
 
 static int mbedtls_entropy_self_test_wrapper ( int verbose )
@@ -312,6 +314,7 @@ static int mbedtls_entropy_self_test_wrapper ( int verbose )
 #endif
   return mbedtls_entropy_self_test ( verbose );
 }
+
 #endif
 
 #if defined(MBEDTLS_SELF_TEST)
@@ -328,12 +331,13 @@ static int mbedtls_memory_buffer_alloc_free_and_self_test ( int verbose )
   mbedtls_memory_buffer_alloc_free();
   return mbedtls_memory_buffer_alloc_self_test ( verbose );
 }
+
 #endif
 
 typedef struct
 {
   const char* name;
-  int ( *function ) ( int );
+  int (*function ) ( int );
 } selftest_t;
 
 const selftest_t selftests[] =
@@ -472,8 +476,8 @@ int main ( int argc, char* argv[] )
   uint32_t endian_test = 0x12345678;
   char* p = ( char* ) &endian_test;
 
-  if ( ! ( p[0] == 0x12 && p[1] == 0x34 && p[2] == 0x56 && p[3] == 0x78 ) &&
-       ! ( p[3] == 0x12 && p[2] == 0x34 && p[1] == 0x56 && p[0] == 0x78 ) )
+  if (! ( p[0] == 0x12 && p[1] == 0x34 && p[2] == 0x56 && p[3] == 0x78 ) &&
+      ! ( p[3] == 0x12 && p[2] == 0x34 && p[1] == 0x56 && p[0] == 0x78 ) )
   {
     mbedtls_printf ( "Mixed-endian platforms are not supported\n" );
     mbedtls_exit ( MBEDTLS_EXIT_FAILURE );
@@ -484,7 +488,7 @@ int main ( int argc, char* argv[] )
    * of a NULL pointer. We do however use that in our code for initializing
    * structures, which should work on every modern platform. Let's be sure.
    */
-  memset ( &pointer, 0, sizeof ( void* ) );
+  memset (&pointer, 0, sizeof ( void* ) );
 
   if ( pointer != NULL )
   {
@@ -575,13 +579,13 @@ int main ( int argc, char* argv[] )
 
   for ( argp = argv + ( argc >= 1 ? 1 : argc ); *argp != NULL; ++argp )
   {
-    if ( strcmp ( *argp, "--quiet" ) == 0 ||
-         strcmp ( *argp, "-q" ) == 0 )
+    if ( strcmp (*argp, "--quiet" ) == 0 ||
+         strcmp (*argp, "-q" ) == 0 )
     {
       v = 0;
     }
-    else if ( strcmp ( *argp, "--exclude" ) == 0 ||
-              strcmp ( *argp, "-x" ) == 0 )
+    else if ( strcmp (*argp, "--exclude" ) == 0 ||
+              strcmp (*argp, "-x" ) == 0 )
     {
       exclude_mode = 1;
     }
@@ -602,14 +606,14 @@ int main ( int argc, char* argv[] )
   mbedtls_memory_buffer_alloc_init ( buf, sizeof ( buf ) );
 #endif
 
-  if ( *argp != NULL && exclude_mode == 0 )
+  if (*argp != NULL && exclude_mode == 0 )
   {
     /* Run the specified tests */
-    for ( ; *argp != NULL; argp++ )
+    for (; *argp != NULL; argp++ )
     {
       for ( test = selftests; test->name != NULL; test++ )
       {
-        if ( !strcmp ( *argp, test->name ) )
+        if (!strcmp (*argp, test->name ) )
         {
           if ( test->function ( v )  != 0 )
           {
@@ -639,13 +643,13 @@ int main ( int argc, char* argv[] )
 
         for ( excluded = argp; *excluded != NULL; ++excluded )
         {
-          if ( !strcmp ( *excluded, test->name ) )
+          if (!strcmp (*excluded, test->name ) )
           {
             break;
           }
         }
 
-        if ( *excluded )
+        if (*excluded )
         {
           if ( v )
           {

@@ -88,6 +88,7 @@ typedef struct
 {
   uintptr_t MBEDTLS_PRIVATE ( opaque ) [2];
 } mbedtls_psa_external_random_context_t;
+
 #endif /* MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG */
 
 #if defined(MBEDTLS_PSA_CRYPTO_CLIENT) && !defined(MBEDTLS_PSA_CRYPTO_C)

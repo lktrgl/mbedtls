@@ -71,7 +71,7 @@ int mbedtls_rsa_deduce_primes ( mbedtls_mpi const* N,
                                    229,  233,  239,  241,  251
                                  };
 
-  const size_t num_primes = sizeof ( primes ) / sizeof ( *primes );
+  const size_t num_primes = sizeof ( primes ) / sizeof (*primes );
 
   if ( P == NULL || Q == NULL || P->p != NULL || Q->p != NULL )
   {
@@ -91,21 +91,21 @@ int mbedtls_rsa_deduce_primes ( mbedtls_mpi const* N,
    * Initializations and temporary changes
    */
 
-  mbedtls_mpi_init ( &K );
-  mbedtls_mpi_init ( &T );
+  mbedtls_mpi_init (&K );
+  mbedtls_mpi_init (&T );
 
   /* T := DE - 1 */
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_mul_mpi ( &T, D,  E ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int ( &T, &T, 1 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_mul_mpi (&T, D,  E ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int (&T, &T, 1 ) );
 
-  if ( ( order = ( uint16_t ) mbedtls_mpi_lsb ( &T ) ) == 0 )
+  if ( ( order = ( uint16_t ) mbedtls_mpi_lsb (&T ) ) == 0 )
   {
     ret = MBEDTLS_ERR_MPI_BAD_INPUT_DATA;
     goto cleanup;
   }
 
   /* After this operation, T holds the largest odd divisor of DE - 1. */
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_shift_r ( &T, order ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_shift_r (&T, order ) );
 
   /*
    * Actual work
@@ -119,9 +119,9 @@ int mbedtls_rsa_deduce_primes ( mbedtls_mpi const* N,
     attempt = 1;
   }
 
-  for ( ; attempt < num_primes; ++attempt )
+  for (; attempt < num_primes; ++attempt )
   {
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_lset ( &K, primes[attempt] ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_lset (&K, primes[attempt] ) );
 
     /* Check if gcd(K,N) = 1 */
     MBEDTLS_MPI_CHK ( mbedtls_mpi_gcd ( P, &K, N ) );
@@ -133,20 +133,20 @@ int mbedtls_rsa_deduce_primes ( mbedtls_mpi const* N,
 
     /* Go through K^T + 1, K^(2T) + 1, K^(4T) + 1, ...
      * and check whether they have nontrivial GCD with N. */
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_exp_mod ( &K, &K, &T, N,
-                                            Q /* temporarily use Q for storing Montgomery
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_exp_mod (&K, &K, &T, N,
+                                           Q /* temporarily use Q for storing Montgomery
                                                * multiplication helper values */ ) );
 
     for ( iter = 1; iter <= order; ++iter )
     {
       /* If we reach 1 prematurely, there's no point
        * in continuing to square K */
-      if ( mbedtls_mpi_cmp_int ( &K, 1 ) == 0 )
+      if ( mbedtls_mpi_cmp_int (&K, 1 ) == 0 )
       {
         break;
       }
 
-      MBEDTLS_MPI_CHK ( mbedtls_mpi_add_int ( &K, &K, 1 ) );
+      MBEDTLS_MPI_CHK ( mbedtls_mpi_add_int (&K, &K, 1 ) );
       MBEDTLS_MPI_CHK ( mbedtls_mpi_gcd ( P, &K, N ) );
 
       if ( mbedtls_mpi_cmp_int ( P, 1 ) ==  1 &&
@@ -161,9 +161,9 @@ int mbedtls_rsa_deduce_primes ( mbedtls_mpi const* N,
         goto cleanup;
       }
 
-      MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int ( &K, &K, 1 ) );
-      MBEDTLS_MPI_CHK ( mbedtls_mpi_mul_mpi ( &K, &K, &K ) );
-      MBEDTLS_MPI_CHK ( mbedtls_mpi_mod_mpi ( &K, &K, N ) );
+      MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int (&K, &K, 1 ) );
+      MBEDTLS_MPI_CHK ( mbedtls_mpi_mul_mpi (&K, &K, &K ) );
+      MBEDTLS_MPI_CHK ( mbedtls_mpi_mod_mpi (&K, &K, N ) );
     }
 
     /*
@@ -173,7 +173,7 @@ int mbedtls_rsa_deduce_primes ( mbedtls_mpi const* N,
      * Check if that's the case and abort if not, to avoid very long,
      * yet eventually failing, computations if N,D,E were not sane.
      */
-    if ( mbedtls_mpi_cmp_int ( &K, 1 ) != 0 )
+    if ( mbedtls_mpi_cmp_int (&K, 1 ) != 0 )
     {
       break;
     }
@@ -183,8 +183,8 @@ int mbedtls_rsa_deduce_primes ( mbedtls_mpi const* N,
 
 cleanup:
 
-  mbedtls_mpi_free ( &K );
-  mbedtls_mpi_free ( &T );
+  mbedtls_mpi_free (&K );
+  mbedtls_mpi_free (&T );
   return ret;
 }
 
@@ -212,27 +212,27 @@ int mbedtls_rsa_deduce_private_exponent ( mbedtls_mpi const* P,
     return MBEDTLS_ERR_MPI_BAD_INPUT_DATA;
   }
 
-  mbedtls_mpi_init ( &K );
-  mbedtls_mpi_init ( &L );
+  mbedtls_mpi_init (&K );
+  mbedtls_mpi_init (&L );
 
   /* Temporarily put K := P-1 and L := Q-1 */
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int ( &K, P, 1 ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int ( &L, Q, 1 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int (&K, P, 1 ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int (&L, Q, 1 ) );
 
   /* Temporarily put D := gcd(P-1, Q-1) */
   MBEDTLS_MPI_CHK ( mbedtls_mpi_gcd ( D, &K, &L ) );
 
   /* K := LCM(P-1, Q-1) */
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_mul_mpi ( &K, &K, &L ) );
-  MBEDTLS_MPI_CHK ( mbedtls_mpi_div_mpi ( &K, NULL, &K, D ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_mul_mpi (&K, &K, &L ) );
+  MBEDTLS_MPI_CHK ( mbedtls_mpi_div_mpi (&K, NULL, &K, D ) );
 
   /* Compute modular inverse of E in LCM(P-1, Q-1) */
   MBEDTLS_MPI_CHK ( mbedtls_mpi_inv_mod ( D, E, &K ) );
 
 cleanup:
 
-  mbedtls_mpi_free ( &K );
-  mbedtls_mpi_free ( &L );
+  mbedtls_mpi_free (&K );
+  mbedtls_mpi_free (&L );
 
   return ret;
 }
@@ -243,19 +243,19 @@ int mbedtls_rsa_deduce_crt ( const mbedtls_mpi* P, const mbedtls_mpi* Q,
 {
   int ret = 0;
   mbedtls_mpi K;
-  mbedtls_mpi_init ( &K );
+  mbedtls_mpi_init (&K );
 
   /* DP = D mod P-1 */
   if ( DP != NULL )
   {
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int ( &K, P, 1 ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int (&K, P, 1 ) );
     MBEDTLS_MPI_CHK ( mbedtls_mpi_mod_mpi ( DP, D, &K ) );
   }
 
   /* DQ = D mod Q-1 */
   if ( DQ != NULL )
   {
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int ( &K, Q, 1 ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int (&K, Q, 1 ) );
     MBEDTLS_MPI_CHK ( mbedtls_mpi_mod_mpi ( DQ, D, &K ) );
   }
 
@@ -266,7 +266,7 @@ int mbedtls_rsa_deduce_crt ( const mbedtls_mpi* P, const mbedtls_mpi* Q,
   }
 
 cleanup:
-  mbedtls_mpi_free ( &K );
+  mbedtls_mpi_free (&K );
 
   return ret;
 }
@@ -277,14 +277,14 @@ cleanup:
 int mbedtls_rsa_validate_params ( const mbedtls_mpi* N, const mbedtls_mpi* P,
                                   const mbedtls_mpi* Q, const mbedtls_mpi* D,
                                   const mbedtls_mpi* E,
-                                  int ( *f_rng ) ( void*, unsigned char*, size_t ),
+                                  int (*f_rng ) ( void*, unsigned char*, size_t ),
                                   void* p_rng )
 {
   int ret = 0;
   mbedtls_mpi K, L;
 
-  mbedtls_mpi_init ( &K );
-  mbedtls_mpi_init ( &L );
+  mbedtls_mpi_init (&K );
+  mbedtls_mpi_init (&L );
 
   /*
    * Step 1: If PRNG provided, check that P and Q are prime
@@ -322,10 +322,10 @@ int mbedtls_rsa_validate_params ( const mbedtls_mpi* N, const mbedtls_mpi* P,
 
   if ( P != NULL && Q != NULL && N != NULL )
   {
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_mul_mpi ( &K, P, Q ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_mul_mpi (&K, P, Q ) );
 
     if ( mbedtls_mpi_cmp_int ( N, 1 )  <= 0 ||
-         mbedtls_mpi_cmp_mpi ( &K, N ) != 0 )
+         mbedtls_mpi_cmp_mpi (&K, N ) != 0 )
     {
       ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
       goto cleanup;
@@ -362,24 +362,24 @@ int mbedtls_rsa_validate_params ( const mbedtls_mpi* N, const mbedtls_mpi* P,
     }
 
     /* Compute DE-1 mod P-1 */
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_mul_mpi ( &K, D, E ) );
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int ( &K, &K, 1 ) );
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int ( &L, P, 1 ) );
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_mod_mpi ( &K, &K, &L ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_mul_mpi (&K, D, E ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int (&K, &K, 1 ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int (&L, P, 1 ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_mod_mpi (&K, &K, &L ) );
 
-    if ( mbedtls_mpi_cmp_int ( &K, 0 ) != 0 )
+    if ( mbedtls_mpi_cmp_int (&K, 0 ) != 0 )
     {
       ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
       goto cleanup;
     }
 
     /* Compute DE-1 mod Q-1 */
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_mul_mpi ( &K, D, E ) );
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int ( &K, &K, 1 ) );
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int ( &L, Q, 1 ) );
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_mod_mpi ( &K, &K, &L ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_mul_mpi (&K, D, E ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int (&K, &K, 1 ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int (&L, Q, 1 ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_mod_mpi (&K, &K, &L ) );
 
-    if ( mbedtls_mpi_cmp_int ( &K, 0 ) != 0 )
+    if ( mbedtls_mpi_cmp_int (&K, 0 ) != 0 )
     {
       ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
       goto cleanup;
@@ -388,8 +388,8 @@ int mbedtls_rsa_validate_params ( const mbedtls_mpi* N, const mbedtls_mpi* P,
 
 cleanup:
 
-  mbedtls_mpi_free ( &K );
-  mbedtls_mpi_free ( &L );
+  mbedtls_mpi_free (&K );
+  mbedtls_mpi_free (&L );
 
   /* Wrap MPI error codes by RSA check failure error code */
   if ( ret != 0 && ret != MBEDTLS_ERR_RSA_KEY_CHECK_FAILED )
@@ -410,8 +410,8 @@ int mbedtls_rsa_validate_crt ( const mbedtls_mpi* P,  const mbedtls_mpi* Q,
   int ret = 0;
 
   mbedtls_mpi K, L;
-  mbedtls_mpi_init ( &K );
-  mbedtls_mpi_init ( &L );
+  mbedtls_mpi_init (&K );
+  mbedtls_mpi_init (&L );
 
   /* Check that DP - D == 0 mod P - 1 */
   if ( DP != NULL )
@@ -422,11 +422,11 @@ int mbedtls_rsa_validate_crt ( const mbedtls_mpi* P,  const mbedtls_mpi* Q,
       goto cleanup;
     }
 
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int ( &K, P, 1 ) );
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_mpi ( &L, DP, D ) );
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_mod_mpi ( &L, &L, &K ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int (&K, P, 1 ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_mpi (&L, DP, D ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_mod_mpi (&L, &L, &K ) );
 
-    if ( mbedtls_mpi_cmp_int ( &L, 0 ) != 0 )
+    if ( mbedtls_mpi_cmp_int (&L, 0 ) != 0 )
     {
       ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
       goto cleanup;
@@ -442,11 +442,11 @@ int mbedtls_rsa_validate_crt ( const mbedtls_mpi* P,  const mbedtls_mpi* Q,
       goto cleanup;
     }
 
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int ( &K, Q, 1 ) );
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_mpi ( &L, DQ, D ) );
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_mod_mpi ( &L, &L, &K ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int (&K, Q, 1 ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_mpi (&L, DQ, D ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_mod_mpi (&L, &L, &K ) );
 
-    if ( mbedtls_mpi_cmp_int ( &L, 0 ) != 0 )
+    if ( mbedtls_mpi_cmp_int (&L, 0 ) != 0 )
     {
       ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
       goto cleanup;
@@ -462,11 +462,11 @@ int mbedtls_rsa_validate_crt ( const mbedtls_mpi* P,  const mbedtls_mpi* Q,
       goto cleanup;
     }
 
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_mul_mpi ( &K, QP, Q ) );
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int ( &K, &K, 1 ) );
-    MBEDTLS_MPI_CHK ( mbedtls_mpi_mod_mpi ( &K, &K, P ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_mul_mpi (&K, QP, Q ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_sub_int (&K, &K, 1 ) );
+    MBEDTLS_MPI_CHK ( mbedtls_mpi_mod_mpi (&K, &K, P ) );
 
-    if ( mbedtls_mpi_cmp_int ( &K, 0 ) != 0 )
+    if ( mbedtls_mpi_cmp_int (&K, 0 ) != 0 )
     {
       ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
       goto cleanup;
@@ -483,8 +483,8 @@ cleanup:
     ret += MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
   }
 
-  mbedtls_mpi_free ( &K );
-  mbedtls_mpi_free ( &L );
+  mbedtls_mpi_free (&K );
+  mbedtls_mpi_free (&L );
 
   return ret;
 }

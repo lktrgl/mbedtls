@@ -185,8 +185,8 @@ static int hex_to_int ( char c )
 
 static int hexpair_to_int ( const char* hexpair )
 {
-  int n1 = hex_to_int ( *hexpair );
-  int n2 = hex_to_int ( * ( hexpair + 1 ) );
+  int n1 = hex_to_int (*hexpair );
+  int n2 = hex_to_int (* ( hexpair + 1 ) );
 
   if ( n1 != -1 && n2 != -1 )
   {
@@ -210,7 +210,7 @@ static int parse_attribute_value_string ( const char* s,
 
   for ( c = s; c < end; c++ )
   {
-    if ( *c == '\\' )
+    if (*c == '\\' )
     {
       c++;
 
@@ -334,7 +334,7 @@ static int parse_attribute_value_hex_der_encoded ( const char* s,
   {
     unsigned char* p = der + 1;
 
-    if ( mbedtls_asn1_get_len ( &p, der + der_length, data_len ) != 0 )
+    if ( mbedtls_asn1_get_len (&p, der + der_length, data_len ) != 0 )
     {
       goto error;
     }
@@ -343,13 +343,13 @@ static int parse_attribute_value_hex_der_encoded ( const char* s,
      * and *data_len is the length of the payload. */
 
     /* Step 4: payload validation */
-    if ( *data_len > MBEDTLS_X509_MAX_DN_NAME_SIZE )
+    if (*data_len > MBEDTLS_X509_MAX_DN_NAME_SIZE )
     {
       goto error;
     }
 
     /* Strings must not contain null bytes. */
-    if ( MBEDTLS_ASN1_IS_STRING_TAG ( *tag ) )
+    if ( MBEDTLS_ASN1_IS_STRING_TAG (*tag ) )
     {
       for ( size_t i = 0; i < *data_len; i++ )
       {
@@ -361,13 +361,14 @@ static int parse_attribute_value_hex_der_encoded ( const char* s,
     }
 
     /* Step 5: output the payload. */
-    if ( *data_len > data_size )
+    if (*data_len > data_size )
     {
       goto error;
     }
 
     memcpy ( data, p, *data_len );
   }
+
   mbedtls_free ( der );
 
   return 0;
@@ -381,7 +382,7 @@ int mbedtls_x509_string_to_names ( mbedtls_asn1_named_data** head, const char* n
 {
   int ret = MBEDTLS_ERR_X509_INVALID_NAME;
   int parse_ret = 0;
-  const char* s = name, *c = s;
+  const char* s = name, * c = s;
   const char* end = s + strlen ( s );
   mbedtls_asn1_buf oid = { .p = NULL, .len = 0, .tag = MBEDTLS_ASN1_NULL };
   const x509_attr_descriptor_t* attr_descr = NULL;
@@ -400,7 +401,7 @@ int mbedtls_x509_string_to_names ( mbedtls_asn1_named_data** head, const char* n
     {
       if ( ( attr_descr = x509_attr_descr_from_name ( s, ( size_t ) ( c - s ) ) ) == NULL )
       {
-        if ( ( mbedtls_oid_from_numeric_string ( &oid, s, ( size_t ) ( c - s ) ) ) != 0 )
+        if ( ( mbedtls_oid_from_numeric_string (&oid, s, ( size_t ) ( c - s ) ) ) != 0 )
         {
           return MBEDTLS_ERR_X509_INVALID_NAME;
         }
@@ -421,14 +422,14 @@ int mbedtls_x509_string_to_names ( mbedtls_asn1_named_data** head, const char* n
       in_attr_type = 0;
     }
 
-    if ( !in_attr_type && ( ( *c == ',' && * ( c - 1 ) != '\\' ) || c == end ) )
+    if (!in_attr_type && ( (*c == ',' && * ( c - 1 ) != '\\' ) || c == end ) )
     {
       if ( s == c )
       {
         mbedtls_free ( oid.p );
         return MBEDTLS_ERR_X509_INVALID_NAME;
       }
-      else if ( *s == '#' )
+      else if (*s == '#' )
       {
         /* We know that c >= s (loop invariant) and c != s (in this
          * else branch), hence c - s - 1 >= 0. */
@@ -601,21 +602,21 @@ int mbedtls_x509_write_sig ( unsigned char** p, unsigned char* start,
   int write_null_par;
   size_t len = 0;
 
-  if ( *p < start || ( size_t ) ( *p - start ) < size )
+  if (*p < start || ( size_t ) (*p - start ) < size )
   {
     return MBEDTLS_ERR_ASN1_BUF_TOO_SMALL;
   }
 
   len = size;
-  ( *p ) -= len;
-  memcpy ( *p, sig, len );
+  (*p ) -= len;
+  memcpy (*p, sig, len );
 
-  if ( *p - start < 1 )
+  if (*p - start < 1 )
   {
     return MBEDTLS_ERR_ASN1_BUF_TOO_SMALL;
   }
 
-  *-- ( *p ) = 0;
+  *-- (*p ) = 0;
   len += 1;
 
   MBEDTLS_ASN1_CHK_ADD ( len, mbedtls_asn1_write_len ( p, start, len ) );

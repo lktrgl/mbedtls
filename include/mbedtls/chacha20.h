@@ -41,6 +41,7 @@ typedef struct mbedtls_chacha20_context
   uint8_t  MBEDTLS_PRIVATE ( keystream8 ) [64]; /*! Leftover keystream bytes. */
   size_t MBEDTLS_PRIVATE ( keystream_bytes_used ); /*! Number of keystream bytes already used. */
 }
+
 mbedtls_chacha20_context;
 
 #else  /* MBEDTLS_CHACHA20_ALT */
@@ -198,6 +199,7 @@ int mbedtls_chacha20_self_test ( int verbose );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* MBEDTLS_CHACHA20_H */

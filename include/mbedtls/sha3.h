@@ -55,6 +55,7 @@ typedef struct
   uint16_t MBEDTLS_PRIVATE ( olen );
   uint16_t MBEDTLS_PRIVATE ( max_block_size );
 }
+
 mbedtls_sha3_context;
 
 /**
@@ -169,6 +170,7 @@ int mbedtls_sha3_self_test ( int verbose );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* mbedtls_sha3.h */

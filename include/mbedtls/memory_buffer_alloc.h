@@ -137,6 +137,7 @@ int mbedtls_memory_buffer_alloc_self_test ( int verbose );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* memory_buffer_alloc.h */

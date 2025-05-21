@@ -93,9 +93,9 @@ int mbedtls_internal_sha1_process ( mbedtls_sha1_context* ctx,
 #define R(t)                                                    \
   (                                                           \
       local.temp = local.W[((t) -  3) & 0x0F] ^             \
-                   local.W[((t) -  8) & 0x0F] ^             \
-                   local.W[((t) - 14) & 0x0F] ^             \
-                   local.W[(t)        & 0x0F],              \
+      local.W[((t) -  8) & 0x0F] ^             \
+      local.W[((t) - 14) & 0x0F] ^             \
+      local.W[(t)        & 0x0F],              \
       (local.W[(t) & 0x0F] = S(local.temp, 1))               \
   )
 
@@ -227,7 +227,7 @@ int mbedtls_internal_sha1_process ( mbedtls_sha1_context* ctx,
   ctx->state[4] += local.E;
 
   /* Zeroise buffers and variables to clear sensitive data from memory. */
-  mbedtls_platform_zeroize ( &local, sizeof ( local ) );
+  mbedtls_platform_zeroize (&local, sizeof ( local ) );
 
   return 0;
 }
@@ -372,25 +372,25 @@ int mbedtls_sha1 ( const unsigned char* input,
   int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
   mbedtls_sha1_context ctx;
 
-  mbedtls_sha1_init ( &ctx );
+  mbedtls_sha1_init (&ctx );
 
-  if ( ( ret = mbedtls_sha1_starts ( &ctx ) ) != 0 )
+  if ( ( ret = mbedtls_sha1_starts (&ctx ) ) != 0 )
   {
     goto exit;
   }
 
-  if ( ( ret = mbedtls_sha1_update ( &ctx, input, ilen ) ) != 0 )
+  if ( ( ret = mbedtls_sha1_update (&ctx, input, ilen ) ) != 0 )
   {
     goto exit;
   }
 
-  if ( ( ret = mbedtls_sha1_finish ( &ctx, output ) ) != 0 )
+  if ( ( ret = mbedtls_sha1_finish (&ctx, output ) ) != 0 )
   {
     goto exit;
   }
 
 exit:
-  mbedtls_sha1_free ( &ctx );
+  mbedtls_sha1_free (&ctx );
   return ret;
 }
 
@@ -436,7 +436,7 @@ int mbedtls_sha1_self_test ( int verbose )
   unsigned char sha1sum[20];
   mbedtls_sha1_context ctx;
 
-  mbedtls_sha1_init ( &ctx );
+  mbedtls_sha1_init (&ctx );
 
   /*
    * SHA-1
@@ -448,7 +448,7 @@ int mbedtls_sha1_self_test ( int verbose )
       mbedtls_printf ( "  SHA-1 test #%d: ", i + 1 );
     }
 
-    if ( ( ret = mbedtls_sha1_starts ( &ctx ) ) != 0 )
+    if ( ( ret = mbedtls_sha1_starts (&ctx ) ) != 0 )
     {
       goto fail;
     }
@@ -459,7 +459,7 @@ int mbedtls_sha1_self_test ( int verbose )
 
       for ( j = 0; j < 1000; j++ )
       {
-        ret = mbedtls_sha1_update ( &ctx, buf, buflen );
+        ret = mbedtls_sha1_update (&ctx, buf, buflen );
 
         if ( ret != 0 )
         {
@@ -469,8 +469,8 @@ int mbedtls_sha1_self_test ( int verbose )
     }
     else
     {
-      ret = mbedtls_sha1_update ( &ctx, sha1_test_buf[i],
-                                  sha1_test_buflen[i] );
+      ret = mbedtls_sha1_update (&ctx, sha1_test_buf[i],
+                                 sha1_test_buflen[i] );
 
       if ( ret != 0 )
       {
@@ -478,7 +478,7 @@ int mbedtls_sha1_self_test ( int verbose )
       }
     }
 
-    if ( ( ret = mbedtls_sha1_finish ( &ctx, sha1sum ) ) != 0 )
+    if ( ( ret = mbedtls_sha1_finish (&ctx, sha1sum ) ) != 0 )
     {
       goto fail;
     }
@@ -510,7 +510,7 @@ fail:
   }
 
 exit:
-  mbedtls_sha1_free ( &ctx );
+  mbedtls_sha1_free (&ctx );
 
   return ret;
 }

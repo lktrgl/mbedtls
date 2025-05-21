@@ -21,6 +21,7 @@ int main ( void )
                    "MBEDTLS_FS_IO not defined.\n" );
   mbedtls_exit ( 0 );
 }
+
 #else
 
 #include "mbedtls/error.h"
@@ -41,7 +42,7 @@ int main ( int argc, char* argv[] )
   unsigned char buf[MBEDTLS_PK_SIGNATURE_MAX_SIZE];
   char filename[512];
 
-  mbedtls_pk_init ( &pk );
+  mbedtls_pk_init (&pk );
 
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
   psa_status_t status = psa_crypto_init();
@@ -69,7 +70,7 @@ int main ( int argc, char* argv[] )
   mbedtls_printf ( "\n  . Reading public key from '%s'", argv[1] );
   fflush ( stdout );
 
-  if ( ( ret = mbedtls_pk_parse_public_keyfile ( &pk, argv[1] ) ) != 0 )
+  if ( ( ret = mbedtls_pk_parse_public_keyfile (&pk, argv[1] ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_pk_parse_public_keyfile returned -0x%04x\n",
                      ( unsigned int ) - ret );
@@ -106,8 +107,8 @@ int main ( int argc, char* argv[] )
     goto exit;
   }
 
-  if ( ( ret = mbedtls_pk_verify ( &pk, MBEDTLS_MD_SHA256, hash, 0,
-                                   buf, i ) ) != 0 )
+  if ( ( ret = mbedtls_pk_verify (&pk, MBEDTLS_MD_SHA256, hash, 0,
+                                  buf, i ) ) != 0 )
   {
     mbedtls_printf ( " failed\n  ! mbedtls_pk_verify returned -0x%04x\n", ( unsigned int ) - ret );
     goto exit;
@@ -118,7 +119,7 @@ int main ( int argc, char* argv[] )
   exit_code = MBEDTLS_EXIT_SUCCESS;
 
 exit:
-  mbedtls_pk_free ( &pk );
+  mbedtls_pk_free (&pk );
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
   mbedtls_psa_crypto_free();
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
@@ -135,5 +136,6 @@ exit:
 
   mbedtls_exit ( exit_code );
 }
+
 #endif /* MBEDTLS_BIGNUM_C && MBEDTLS_MD_CAN_SHA256 &&
           MBEDTLS_PK_PARSE_C && MBEDTLS_FS_IO */

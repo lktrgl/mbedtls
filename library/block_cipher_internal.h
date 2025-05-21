@@ -29,7 +29,7 @@ extern "C" {
  */
 static inline void mbedtls_block_cipher_init ( mbedtls_block_cipher_context_t* ctx )
 {
-  memset ( ctx, 0, sizeof ( *ctx ) );
+  memset ( ctx, 0, sizeof (*ctx ) );
 }
 
 /**
@@ -94,6 +94,7 @@ void mbedtls_block_cipher_free ( mbedtls_block_cipher_context_t* ctx );
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #endif /* MBEDTLS_BLOCK_CIPHER_INTERNAL_H */
